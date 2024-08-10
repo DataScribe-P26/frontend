@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ImageUpload from "../image upload and display/Imageupload";
 import useStore from "../../../Zustand/Alldata";
 import { useNavigate, useParams } from "react-router-dom";
+import Spinner from "./loading_screen";
 
 function Analysis({}) {
   const { projectName } = useParams();
@@ -39,7 +40,9 @@ function Analysis({}) {
     });
   });
 
+  const sorted_class = classes_used.sort((a, b) => b.count - a.count);
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
+  const [loading, setloading] = useState(false);
 
   return (
     <div className="w-full h-screen flex">
@@ -54,7 +57,7 @@ function Analysis({}) {
           <div
             className={`w-[70%] min-h-[150px] max-h-[250px] bg-slate-600 rounded-xl mt-3 overflow-y-auto custom-scrollbar`}
           >
-            {classes_used.length > 0 ? (
+            {sorted_class.length > 0 ? (
               <div className="relative">
                 <table className="w-full text-white">
                   <thead className="sticky top-0 bg-gray-700">
@@ -62,15 +65,13 @@ function Analysis({}) {
                       <th className="py-3 px-4">Number</th>
                       <th className="py-3 px-4">Class Name</th>
                       <th className="py-3 px-4">Count</th>
-                      <th className="py-3 px-4">Analysis</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {classes_used.map(({ class_name, count }, index) => (
+                    {sorted_class.map(({ class_name, count }, index) => (
                       <tr key={index} className="hover:bg-slate-400">
                         <td className="py-2 px-4 text-center">{index + 1}</td>
                         <td className="py-2 px-4 text-center">{class_name}</td>
-                        <td className="py-2 px-4 text-center">{count}</td>
                         <td className="py-2 px-4 text-center">{count}</td>
                       </tr>
                     ))}
@@ -112,27 +113,45 @@ function Analysis({}) {
         </div>
       </div>
       <div className="w-[40%] h-screen flex flex-col justify-center items-center  p-6">
-        {imageSrc.length > 0 ? (
-          <div className="flex flex-col items-center">
-            <div className="text-white text-lg mb-4">Upload More Images?</div>
-            <ImageUpload projectName={projectName} />
-            <button
-              className="px-6 py-3 rounded-lg bg-green-500 text-white mt-20 shadow-lg hover:bg-green-600 transition"
-              onClick={() => navigate(`/projects/${projectName}/main`)}
-            >
-              Continue
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center min-h-screen">
-            <div className="text-center">
-              <div className="mb-8 text-white text-xl">
-                No Images Uploaded Yet.
-              </div>
-              <ImageUpload projectName={projectName} />
-            </div>
-          </div>
-        )}
+        <>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              {imageSrc.length > 0 ? (
+                <div className="flex flex-col items-center">
+                  <div className="text-white text-lg mb-4">
+                    Upload More Images?
+                  </div>
+                  <ImageUpload
+                    projectName={projectName}
+                    loading={loading}
+                    setloading={setloading}
+                  />
+                  <button
+                    className="px-6 py-3 rounded-lg bg-green-500 text-white mt-20 shadow-lg hover:bg-green-600 transition"
+                    onClick={() => navigate(`/projects/${projectName}/main`)}
+                  >
+                    Continue
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-screen">
+                  <div className="text-center">
+                    <div className="mb-8 text-white text-xl">
+                      No Images Uploaded Yet.
+                    </div>
+                    <ImageUpload
+                      projectName={projectName}
+                      loading={loading}
+                      setloading={setloading}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </>
       </div>
     </div>
   );

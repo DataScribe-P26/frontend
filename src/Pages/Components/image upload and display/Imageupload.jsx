@@ -5,9 +5,8 @@ import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
 import Spinner from "../Image Project/loading_screen";
 
-function ImageUpload({ projectName }) {
+function ImageUpload({ projectName, loading, setloading }) {
   const { imageSrc, setImageSrc } = useStore();
-  const [loading, setloading] = useState(false);
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
