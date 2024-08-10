@@ -1,40 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import useStore from "../../../Zustand/Alldata";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
+import Spinner from "../Image Project/loading_screen";
 
 function ImageUpload({ projectName }) {
   const { imageSrc, setImageSrc } = useStore();
+  const [loading, setloading] = useState(false);
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
-    const newImages = [];
+    setloading(true);
+    const images = [];
+    let processedFiles = 0;
 
-    for (const file of files) {
+    files.forEach((file) => {
       const reader = new FileReader();
-      reader.onload = async (event) => {
+      reader.onload = (event) => {
         const img = new Image();
         img.src = event.target.result;
-        img.onload = async () => {
-          const image = {
-            src: img.src,
-            file: file,
-            rectangle_annotations: [],
-            polygon_annotations: [],
-          };
+        img.onload = () => {
+          const exists = imageSrc.some((imgg) => imgg.src === img.src);
 
-          newImages.push(image);
+          if (!exists) {
+            images.push({
+              src: img.src,
+              file: file,
+              rectangle_annotations: [],
+              polygon_annotations: [],
+            });
+          }
 
-          if (newImages.length === files.length) {
-            const updatedImages = [...imageSrc, ...newImages];
+          processedFiles += 1;
+
+          if (processedFiles === files.length) {
+            const updatedImages = [...imageSrc, ...images];
             setImageSrc(updatedImages);
-            await uploadImagesSequentially(newImages);
+            uploadImagesSequentially(images);
           }
         };
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
   const uploadImagesSequentially = async (images) => {
@@ -75,26 +83,32 @@ function ImageUpload({ projectName }) {
       }
     }
 
-    toast.success("All images uploaded successfully.");
+    setloading(false);
   };
 
   return (
     <div className="flex flex-col items-center bg-slate-500 p-6 rounded-lg shadow-lg">
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        multiple
-        id="file-upload"
-        className="hidden"
-      />
-      <label
-        htmlFor="file-upload"
-        className="flex items-center px-6 py-3 rounded-full bg-blue-600 text-white cursor-pointer shadow-md hover:bg-blue-700 transition"
-      >
-        <MdCloudUpload className="text-xl mr-2" />
-        Choose Files
-      </label>
+      {!loading && (
+        <>
+          {" "}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            multiple
+            id="file-upload"
+            className="hidden"
+          />
+          <label
+            htmlFor="file-upload"
+            className="flex items-center px-6 py-3 rounded-full bg-blue-600 text-white cursor-pointer shadow-md hover:bg-blue-700 transition"
+          >
+            <MdCloudUpload className="text-xl mr-2" />
+            Choose Files
+          </label>
+        </>
+      )}
+      {loading && <Spinner />}
     </div>
   );
 }

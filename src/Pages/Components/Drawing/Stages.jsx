@@ -30,16 +30,16 @@ function Stages({ images, action, current, cl, setcl }) {
 
   useEffect(() => {
     if (pendingAnnotation && cl) {
-      const current_class = classes.find(
+      const current_class = classes?.find(
         (classItem) => classItem.class_label === cl
       );
 
       set_allAnnotations((prevAnnotations) =>
-        prevAnnotations.map((entry) =>
+        prevAnnotations?.map((entry) =>
           entry.image_id === current
             ? {
                 ...entry,
-                annotations: entry.annotations.map((annotation) =>
+                annotations: entry.annotations?.map((annotation) =>
                   annotation.class_id === pendingAnnotation.class_id
                     ? {
                         ...annotation,
@@ -58,7 +58,7 @@ function Stages({ images, action, current, cl, setcl }) {
       setPendingAnnotation(null);
     }
   }, [cl, pendingAnnotation, classes, current, set_allAnnotations]);
-  const currentImage = annotations.find((image) => image.image_id === current);
+  const currentImage = annotations?.find((image) => image.image_id === current);
 
   // console.log("Current Image:", currentImage);
   // console.log("Images Prop:", images);
@@ -76,7 +76,7 @@ function Stages({ images, action, current, cl, setcl }) {
   const [isFinished, setIsFinished] = useState(false);
   const [hoveredPolygonIndex, setHoveredPolygonIndex] = useState(null);
   const [hoveredTextIndex, setHoveredTextIndex] = useState(null);
-  const current_image = images.find((image) => image.src === current);
+  const current_image = images?.find((image) => image.src === current);
 
   const getMousePos = (stage) => {
     const pointerPosition = stage.getPointerPosition();
@@ -113,7 +113,7 @@ function Stages({ images, action, current, cl, setcl }) {
     };
 
     if (class_label) {
-      const current_class = classes.find(
+      const current_class = classes?.find(
         (classItem) => classItem.class_label === class_label
       );
       newAnnotation.class_name = current_class?.class_label || "";
@@ -121,7 +121,7 @@ function Stages({ images, action, current, cl, setcl }) {
     }
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
@@ -160,13 +160,13 @@ function Stages({ images, action, current, cl, setcl }) {
     let newAnnotation = {
       class_id: classId,
       class_name: "",
-      points: points.map((point) => ({ x: point.x, y: point.y })),
+      points: points?.map((point) => ({ x: point.x, y: point.y })),
       Color: "black",
       type: "polygon",
       edit: false,
     };
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
@@ -202,11 +202,11 @@ function Stages({ images, action, current, cl, setcl }) {
     moved.current = true;
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.map((annotation) =>
+              annotations: entry.annotations?.map((annotation) =>
                 annotation.class_id === selectedImage_ID.current
                   ? {
                       ...annotation,
@@ -236,16 +236,16 @@ function Stages({ images, action, current, cl, setcl }) {
   };
 
   const finalizeRectangle = () => {
-    const current_class = classes.find(
+    const current_class = classes?.find(
       (classItem) => classItem.class_label === class_label
     );
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.map((annotation) =>
+              annotations: entry.annotations?.map((annotation) =>
                 annotation.class_id === selectedImage_ID.current
                   ? {
                       ...annotation,
@@ -303,11 +303,11 @@ function Stages({ images, action, current, cl, setcl }) {
 
   const handleDelete = (class_id) => {
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.filter(
+              annotations: entry.annotations?.filter(
                 (annotation) => annotation.class_id !== class_id
               ),
             }
@@ -437,7 +437,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x}
+                                      x={annotation.x - 10}
                                       y={annotation.y + 5}
                                       text="Delete"
                                       fontSize={16}
@@ -523,7 +523,7 @@ function Stages({ images, action, current, cl, setcl }) {
                       )}
 
                       {action === "polygon" &&
-                        points.map((point, index) => {
+                        points?.map((point, index) => {
                           const width = 6;
                           const x = point.x - width / 2;
                           const y = point.y - width / 2;

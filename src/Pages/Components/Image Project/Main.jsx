@@ -31,14 +31,14 @@ function Main() {
     setAnnotations(all_annotations);
   }, [all_annotations]);
 
-  const currentImage = annotations.find((image) => image.image_id === current);
+  const currentImage = annotations?.find((image) => image.image_id === current);
 
   async function submit() {
     if (
       !currentImage ||
       !imageSrc ||
       typeof current !== "string" ||
-      !imageSrc.find((img) => img.src === current)
+      !imageSrc?.find((img) => img.src === current)
     ) {
       console.error("Invalid inputs:", {
         currentImage,
@@ -55,11 +55,14 @@ function Main() {
     const fileName = "abcd";
 
     const rectangle_annotations = currentImage.annotations.filter(
-      (a) => a.type === "rectangle"
+      (a) =>
+        a.type === "rectangle" && a.class_name !== "" && a.Color !== "black"
     );
+
     const polygon_annotations = currentImage.annotations.filter(
-      (a) => a.type === "polygon"
+      (a) => a.type === "polygon" && a.class_name !== "" && a.Color !== "black"
     );
+
     console.log("rec", rectangle_annotations);
     console.log("poly", polygon_annotations);
 
@@ -133,47 +136,6 @@ function Main() {
     }
   };
 
-  const fileInputRef = useRef(null);
-
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handle_more_image = (e) => {
-    const files = Array.from(e.target.files);
-    const images = [];
-    let processedFiles = 0;
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const exists = imageSrc.some((imgg) => imgg.src === img.src);
-
-          if (!exists) {
-            images.push({
-              src: img.src,
-              file: file, // Store the file object
-              rectangle_annotations: [],
-              polygon_annotations: [],
-            });
-          }
-
-          processedFiles += 1;
-
-          if (processedFiles === files.length) {
-            const newImages = [...(imageSrc || []), ...images];
-            console.log("Updating imageSrc with:", newImages);
-            setImageSrc(newImages);
-          }
-        };
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
   return (
     <>
       <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
@@ -191,7 +153,7 @@ function Main() {
                 <div className="w-full h-[10vh] flex items-end justify-end gap-3 px-10"></div>
                 <div className=" h-[70vh] gap-4 flex justify-center items-center mt-5">
                   <Stages
-                    imageSrc={imageSrc.find((img) => img.src === current)}
+                    imageSrc={imageSrc?.find((img) => img.src === current)}
                     action={action}
                     images={imageSrc}
                     current={current}

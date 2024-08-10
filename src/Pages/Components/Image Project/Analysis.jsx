@@ -124,8 +124,13 @@ function Analysis({}) {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center">
-            <ImageUpload projectName={projectName} />
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <div className="text-center">
+              <div className="mb-8 text-white text-xl">
+                No Images Uploaded Yet.
+              </div>
+              <ImageUpload projectName={projectName} />
+            </div>
           </div>
         )}
       </div>
