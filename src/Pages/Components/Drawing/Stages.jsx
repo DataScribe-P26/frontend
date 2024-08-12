@@ -108,7 +108,7 @@ function Stages({ images, action, current, cl, setcl }) {
     isPainting.current = true;
 
     let newAnnotation = {
-      class_id: selectedImage_ID.current,
+      class_id: selectedImage_ID.current || Math.random(),
       class_name: "",
       x,
       y,
@@ -133,6 +133,30 @@ function Stages({ images, action, current, cl, setcl }) {
           ? {
               ...entry,
               annotations: [...entry.annotations, newAnnotation],
+            }
+          : entry
+      )
+    );
+  };
+
+  const handleDragEnd = (e, annotation) => {
+    const newX = e.target.x();
+    const newY = e.target.y();
+
+    set_allAnnotations((prevAnnotations) =>
+      prevAnnotations?.map((entry) =>
+        entry.image_id === current
+          ? {
+              ...entry,
+              annotations: entry.annotations?.map((a) =>
+                a.class_id === annotation.class_id
+                  ? {
+                      ...a,
+                      x: newX,
+                      y: newY,
+                    }
+                  : a
+              ),
             }
           : entry
       )
@@ -358,22 +382,6 @@ function Stages({ images, action, current, cl, setcl }) {
     setIsMouseOverStartPoint(false);
   };
 
-  const handleMouseEnterPolygon = (index) => {
-    setHoveredPolygonIndex(index);
-  };
-
-  const handleMouseLeavePolygon = () => {
-    setHoveredPolygonIndex(null);
-  };
-
-  const handleMouseEnterText = (index) => {
-    setHoveredTextIndex(index);
-  };
-
-  const handleMouseLeaveText = () => {
-    setHoveredTextIndex(null);
-  };
-
   const calculateCentroid = (points) => {
     const numPoints = points.length;
     let centroidX = 0;
@@ -529,6 +537,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
+                                draggable
+                                onDragEnd={(e) => handleDragEnd(e, annotation)}
                               />
 
                               {hoveredId === annotation.class_id &&
@@ -697,7 +707,7 @@ function Stages({ images, action, current, cl, setcl }) {
                           />
                         )}
                       {action === "polygon" &&
-                        points.map((point, index) => {
+                        points?.map((point, index) => {
                           const width = 6;
                           const x = point.x - width / 2;
                           const y = point.y - width / 2;
