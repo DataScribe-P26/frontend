@@ -28,6 +28,7 @@ function ImageUpload({ projectName, loading, setloading }) {
               file: file,
               rectangle_annotations: [],
               polygon_annotations: [],
+              segmentation_annotations: [],
               width: img.width,
               height: img.height,
               width_multiplier: 800 / img.width,
@@ -57,6 +58,7 @@ function ImageUpload({ projectName, loading, setloading }) {
         const data = {
           rectangle_annotations: image.rectangle_annotations,
           polygon_annotations: image.polygon_annotations,
+          segmentation_annotations: image.segmentation_annotations,
           file_content: base64String,
           file_name: fileName,
           mime_type: image.file.type || "image/jpeg", // Get MIME type from file or use default

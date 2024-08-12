@@ -63,9 +63,21 @@ const useStore = create((set) => ({
           })),
         }));
 
+        const new_segmentation = i.segmentation_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * i.width_multiplier,
+            y: point.y * i.height_multiplier,
+          })),
+        }));
+
         return {
           image_id: i.src,
-          annotations: [...new_rectangles, ...new_polygons],
+          annotations: [
+            ...new_rectangles,
+            ...new_polygons,
+            ...new_segmentation,
+          ],
           id: i.id,
           width_multiplier: i.width_multiplier,
           height_multiplier: i.height_multiplier,

@@ -30,6 +30,7 @@ function Imagehome() {
             src: `data:image/jpeg;base64,${image.src}`,
             rectangle_annotations: image.rectangle_annotations,
             polygon_annotations: image.polygon_annotations,
+            segmentation_annotations: image.segmentation_annotations,
             id: image.image_id,
             width_multiplier: image.width_multiplier,
             height_multiplier: image.height_multiplier,

@@ -8,7 +8,7 @@ import axios from "axios";
 import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdCloudUpload } from "react-icons/md";
 
 function Main() {
@@ -30,6 +30,7 @@ function Main() {
   useEffect(() => {
     setAnnotations(all_annotations);
   }, [all_annotations]);
+  const navigate = useNavigate();
 
   let currentImage = annotations?.find((image) => image.image_id === current);
 
@@ -81,8 +82,23 @@ function Main() {
         })),
       }));
 
+    const segmentation_annotations = (currentImage?.annotations || [])
+      .filter(
+        (a) =>
+          a.type === "segmentation" &&
+          a.class_name !== "" &&
+          a.Color !== "black"
+      )
+      .map((polygon) => ({
+        ...polygon,
+        points: polygon.points.map((point) => ({
+          x: point.x / (currentImage.width_multiplier || 1),
+          y: point.y / (currentImage.height_multiplier || 1),
+        })),
+      }));
+
     console.log("rec", rectangle_annotations);
-    console.log("poly", polygon_annotations);
+    console.log("segmentation", segmentation_annotations);
 
     const imageDetails = {
       width: currentImage.width || 0,
@@ -94,6 +110,7 @@ function Main() {
     const data = {
       rectangle_annotations,
       polygon_annotations,
+      segmentation_annotations,
       file_content: base64String,
       file_name: fileName,
       mime_type: "image/jpeg",
@@ -111,11 +128,10 @@ function Main() {
         }
       );
       console.log(response.data);
-      toast.success("Change Saved Successfully");
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
-        toast.error("Change Not Saved");
+        toast.error(error.message);
       } else {
         console.error("Network Error:", error.message);
         toast.error("Change Not Saved");
@@ -162,6 +178,12 @@ function Main() {
       setcurrent(imageSrc[lastIndex].src);
     }
   };
+
+  useEffect(() => {
+    if (imageSrc?.length == 0) {
+      navigate(`/project/${projectName}`);
+    }
+  }, [imageSrc]);
 
   // window.addEventListener("beforeunload", function (event) {
   //   const message = "Are you sure you want to leave?";

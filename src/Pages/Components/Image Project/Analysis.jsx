@@ -130,7 +130,7 @@ function Analysis({}) {
                   />
                   <button
                     className="px-6 py-3 rounded-lg bg-green-500 text-white mt-20 shadow-lg hover:bg-green-600 transition"
-                    onClick={() => navigate(`/projects/${projectName}/main`)}
+                    onClick={() => navigate(`/project/${projectName}/main`)}
                   >
                     Continue
                   </button>
