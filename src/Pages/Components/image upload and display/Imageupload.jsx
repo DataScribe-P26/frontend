@@ -28,6 +28,10 @@ function ImageUpload({ projectName, loading, setloading }) {
               file: file,
               rectangle_annotations: [],
               polygon_annotations: [],
+              width: img.width,
+              height: img.height,
+              width_multiplier: 800 / img.width,
+              height_multiplier: 450 / img.height,
             });
           }
 
@@ -55,10 +59,14 @@ function ImageUpload({ projectName, loading, setloading }) {
           polygon_annotations: image.polygon_annotations,
           file_content: base64String,
           file_name: fileName,
-          mime_type: "image/jpeg",
+          mime_type: image.file.type || "image/jpeg", // Get MIME type from file or use default
+          image: {
+            width: image.width,
+            height: image.height,
+            width_multiplier: image.width_multiplier,
+            height_multiplier: image.height_multiplier,
+          },
         };
-
-        console.log("Uploading image:", data); // Debugging line
 
         await axios.post(
           `http://127.0.0.1:8000/projects/${projectName}/upload/`,
@@ -69,12 +77,14 @@ function ImageUpload({ projectName, loading, setloading }) {
             },
           }
         );
-
-        console.log(`Image ${fileName} uploaded successfully.`); // Debugging line
       } catch (error) {
         if (error.response) {
           console.error("Error response data:", error.response.data);
-          toast.error("Image upload failed.");
+          toast.error(
+            `Image upload failed: ${
+              error.response.data.detail || "Unknown error"
+            }`
+          );
         } else {
           console.error("Network Error:", error.message);
           toast.error("Image upload failed.");
@@ -89,7 +99,6 @@ function ImageUpload({ projectName, loading, setloading }) {
     <div className="flex flex-col items-center bg-slate-500 p-6 rounded-lg shadow-lg">
       {!loading && (
         <>
-          {" "}
           <input
             type="file"
             accept="image/*"

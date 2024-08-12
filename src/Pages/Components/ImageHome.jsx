@@ -24,13 +24,15 @@ function Imagehome() {
         const response = await axios.get(
           `http://127.0.0.1:8000/projects/${projectName}/images/`
         );
-
+        console.log(response.data);
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({
             src: `data:image/jpeg;base64,${image.src}`,
             rectangle_annotations: image.rectangle_annotations,
             polygon_annotations: image.polygon_annotations,
             id: image.image_id,
+            width_multiplier: image.width_multiplier,
+            height_multiplier: image.height_multiplier,
           }));
 
           setAnnots(formattedImages);

@@ -31,14 +31,14 @@ function Main() {
     setAnnotations(all_annotations);
   }, [all_annotations]);
 
-  const currentImage = annotations?.find((image) => image.image_id === current);
+  let currentImage = annotations?.find((image) => image.image_id === current);
 
   async function submit() {
     if (
       !currentImage ||
       !imageSrc ||
       typeof current !== "string" ||
-      !imageSrc?.find((img) => img.src === current)
+      !imageSrc.find((img) => img.src === current)
     ) {
       console.error("Invalid inputs:", {
         currentImage,
@@ -53,18 +53,43 @@ function Main() {
     const src = current;
     const base64String = src.split(",")[1];
     const fileName = "abcd";
+    console.log("Allah", currentImage);
 
-    const rectangle_annotations = currentImage.annotations.filter(
-      (a) =>
-        a.type === "rectangle" && a.class_name !== "" && a.Color !== "black"
-    );
+    const rectangle_annotations = (currentImage?.annotations || [])
+      .filter(
+        (a) =>
+          a.type === "rectangle" && a.class_name !== "" && a.Color !== "black"
+      )
+      .map((rect) => ({
+        ...rect,
+        x: rect.x / (currentImage.width_multiplier || 1),
+        y: rect.y / (currentImage.height_multiplier || 1),
+        width: rect.width / (currentImage.width_multiplier || 1),
+        height: rect.height / (currentImage.height_multiplier || 1),
+      }));
 
-    const polygon_annotations = currentImage.annotations.filter(
-      (a) => a.type === "polygon" && a.class_name !== "" && a.Color !== "black"
-    );
+    const polygon_annotations = (currentImage?.annotations || [])
+      .filter(
+        (a) =>
+          a.type === "polygon" && a.class_name !== "" && a.Color !== "black"
+      )
+      .map((polygon) => ({
+        ...polygon,
+        points: polygon.points.map((point) => ({
+          x: point.x / (currentImage.width_multiplier || 1),
+          y: point.y / (currentImage.height_multiplier || 1),
+        })),
+      }));
 
     console.log("rec", rectangle_annotations);
     console.log("poly", polygon_annotations);
+
+    const imageDetails = {
+      width: currentImage.width || 0,
+      height: currentImage.height || 0,
+      width_multiplier: currentImage.width_multiplier || 1,
+      height_multiplier: currentImage.height_multiplier || 1,
+    };
 
     const data = {
       rectangle_annotations,
@@ -72,6 +97,7 @@ function Main() {
       file_content: base64String,
       file_name: fileName,
       mime_type: "image/jpeg",
+      image: imageDetails,
     };
 
     try {
@@ -85,6 +111,7 @@ function Main() {
         }
       );
       console.log(response.data);
+      toast.success("Change Saved Successfully");
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
@@ -135,6 +162,12 @@ function Main() {
       setcurrent(imageSrc[lastIndex].src);
     }
   };
+
+  // window.addEventListener("beforeunload", function (event) {
+  //   const message = "Are you sure you want to leave?";
+  //   event.returnValue = message;
+  //   return message;
+  // });
 
   return (
     <>

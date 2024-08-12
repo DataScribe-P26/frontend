@@ -46,11 +46,32 @@ const useStore = create((set) => ({
     }
 
     set(() => {
-      const newAnnotations = src.map((i) => ({
-        image_id: i.src,
-        annotations: [...i.rectangle_annotations, ...i.polygon_annotations],
-        id: i.id,
-      }));
+      const newAnnotations = src.map((i) => {
+        const new_rectangles = i.rectangle_annotations.map((rect) => ({
+          ...rect,
+          x: rect.x * i.width_multiplier,
+          y: rect.y * i.height_multiplier,
+          width: rect.width * i.width_multiplier,
+          height: rect.height * i.height_multiplier,
+        }));
+
+        const new_polygons = i.polygon_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * i.width_multiplier,
+            y: point.y * i.height_multiplier,
+          })),
+        }));
+
+        return {
+          image_id: i.src,
+          annotations: [...new_rectangles, ...new_polygons],
+          id: i.id,
+          width_multiplier: i.width_multiplier,
+          height_multiplier: i.height_multiplier,
+        };
+      });
+
       const firstImageSrc = src.length > 0 ? src[0].src : null;
       return {
         imageSrc: src,
