@@ -110,11 +110,14 @@ const useStore = create((set) => ({
 
   set_classlabel: (class_label) => set({ class_label }),
 
-  add_classes: (newClassLabel) =>
+  add_classes: (newClassLabel, newcolor) =>
     set((state) => ({
       classes: [
         ...state.classes,
-        { class_label: newClassLabel, color: randomBrightColor(state.counter) },
+        {
+          class_label: newClassLabel,
+          color: newcolor || randomBrightColor(state.counter),
+        },
       ],
       counter: state.counter + 1,
     })),

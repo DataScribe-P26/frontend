@@ -27,7 +27,7 @@ function Analysis({}) {
       imagesAnnotated++;
     }
 
-    annotationList?.forEach(({ class_name }) => {
+    annotationList?.forEach(({ class_name, Color }) => {
       if (class_name) {
         const existingClass = classes_used?.find(
           (item) => item.class_name.toLowerCase() === class_name.toLowerCase()
@@ -35,23 +35,26 @@ function Analysis({}) {
         if (existingClass) {
           existingClass.count++;
         } else {
-          classes_used.push({ class_name, count: 1 });
+          classes_used.push({ class_name, Color, count: 1 });
         }
       }
     });
   });
 
+  console.log(classes_used);
+
   useEffect(() => {
     if (!classesAddedRef.current) {
       classes_used?.forEach((clas) => {
         const newClass = clas.class_name;
+        const newcolor = clas.Color;
         if (newClass !== null && newClass !== "") {
           const exists = classes?.some(
             (existingClass) =>
               existingClass.class_label.toLowerCase() === newClass.toLowerCase()
           );
           if (!exists) {
-            add_classes(newClass);
+            add_classes(newClass, newcolor);
           }
         }
       });
