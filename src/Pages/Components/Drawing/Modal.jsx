@@ -56,20 +56,24 @@ function Modal({ classes, setcl }) {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Select the class</h2>
         </div>
-        <div className="mt-4">
-          {classes.map((classs, index) => (
-            <div
-              key={index}
-              className="cursor-pointer hover:bg-slate-400 px-2 hover:rounded-md py-1"
-              style={{ color: classs.color }}
-              onClick={() => {
-                setcl(classs.class_label);
-                closeModal(classs.class_label);
-              }}
-            >
-              {classs.class_label}
-            </div>
-          ))}
+        <div className="mt-4 mb-8">
+          {classes.length > 0 &&
+            classes.map((classs, index) => (
+              <div
+                key={index}
+                className="cursor-pointer hover:bg-slate-400 px-2 hover:rounded-md py-1"
+                style={{ color: classs.color }}
+                onClick={() => {
+                  setcl(classs.class_label);
+                  closeModal(classs.class_label);
+                }}
+              >
+                {classs.class_label}
+              </div>
+            ))}
+          {classes.length == 0 && (
+            <div className="mt3 mb-4">No Class Added</div>
+          )}
         </div>
       </div>
     </div>

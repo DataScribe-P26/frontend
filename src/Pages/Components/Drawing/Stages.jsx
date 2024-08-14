@@ -439,7 +439,6 @@ function Stages({ images, action, current, cl, setcl }) {
     setZoomEnabled(!action);
   }, [action]);
 
-  console.log(cl);
   return (
     <>
       {current_image && (
@@ -558,7 +557,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x}
+                                      x={annotation.x - 15}
                                       y={annotation.y + 5}
                                       text="Delete"
                                       fontSize={16}

@@ -2,6 +2,8 @@ import create from "zustand";
 
 const isValidColor = (color) => /^#[0-9A-F]{6}$/i.test(color);
 const brightColors = [
+  "#FF7F50",
+  "#FF69B4",
   "#00FF00",
   "#0000FF",
   "#FFFF00",
@@ -34,11 +36,7 @@ const useStore = create((set) => ({
   all_annotations: [],
   class_label: null,
   counter: 0,
-  classes: [
-    { class_label: "Dog", color: "#FF7F50" },
-    { class_label: "Cat", color: "#B0E0E6" },
-    { class_label: "Lion", color: "#FF69B4" },
-  ],
+  classes: [],
   setImageSrc: (src) => {
     if (!Array.isArray(src)) {
       console.error("setImageSrc expects an array, but received:", src);
@@ -117,6 +115,33 @@ const useStore = create((set) => ({
         { class_label: newClassLabel, color: randomBrightColor(state.counter) },
       ],
       counter: state.counter + 1,
+    })),
+
+  set_classes: (classLabels) =>
+    set((state) => {
+      const uniqueClasses = classLabels.filter((newClassLabel) => {
+        return !state.classes.some(
+          (existingClass) =>
+            existingClass.class_label.toLowerCase() ===
+            newClassLabel.toLowerCase()
+        );
+      });
+
+      const newClasses = uniqueClasses.map((classLabel, index) => ({
+        class_label: classLabel,
+        color: randomBrightColor(state.counter + index),
+      }));
+
+      return {
+        classes: [...state.classes, ...newClasses],
+        counter: state.counter + newClasses.length,
+      };
+    }),
+
+  clear_classes: () =>
+    set(() => ({
+      classes: [],
+      counter: 0,
     })),
 
   isModalOpen: false,

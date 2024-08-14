@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ImageUpload from "../image upload and display/Imageupload";
 import useStore from "../../../Zustand/Alldata";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,8 +6,9 @@ import Spinner from "./loading_screen";
 
 function Analysis({}) {
   const { projectName } = useParams();
-  const { imageSrc, all_annotations } = useStore();
+  const { imageSrc, all_annotations, add_classes, classes } = useStore();
   const [annotations, setAnnotations] = useState(all_annotations);
+  const classesAddedRef = useRef(false);
 
   useEffect(() => {
     setAnnotations(all_annotations);
@@ -26,10 +27,10 @@ function Analysis({}) {
       imagesAnnotated++;
     }
 
-    annotationList.forEach(({ class_name }) => {
+    annotationList?.forEach(({ class_name }) => {
       if (class_name) {
-        const existingClass = classes_used.find(
-          (item) => item.class_name === class_name
+        const existingClass = classes_used?.find(
+          (item) => item.class_name.toLowerCase() === class_name.toLowerCase()
         );
         if (existingClass) {
           existingClass.count++;
@@ -39,6 +40,24 @@ function Analysis({}) {
       }
     });
   });
+
+  useEffect(() => {
+    if (!classesAddedRef.current) {
+      classes_used?.forEach((clas) => {
+        const newClass = clas.class_name;
+        if (newClass !== null && newClass !== "") {
+          const exists = classes?.some(
+            (existingClass) =>
+              existingClass.class_label.toLowerCase() === newClass.toLowerCase()
+          );
+          if (!exists) {
+            add_classes(newClass);
+          }
+        }
+      });
+      classesAddedRef.current = true;
+    }
+  }, [classes_used, add_classes, classes]);
 
   const sorted_class = classes_used.sort((a, b) => b.count - a.count);
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
@@ -68,7 +87,7 @@ function Analysis({}) {
                     </tr>
                   </thead>
                   <tbody>
-                    {sorted_class.map(({ class_name, count }, index) => (
+                    {sorted_class?.map(({ class_name, count }, index) => (
                       <tr key={index} className="hover:bg-slate-400">
                         <td className="py-2 px-4 text-center">{index + 1}</td>
                         <td className="py-2 px-4 text-center">{class_name}</td>

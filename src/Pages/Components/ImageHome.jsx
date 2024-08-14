@@ -7,7 +7,7 @@ import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
 
 function Imagehome() {
-  const { setImageSrc, imageSrc, setcurrent } = useStore();
+  const { setImageSrc, imageSrc, clear_classes } = useStore();
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
@@ -21,6 +21,7 @@ function Imagehome() {
       try {
         setImageSrc([]);
         setLoading(true);
+        clear_classes();
         const response = await axios.get(
           `http://127.0.0.1:8000/projects/${projectName}/images/`
         );
@@ -52,7 +53,7 @@ function Imagehome() {
     if (projectName) {
       fetchImages();
     }
-  }, [projectName, setImageSrc]);
+  }, [projectName, clear_classes, setImageSrc]);
 
   return (
     <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
