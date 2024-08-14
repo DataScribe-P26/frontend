@@ -36,6 +36,7 @@ const useStore = create((set) => ({
   all_annotations: [],
   class_label: null,
   counter: 0,
+  currentIndex: 0,
   classes: [],
   setImageSrc: (src) => {
     if (!Array.isArray(src)) {
@@ -102,6 +103,7 @@ const useStore = create((set) => ({
   setAction: (action) => set({ action }),
 
   setcurrent: (current) => set({ current }),
+  setCurrentIndex: (currentIndex) => set({ currentIndex }),
 
   set_allAnnotations: (newAnnotations) =>
     set({ all_annotations: newAnnotations }),

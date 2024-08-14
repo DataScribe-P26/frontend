@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MdCloudUpload } from "react-icons/md";
 
 function Main() {
+  //imageSrc,setImageSrc,current,setcurrent,classes,all_annotations,setCurrentIndex,setCurrentIndex
   const {
     imageSrc,
     setImageSrc,
@@ -22,6 +23,8 @@ function Main() {
     classes,
     all_annotations,
     isModalOpen,
+    currentIndex,
+    setCurrentIndex,
   } = useStore();
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
@@ -31,6 +34,10 @@ function Main() {
     setAnnotations(all_annotations);
   }, [all_annotations]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("mainState", JSON.stringify(imageSrc));
+  }, [imageSrc, setImageSrc]);
 
   let currentImage = annotations?.find((image) => image.image_id === current);
 
@@ -138,8 +145,6 @@ function Main() {
       }
     }
   }
-
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
     if (currentIndex < imageSrc.length - 1) {

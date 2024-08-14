@@ -536,7 +536,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
-                                draggable
+                                draggable={action === "edit"}
                                 onDragEnd={(e) => handleDragEnd(e, annotation)}
                               />
 
