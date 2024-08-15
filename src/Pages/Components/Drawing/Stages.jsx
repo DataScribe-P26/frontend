@@ -6,11 +6,15 @@ import useStore from "../../../Zustand/Alldata";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
+import { Transformer } from "react-konva";
+import { all } from "axios";
 
 function Stages({ images, action, current, cl, setcl }) {
   // console.log("stages current", current);
   const stageRef = useRef();
   const [zoomEnabled, setZoomEnabled] = useState(true);
+  const [selectedId, setSelectedId] = useState(null); // For selecting rectangles
+  const transformerRef = useRef(null); // Ref for the Transformer
 
   const {
     all_annotations,
@@ -117,6 +121,7 @@ function Stages({ images, action, current, cl, setcl }) {
       Color: "black",
       type: "rectangle",
       edit: false,
+      rotation: 0,
     };
 
     if (class_label) {
@@ -137,6 +142,13 @@ function Stages({ images, action, current, cl, setcl }) {
           : entry
       )
     );
+  };
+
+  const handleRectSelect = (annotation) => {
+    setSelectedId(annotation.class_id.toString());
+    console.log("Selected ID:", selectedId);
+    console.log("Action:", action);
+    console.log("Annotation id:", annotation.class_id);
   };
 
   const handleDragEnd = (e, annotation) => {
@@ -162,6 +174,48 @@ function Stages({ images, action, current, cl, setcl }) {
       )
     );
   };
+
+  const handleTransformEnd = (e, annotation) => {
+    console.log("abcd", annotation);
+    const node = e.target;
+    const newX = node.x();
+    const newY = node.y();
+    const newRotation = node.rotation();
+    const newWidth = node.width();
+    const newHeight = node.height();
+
+    const abcd = set_allAnnotations((prevAnnotations) =>
+      prevAnnotations?.map((entry) =>
+        entry.image_id === current
+          ? {
+              ...entry,
+              annotations: entry.annotations?.map((a) =>
+                a.class_id === annotation.class_id
+                  ? {
+                      ...a,
+                      x: newX,
+                      y: newY,
+                      width: node.width() * node.scaleX(),
+                      height: node.height() * node.scaleY(),
+                      rotation: newRotation,
+                    }
+                  : a
+              ),
+            }
+          : entry
+      )
+    );
+    console.log(abcd);
+  };
+
+  useEffect(() => {
+    const transformer = transformerRef.current;
+    if (!transformer) return;
+
+    const selectedNode = stageRef.current.findOne(`#${selectedId}`);
+    transformer.nodes(selectedNode ? [selectedNode] : []);
+    transformer.getLayer().batchDraw();
+  }, [selectedId]);
 
   const handleClick = (event) => {
     const stage = event.target.getStage();
@@ -410,21 +464,6 @@ function Stages({ images, action, current, cl, setcl }) {
     );
   };
 
-  const handleMouseOver = (event, annotation) => {
-    setHoveredId(annotation.class_id);
-  };
-
-  const handleMouseOut = (event) => {
-    setHoveredId(null);
-  };
-
-  const resetAnnotations = () => {
-    const resetAnnotations = annotations?.map((entry) =>
-      entry.image_id === current ? { ...entry, annotations: [] } : entry
-    );
-    set_allAnnotations(resetAnnotations);
-  };
-
   const closeSegmentationMask = () => {
     if (segmentationPath.length > 1) {
       setSegmentationPath((prevPath) => [...prevPath, prevPath[0]]);
@@ -516,6 +555,7 @@ function Stages({ images, action, current, cl, setcl }) {
                     onMouseMove={onMouseMove}
                     onMouseUp={onPointerUp}
                     style={{ cursor: "pointer" }}
+                    onClick={() => setSelectedId(null)}
                   >
                     <Layer>
                       <Konvaimage image={current_image} />
@@ -528,8 +568,10 @@ function Stages({ images, action, current, cl, setcl }) {
                                 setHoveredId(annotation.class_id)
                               }
                               onMouseLeave={() => setHoveredId(null)}
+                              onClick={() => handleRectSelect(annotation)}
                             >
                               <Rect
+                                id={annotation.class_id.toString()}
                                 x={annotation.x}
                                 y={annotation.y}
                                 strokeWidth={2}
@@ -537,7 +579,19 @@ function Stages({ images, action, current, cl, setcl }) {
                                 width={annotation.width}
                                 stroke={annotation.Color}
                                 draggable={action === "edit"}
+                                rotation={annotation.rotation}
                                 onDragEnd={(e) => handleDragEnd(e, annotation)}
+                                onTransformEnd={(e) =>
+                                  handleTransformEnd(e, annotation)
+                                }
+                                onClick={(e) => {
+                                  e.cancelBubble = true; // Prevent click event from propagating to the stage
+                                  setSelectedId(annotation.class_id);
+                                }}
+                                onTap={(e) => {
+                                  e.cancelBubble = true; // Prevent click event from propagating to the stage
+                                  setSelectedId(annotation.class_id);
+                                }}
                               />
 
                               {hoveredId === annotation.class_id &&
@@ -570,6 +624,21 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                   </>
+                                )}
+
+                              {selectedId === annotation.class_id &&
+                                action === "edit" && (
+                                  <Transformer
+                                    ref={transformerRef}
+                                    anchorSize={10}
+                                    borderStrokeWidth={2}
+                                    rotationSnaps={[0, 90, 180, 270]}
+                                    rotateEnabled={true}
+                                    resizeEnabled={true}
+                                    anchorStroke="black"
+                                    borderStroke="blue"
+                                    onTransformEnd={handleTransformEnd}
+                                  />
                                 )}
                             </Group>
                           );
@@ -686,6 +755,7 @@ function Stages({ images, action, current, cl, setcl }) {
                         }
                         return null;
                       })}
+
                       {action === "polygon" && (
                         <Line
                           points={points.flatMap((point) => [point.x, point.y])}
