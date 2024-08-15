@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Imageupload from "../image upload and display/Imageupload";
 import Stages from "../Drawing/Stages";
 import Options from "../Drawing/Options";
@@ -9,10 +9,8 @@ import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { MdCloudUpload } from "react-icons/md";
 
 function Main() {
-  //imageSrc,setImageSrc,current,setcurrent,classes,all_annotations,setCurrentIndex,setCurrentIndex
   const {
     imageSrc,
     setImageSrc,
@@ -25,19 +23,56 @@ function Main() {
     isModalOpen,
     currentIndex,
     setCurrentIndex,
+    project_name,
   } = useStore();
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
   const [annotations, setAnnotations] = useState(all_annotations);
 
+  const navigate = useNavigate();
+
+  const loadFromProjectLocalStorage = (key, defaultValue) => {
+    const saved = localStorage.getItem(`${projectName}_${key}`);
+    try {
+      return saved ? JSON.parse(saved) : defaultValue;
+    } catch (e) {
+      console.error(`Failed to parse ${key} from localStorage`, e);
+      return defaultValue;
+    }
+  };
+
+  useEffect(() => {
+    if (imageSrc.length > 0) {
+      const savedCurrent = loadFromProjectLocalStorage("current", null);
+      const savedIndex = loadFromProjectLocalStorage("currentIndex", 0);
+
+      if (savedCurrent && savedIndex) {
+        const index = parseInt(savedIndex, 10);
+        if (index >= 0 && index < imageSrc.length) {
+          setCurrentIndex(index);
+          setcurrent(imageSrc[index].src);
+        } else {
+          console.warn("Invalid saved index, resetting to 0.");
+          setCurrentIndex(0);
+          setcurrent(imageSrc[0].src);
+        }
+      }
+    }
+  }, [imageSrc, setCurrentIndex, setcurrent, projectName]);
+
+  useEffect(() => {
+    if (current && currentIndex !== undefined) {
+      localStorage.setItem(`${projectName}_current`, JSON.stringify(current));
+      localStorage.setItem(
+        `${projectName}_currentIndex`,
+        JSON.stringify(currentIndex)
+      );
+    }
+  }, [current, currentIndex, projectName]);
+
   useEffect(() => {
     setAnnotations(all_annotations);
   }, [all_annotations]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    localStorage.setItem("mainState", JSON.stringify(imageSrc));
-  }, [imageSrc, setImageSrc]);
 
   let currentImage = annotations?.find((image) => image.image_id === current);
 
@@ -61,7 +96,6 @@ function Main() {
     const src = current;
     const base64String = src.split(",")[1];
     const fileName = "abcd";
-    console.log("Allah", currentImage);
 
     const rectangle_annotations = (currentImage?.annotations || [])
       .filter(
@@ -103,9 +137,6 @@ function Main() {
           y: point.y / (currentImage.height_multiplier || 1),
         })),
       }));
-
-    console.log("rec", rectangle_annotations);
-    console.log("segmentation", segmentation_annotations);
 
     const imageDetails = {
       width: currentImage.width || 0,
@@ -151,8 +182,9 @@ function Main() {
       if (currentImage?.annotations?.length > 0) {
         submit();
       }
-      setCurrentIndex(currentIndex + 1);
-      setcurrent(imageSrc[currentIndex + 1].src);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      setcurrent(imageSrc[nextIndex].src);
     }
   };
 
@@ -161,8 +193,9 @@ function Main() {
       if (currentImage?.annotations?.length > 0) {
         submit();
       }
-      setCurrentIndex(currentIndex - 1);
-      setcurrent(imageSrc[currentIndex - 1].src);
+      const prevIndex = currentIndex - 1;
+      setCurrentIndex(prevIndex);
+      setcurrent(imageSrc[prevIndex].src);
     }
   };
 
@@ -185,88 +218,75 @@ function Main() {
   };
 
   useEffect(() => {
-    if (imageSrc?.length == 0) {
+    if (imageSrc.length === 0) {
       navigate(`/project/${projectName}`);
     }
-  }, [imageSrc]);
-
-  // window.addEventListener("beforeunload", function (event) {
-  //   const message = "Are you sure you want to leave?";
-  //   event.returnValue = message;
-  //   return message;
-  // });
+  }, [imageSrc, navigate, projectName]);
 
   return (
-    <>
-      <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
-        {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
-        {imageSrc?.length > 0 ? (
-          <div className="flex w-full h-screen">
-            <div className="w-[20vw] h-screen rounded-r-xl bg-gradient-to-t from-purple-900 to-neutral-900 border-r-4 border-purple-900 py-6 pt-10 px-[20px]">
-              <AnnotationsLabels
-                currentImage={currentImage}
-                classes={classes}
-              />
-            </div>
-            <div className="w-[80vw] h-screen flex-col">
-              <div className="w-full h-[100vh] ">
-                <div className="w-full h-[10vh] flex items-end justify-end gap-3 px-10"></div>
-                <div className=" h-[70vh] gap-4 flex justify-center items-center mt-5">
-                  <Stages
-                    imageSrc={imageSrc?.find((img) => img.src === current)}
+    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
+      {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
+      {imageSrc.length > 0 ? (
+        <div className="flex w-full h-screen">
+          <div className="w-[20vw] h-screen rounded-r-xl bg-gradient-to-t from-purple-900 to-neutral-900 border-r-4 border-purple-900 py-6 pt-10 px-[20px]">
+            <AnnotationsLabels currentImage={currentImage} classes={classes} />
+          </div>
+          <div className="w-[80vw] h-screen flex-col">
+            <div className="w-full h-[100vh] ">
+              <div className="w-full h-[10vh] flex items-end justify-end gap-3 px-10"></div>
+              <div className=" h-[70vh] gap-4 flex justify-center items-center mt-5">
+                <Stages
+                  imageSrc={imageSrc.find((img) => img.src === current)}
+                  action={action}
+                  images={imageSrc}
+                  current={current}
+                  cl={cl}
+                  setcl={setcl}
+                />
+                <div>
+                  <Options
+                    setAction={setAction}
                     action={action}
-                    images={imageSrc}
-                    current={current}
-                    cl={cl}
-                    setcl={setcl}
+                    submit={submit}
                   />
-                  <div>
-                    <Options
-                      setAction={setAction}
-                      action={action}
-                      submit={submit}
-                    />
-                  </div>
                 </div>
-                <div className="w-full h-[15vh]  flex justify-center">
-                  <div className="h-[4rem] flex items-center">
-                    <button
-                      className="h-[3rem] py-3 bg-slate-400 px-4 flex items-center rounded-l-xl"
-                      onClick={handlePrev}
-                      disabled={currentIndex === 0}
-                    >
-                      <FaArrowLeft />
-                    </button>
-                    <div className="h-[3rem] py-1 flex items-center bg-slate-300 pr-5 pl-2">
-                      <input
-                        type="number"
-                        value={currentIndex + 1}
-                        onChange={handleInputChange}
-                        min={0}
-                        max={imageSrc.length}
-                        className="text-end bg-slate-300 flex justify-end no-spinner w-5 min-w-[20px] max-w-[30px]"
-                      />
-                      /{imageSrc.length}
-                    </div>
-                    <button
-                      className="h-[3rem] py-1 bg-slate-400 px-4 flex items-center rounded-r-xl"
-                      onClick={handleNext}
-                      disabled={currentIndex === imageSrc.length - 1}
-                    >
-                      <FaArrowRight />
-                    </button>
+              </div>
+              <div className="w-full h-[15vh] flex justify-center">
+                <div className="h-[4rem] flex items-center">
+                  <button
+                    className="h-[3rem] py-3 bg-slate-400 px-4 flex items-center rounded-l-xl"
+                    onClick={handlePrev}
+                    disabled={currentIndex === 0}
+                  >
+                    <FaArrowLeft />
+                  </button>
+                  <div className="h-[3rem] py-1 flex items-center bg-slate-300 pr-5 pl-2">
+                    <input
+                      type="number"
+                      value={currentIndex + 1}
+                      onChange={handleInputChange}
+                      min={1}
+                      max={imageSrc.length}
+                      className="text-end bg-slate-300 flex justify-end no-spinner w-5 min-w-[20px] max-w-[30px]"
+                    />
+                    /{imageSrc.length}
                   </div>
+                  <button
+                    className="h-[3rem] py-1 bg-slate-400 px-4 flex items-center rounded-r-xl"
+                    onClick={handleNext}
+                    disabled={currentIndex === imageSrc.length - 1}
+                  >
+                    <FaArrowRight />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        ) : (
-          <>
-            <Imageupload setImageSrc={setImageSrc} />
-          </>
-        )}
-      </div>
-    </>
+        </div>
+      ) : (
+        <Imageupload setImageSrc={setImageSrc} />
+      )}
+    </div>
   );
 }
 

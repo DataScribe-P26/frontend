@@ -7,14 +7,11 @@ import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
 
 function Imagehome() {
-  const { setImageSrc, imageSrc, clear_classes } = useStore();
+  const { setImageSrc, imageSrc, clear_classes, setcurrent, setCurrentIndex } =
+    useStore();
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
-
-  useEffect(() => {
-    console.log("image", imageSrc);
-  }, [imageSrc]);
 
   useEffect(() => {
     const fetchImages = async () => {

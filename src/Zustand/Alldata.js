@@ -24,20 +24,33 @@ const brightColors = [
   "#8B0000",
 ];
 
-const randomBrightColor = (index) => {
-  return brightColors[index % brightColors.length];
+const randomBrightColor = (index) => brightColors[index % brightColors.length];
+
+const loadFromLocalStorage = (key, defaultValue) => {
+  const saved = localStorage.getItem(key);
+  try {
+    if (key === "current" && saved && saved.startsWith("data:image")) {
+      return saved;
+    }
+    return saved ? JSON.parse(saved) : defaultValue;
+  } catch (e) {
+    console.error(`Failed to parse ${key} from localStorage`, e);
+    return defaultValue;
+  }
 };
 
 const useStore = create((set) => ({
   imageSrc: [],
   Color: "#000000",
   action: null,
-  current: 0,
+  current: null,
   all_annotations: [],
   class_label: null,
   counter: 0,
   currentIndex: 0,
   classes: [],
+  project_name: "",
+
   setImageSrc: (src) => {
     if (!Array.isArray(src)) {
       console.error("setImageSrc expects an array, but received:", src);
@@ -83,7 +96,11 @@ const useStore = create((set) => ({
         };
       });
 
-      const firstImageSrc = src.length > 0 ? src[0].src : null;
+      const firstImageSrc =
+        src.length > 0 && !loadFromLocalStorage("current", null)
+          ? src[0].src
+          : loadFromLocalStorage("current", null);
+
       return {
         imageSrc: src,
         all_annotations: newAnnotations,
@@ -102,8 +119,24 @@ const useStore = create((set) => ({
 
   setAction: (action) => set({ action }),
 
-  setcurrent: (current) => set({ current }),
-  setCurrentIndex: (currentIndex) => set({ currentIndex }),
+  setcurrent: (current) => {
+    set({ current });
+    const { project_name } = useStore.getState();
+    if (project_name) {
+      localStorage.setItem(`${project_name}_current`, current);
+    }
+  },
+
+  setCurrentIndex: (currentIndex) => {
+    set({ currentIndex });
+    const { project_name } = useStore.getState();
+    if (project_name) {
+      localStorage.setItem(
+        `${project_name}_currentIndex`,
+        JSON.stringify(currentIndex)
+      );
+    }
+  },
 
   set_allAnnotations: (newAnnotations) =>
     set({ all_annotations: newAnnotations }),
@@ -168,8 +201,25 @@ const useStore = create((set) => ({
       projects: [...state.projects, { project_name, project_description }],
     })),
 
-  project_name: null,
-  setprojectname: (project_name) => set({ project_name }),
+  setprojectname: (project_name) => {
+    set({ project_name });
+
+    const savedCurrent = loadFromLocalStorage(`${project_name}_current`, null);
+    const savedCurrentIndex = loadFromLocalStorage(
+      `${project_name}_currentIndex`,
+      0
+    );
+
+    set({
+      current: savedCurrent,
+      currentIndex: savedCurrentIndex,
+    });
+
+    if (!savedCurrent && !savedCurrentIndex) {
+      localStorage.setItem(`${project_name}_current`, null);
+      localStorage.setItem(`${project_name}_currentIndex`, JSON.stringify(0));
+    }
+  },
 }));
 
 export default useStore;

@@ -6,9 +6,20 @@ import Spinner from "./loading_screen";
 
 function Analysis({}) {
   const { projectName } = useParams();
-  const { imageSrc, all_annotations, add_classes, classes } = useStore();
+  const {
+    imageSrc,
+    all_annotations,
+    add_classes,
+    classes,
+    project_name,
+    setprojectname,
+  } = useStore();
   const [annotations, setAnnotations] = useState(all_annotations);
   const classesAddedRef = useRef(false);
+
+  if (project_name == "") {
+    setprojectname(projectName);
+  }
 
   useEffect(() => {
     setAnnotations(all_annotations);
@@ -41,8 +52,6 @@ function Analysis({}) {
     });
   });
 
-  console.log(classes_used);
-
   useEffect(() => {
     if (!classesAddedRef.current) {
       classes_used?.forEach((clas) => {
@@ -69,7 +78,7 @@ function Analysis({}) {
   return (
     <div className="w-full h-screen flex">
       <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900">
-        <div className="text-3xl font-bold text-white">{projectName}</div>
+        <div className="text-3xl font-bold text-white">{project_name}</div>
         <div className="text-gray-400">Created On - </div>
 
         <div>
