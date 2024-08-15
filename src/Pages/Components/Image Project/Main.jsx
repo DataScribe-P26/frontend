@@ -217,12 +217,6 @@ function Main() {
     }
   };
 
-  useEffect(() => {
-    if (imageSrc.length === 0) {
-      navigate(`/project/${projectName}`);
-    }
-  }, [imageSrc, navigate, projectName]);
-
   return (
     <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
       {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}

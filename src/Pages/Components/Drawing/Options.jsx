@@ -1,9 +1,9 @@
 import { RiRectangleLine } from "react-icons/ri";
 import { BsVectorPen } from "react-icons/bs";
 import { BiPolygon } from "react-icons/bi";
-import { FaRegSave } from "react-icons/fa";
+import { FaLock, FaRegSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { TbZoomCancel } from "react-icons/tb";
+import { FaAnchorLock } from "react-icons/fa6";
 import toast from "react-hot-toast";
 
 function Options({ action, setAction, submit }) {
@@ -64,7 +64,7 @@ function Options({ action, setAction, submit }) {
             }
           }}
         >
-          <TbZoomCancel style={{ width: "60%", height: "60%" }} />
+          <FaAnchorLock style={{ width: "60%", height: "60%" }} />
         </button>
         <button
           className={`rounded-full w-11 h-11 flex items-center justify-center bg-slate-400`}

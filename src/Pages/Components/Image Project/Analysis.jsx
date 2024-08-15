@@ -4,7 +4,7 @@ import useStore from "../../../Zustand/Alldata";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
 
-function Analysis({}) {
+function Analysis({ set_analysis_page }) {
   const { projectName } = useParams();
   const {
     imageSrc,
@@ -161,7 +161,7 @@ function Analysis({}) {
                   />
                   <button
                     className="px-6 py-3 rounded-lg bg-green-500 text-white mt-20 shadow-lg hover:bg-green-600 transition"
-                    onClick={() => navigate(`/project/${projectName}/main`)}
+                    onClick={() => set_analysis_page(false)}
                   >
                     Continue
                   </button>

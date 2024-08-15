@@ -5,6 +5,7 @@ import useStore from "../../Zustand/Alldata";
 import { useParams } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
+import Main from "./Image Project/Main";
 
 function Imagehome() {
   const { setImageSrc, imageSrc, clear_classes, setcurrent, setCurrentIndex } =
@@ -12,6 +13,7 @@ function Imagehome() {
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
+  const [analysis_page, set_analysis_page] = useState(true); // Default to true
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -56,8 +58,10 @@ function Imagehome() {
     <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
       {loading ? (
         <Spinner />
+      ) : analysis_page ? (
+        <Analysis set_analysis_page={set_analysis_page} />
       ) : (
-        <Analysis annotations={annots} imageSrc={imageSrc} />
+        <Main />
       )}
     </div>
   );
