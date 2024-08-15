@@ -30,7 +30,7 @@ function AnnotationsLabels({ currentImage, classes }) {
               <div className="w-[30%] text-center">{item.count}</div>
               <div className="w-[30%] flex justify-center">
                 <div
-                  className="w-[15px] h-[15px] rounded-full"
+                  className="w-[50px] h-[22px] rounded-full"
                   style={{ backgroundColor: item.color }}
                 ></div>
               </div>

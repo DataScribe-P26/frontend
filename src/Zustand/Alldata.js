@@ -2,6 +2,8 @@ import create from "zustand";
 
 const isValidColor = (color) => /^#[0-9A-F]{6}$/i.test(color);
 const brightColors = [
+  "#FF7F50",
+  "#FF69B4",
   "#00FF00",
   "#0000FF",
   "#FFFF00",
@@ -22,23 +24,33 @@ const brightColors = [
   "#8B0000",
 ];
 
-const randomBrightColor = (index) => {
-  return brightColors[index % brightColors.length];
+const randomBrightColor = (index) => brightColors[index % brightColors.length];
+
+const loadFromLocalStorage = (key, defaultValue) => {
+  const saved = localStorage.getItem(key);
+  try {
+    if (key === "current" && saved && saved.startsWith("data:image")) {
+      return saved;
+    }
+    return saved ? JSON.parse(saved) : defaultValue;
+  } catch (e) {
+    console.error(`Failed to parse ${key} from localStorage`, e);
+    return defaultValue;
+  }
 };
 
 const useStore = create((set) => ({
   imageSrc: [],
   Color: "#000000",
   action: null,
-  current: 0,
+  current: null,
   all_annotations: [],
   class_label: null,
   counter: 0,
-  classes: [
-    { class_label: "Dog", color: "#FF7F50" },
-    { class_label: "Cat", color: "#B0E0E6" },
-    { class_label: "Lion", color: "#FF69B4" },
-  ],
+  currentIndex: 0,
+  classes: [],
+  project_name: "",
+
   setImageSrc: (src) => {
     if (!Array.isArray(src)) {
       console.error("setImageSrc expects an array, but received:", src);
@@ -46,11 +58,49 @@ const useStore = create((set) => ({
     }
 
     set(() => {
-      const newAnnotations = src.map((i) => ({
-        image_id: i.src,
-        annotations: [...i.rectangle_annotations, ...i.polygon_annotations,...i.segmentation_annotations],
-      }));
-      const firstImageSrc = src.length > 0 ? src[0].src : null;
+      const newAnnotations = src.map((i) => {
+        const new_rectangles = i.rectangle_annotations.map((rect) => ({
+          ...rect,
+          x: rect.x * i.width_multiplier,
+          y: rect.y * i.height_multiplier,
+          width: rect.width * i.width_multiplier,
+          height: rect.height * i.height_multiplier,
+        }));
+
+        const new_polygons = i.polygon_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * i.width_multiplier,
+            y: point.y * i.height_multiplier,
+          })),
+        }));
+
+        const new_segmentation = i.segmentation_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * i.width_multiplier,
+            y: point.y * i.height_multiplier,
+          })),
+        }));
+
+        return {
+          image_id: i.src,
+          annotations: [
+            ...new_rectangles,
+            ...new_polygons,
+            ...new_segmentation,
+          ],
+          id: i.id,
+          width_multiplier: i.width_multiplier,
+          height_multiplier: i.height_multiplier,
+        };
+      });
+
+      const firstImageSrc =
+        src.length > 0 && !loadFromLocalStorage("current", null)
+          ? src[0].src
+          : loadFromLocalStorage("current", null);
+
       return {
         imageSrc: src,
         all_annotations: newAnnotations,
@@ -69,20 +119,67 @@ const useStore = create((set) => ({
 
   setAction: (action) => set({ action }),
 
-  setcurrent: (current) => set({ current }),
+  setcurrent: (current) => {
+    set({ current });
+    const { project_name } = useStore.getState();
+    if (project_name) {
+      localStorage.setItem(`${project_name}_current`, current);
+    }
+  },
+
+  setCurrentIndex: (currentIndex) => {
+    set({ currentIndex });
+    const { project_name } = useStore.getState();
+    if (project_name) {
+      localStorage.setItem(
+        `${project_name}_currentIndex`,
+        JSON.stringify(currentIndex)
+      );
+    }
+  },
 
   set_allAnnotations: (newAnnotations) =>
     set({ all_annotations: newAnnotations }),
 
   set_classlabel: (class_label) => set({ class_label }),
 
-  add_classes: (newClassLabel) =>
+  add_classes: (newClassLabel, newcolor) =>
     set((state) => ({
       classes: [
         ...state.classes,
-        { class_label: newClassLabel, color: randomBrightColor(state.counter) },
+        {
+          class_label: newClassLabel,
+          color: newcolor || randomBrightColor(state.counter),
+        },
       ],
       counter: state.counter + 1,
+    })),
+
+  set_classes: (classLabels) =>
+    set((state) => {
+      const uniqueClasses = classLabels.filter((newClassLabel) => {
+        return !state.classes.some(
+          (existingClass) =>
+            existingClass.class_label.toLowerCase() ===
+            newClassLabel.toLowerCase()
+        );
+      });
+
+      const newClasses = uniqueClasses.map((classLabel, index) => ({
+        class_label: classLabel,
+        color: randomBrightColor(state.counter + index),
+      }));
+
+      return {
+        classes: [...state.classes, ...newClasses],
+        counter: state.counter + newClasses.length,
+      };
+    }),
+
+  clear_classes: () =>
+    set(() => ({
+      classes: [],
+      counter: 0,
     })),
 
   isModalOpen: false,
@@ -104,8 +201,25 @@ const useStore = create((set) => ({
       projects: [...state.projects, { project_name, project_description }],
     })),
 
-  project_name: null,
-  setprojectname: (project_name) => set({ project_name }),
+  setprojectname: (project_name) => {
+    set({ project_name });
+
+    const savedCurrent = loadFromLocalStorage(`${project_name}_current`, null);
+    const savedCurrentIndex = loadFromLocalStorage(
+      `${project_name}_currentIndex`,
+      0
+    );
+
+    set({
+      current: savedCurrent,
+      currentIndex: savedCurrentIndex,
+    });
+
+    if (!savedCurrent && !savedCurrentIndex) {
+      localStorage.setItem(`${project_name}_current`, null);
+      localStorage.setItem(`${project_name}_currentIndex`, JSON.stringify(0));
+    }
+  },
 }));
 
 export default useStore;

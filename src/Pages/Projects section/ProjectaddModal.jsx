@@ -5,8 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function ProjectaddModal({ names }) {
-  const { isProjectModalOpen, closeProjectModal, addProject, projects } =
-    useStore();
+  const { isProjectModalOpen, closeProjectModal, addProject } = useStore();
   const [name, setname] = useState("");
   const [description, setdescription] = useState("");
   const navigate = useNavigate();

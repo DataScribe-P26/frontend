@@ -1,16 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Group, Layer, Rect, Stage, Text, Line } from "react-konva";
-import Konvaimage from "../image/Konvaimage";
+import Konvaimage from "../image upload and display/Konvaimage";
 import toast from "react-hot-toast";
 import useStore from "../../../Zustand/Alldata";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
+import { Transformer } from "react-konva";
 
 function Stages({ images, action, current, cl, setcl }) {
   // console.log("stages current", current);
   const stageRef = useRef();
   const [zoomEnabled, setZoomEnabled] = useState(true);
+  const [selectedId, setSelectedId] = useState(null); // For selecting rectangles
+  const transformerRef = useRef(null); // Ref for the Transformer
 
   const {
     all_annotations,
@@ -30,16 +33,16 @@ function Stages({ images, action, current, cl, setcl }) {
 
   useEffect(() => {
     if (pendingAnnotation && cl) {
-      const current_class = classes.find(
+      const current_class = classes?.find(
         (classItem) => classItem.class_label === cl
       );
 
       set_allAnnotations((prevAnnotations) =>
-        prevAnnotations.map((entry) =>
+        prevAnnotations?.map((entry) =>
           entry.image_id === current
             ? {
                 ...entry,
-                annotations: entry.annotations.map((annotation) =>
+                annotations: entry.annotations?.map((annotation) =>
                   annotation.class_id === pendingAnnotation.class_id
                     ? {
                         ...annotation,
@@ -59,7 +62,7 @@ function Stages({ images, action, current, cl, setcl }) {
       setIsFinished(true); // End the segmentation function
     }
   }, [cl, pendingAnnotation, classes, current, set_allAnnotations]);
-  const currentImage = annotations.find((image) => image.image_id === current);
+  const currentImage = annotations?.find((image) => image.image_id === current);
 
   // console.log("Current Image:", currentImage);
   // console.log("Images Prop:", images);
@@ -78,9 +81,10 @@ function Stages({ images, action, current, cl, setcl }) {
   const [hoveredPolygonIndex, setHoveredPolygonIndex] = useState(null);
   const [hoveredTextIndex, setHoveredTextIndex] = useState(null);
   const [segmentationPath, setSegmentationPath] = useState([]);
-  const [hoveredSegmentationIndex, setHoveredSegmentationIndex] = useState(null);
+  const [hoveredSegmentationIndex, setHoveredSegmentationIndex] =
+    useState(null);
 
-  const current_image = images.find((image) => image.src === current);
+  const current_image = images?.find((image) => image.src === current);
 
   const getMousePos = (stage) => {
     const pointerPosition = stage.getPointerPosition();
@@ -95,8 +99,7 @@ function Stages({ images, action, current, cl, setcl }) {
       onRectangleMouseDown();
     } else if (action === "polygon") {
       handleClick(event);
-    }
-    else if (action === "segmentation") {
+    } else if (action === "segmentation") {
       handleSegmentationMouseDown(event);
     }
   };
@@ -108,7 +111,7 @@ function Stages({ images, action, current, cl, setcl }) {
     isPainting.current = true;
 
     let newAnnotation = {
-      class_id: selectedImage_ID.current,
+      class_id: selectedImage_ID.current || Math.random(),
       class_name: "",
       x,
       y,
@@ -117,10 +120,11 @@ function Stages({ images, action, current, cl, setcl }) {
       Color: "black",
       type: "rectangle",
       edit: false,
+      rotation: 0
     };
 
     if (class_label) {
-      const current_class = classes.find(
+      const current_class = classes?.find(
         (classItem) => classItem.class_label === class_label
       );
       newAnnotation.class_name = current_class?.class_label || "";
@@ -128,7 +132,7 @@ function Stages({ images, action, current, cl, setcl }) {
     }
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
@@ -138,6 +142,83 @@ function Stages({ images, action, current, cl, setcl }) {
       )
     );
   };
+
+  // const handleRectSelect = (annotation) => {
+  //   setSelectedId(annotation.class_id.toString());
+  //   console.log('Selected ID:', selectedId);
+  //   console.log('Action:', action);
+  //   console.log('Annotation id:', annotation.class_id)
+  // };
+
+  const handleDragEnd = (e, annotation) => {
+    const newX = e.target.x();
+    const newY = e.target.y();
+
+    set_allAnnotations((prevAnnotations) =>
+      prevAnnotations?.map((entry) =>
+        entry.image_id === current
+          ? {
+              ...entry,
+              annotations: entry.annotations?.map((a) =>
+                a.class_id === annotation.class_id
+                  ? {
+                      ...a,
+                      x: newX,
+                      y: newY,
+                    }
+                  : a
+              ),
+            }
+          : entry
+      )
+    );
+  };
+
+
+  const handleTransformEnd = (e, annotation) => {
+    console.log(annotation);
+    const node = e.target;
+    const newX = node.x();
+    const newY = node.y();
+    const newRotation = node.rotation();
+    const newWidth = node.width() ;
+    const newHeight = node.height() ;
+
+    set_allAnnotations((prevAnnotations) =>
+      prevAnnotations?.map((entry) =>
+        entry.image_id === current
+          ? {
+              ...entry,
+              annotations: entry.annotations?.map((a) =>
+                a.class_id === annotation.class_id
+                  ? {
+                      ...a,
+                      x: newX,
+                      y: newY,
+                      width: newWidth,
+                      height: newHeight,
+                      rotation: newRotation,
+                    }
+                  : a
+              ),
+            }
+          : entry
+      )
+    );
+    
+    console.log(annotation); 
+    console.log(newRotation);
+  };
+
+  useEffect(() => {
+    const transformer = transformerRef.current;
+    if (!transformer) return;
+
+    const selectedNode = stageRef.current.findOne(`#${selectedId}`);
+    transformer.nodes(selectedNode ? [selectedNode] : []);
+    transformer.getLayer().batchDraw();
+  }, [selectedId]);
+
 
   const handleClick = (event) => {
     const stage = event.target.getStage();
@@ -172,19 +253,18 @@ function Stages({ images, action, current, cl, setcl }) {
     } else {
       setSegmentationPath((prevPath) => [...prevPath, mousePos]);
     }
-          // Check if the current point is near the starting point
-          if (segmentationPath.length > 2) {
-            const distance = Math.sqrt(
-              Math.pow(mousePos.x - segmentationPath[0].x, 2) +
-                Math.pow(mousePos.y - segmentationPath[0].y, 2)
-            );
-    
-            if (distance < 10) {
-              closeSegmentationMask();
-            }
-          }
-  };
+    // Check if the current point is near the starting point
+    if (segmentationPath.length > 2) {
+      const distance = Math.sqrt(
+        Math.pow(mousePos.x - segmentationPath[0].x, 2) +
+          Math.pow(mousePos.y - segmentationPath[0].y, 2)
+      );
 
+      if (distance < 10) {
+        closeSegmentationMask();
+      }
+    }
+  };
 
   const addPolygon = async (points) => {
     const classId = Math.random(); // random id
@@ -192,13 +272,13 @@ function Stages({ images, action, current, cl, setcl }) {
     let newAnnotation = {
       class_id: classId,
       class_name: "",
-      points: points.map((point) => ({ x: point.x, y: point.y })),
+      points: points?.map((point) => ({ x: point.x, y: point.y })),
       Color: "black",
       type: "polygon",
       edit: false,
     };
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
@@ -216,7 +296,7 @@ function Stages({ images, action, current, cl, setcl }) {
 
   const addSegmentationMask = async (path) => {
     const classId = selectedImage_ID.current;
-    const current_class = classes.find(
+    const current_class = classes?.find(
       (classItem) => classItem.class_label === cl // use the selected class label
     );
 
@@ -224,12 +304,12 @@ function Stages({ images, action, current, cl, setcl }) {
       class_id: classId,
       class_name: current_class?.class_label || "",
       points: path,
-      Color:current_class?.color || "rgba(0, 0, 0, 0.5)", // Use the class color here
+      Color: current_class?.color || "rgba(0, 0, 0, 0.5)", // Use the class color here
       type: "segmentation",
       edit: false,
     };
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
@@ -245,7 +325,6 @@ function Stages({ images, action, current, cl, setcl }) {
     });
   };
 
-
   const onMouseMove = (event) => {
     if (!action || !isPainting.current) return;
 
@@ -253,14 +332,13 @@ function Stages({ images, action, current, cl, setcl }) {
       onRectangleMouseMove();
     } else if (action === "polygon") {
       handleMouseMove(event);
+    } else if (action === "segmentation") {
+      const stage = stageRef.current;
+      const mousePos = getMousePos(stage);
+      setSegmentationPath((prevPath) => [...prevPath, mousePos]);
     }
-    else if (action === "segmentation") {
-        const stage = stageRef.current;
-        const mousePos = getMousePos(stage);
-        setSegmentationPath((prevPath) => [...prevPath, mousePos]);
-      }
-    };
-    const finalizeAnnotation = () => {
+  };
+  const finalizeAnnotation = () => {
     set_classlabel(null); // Reset class label
     setcl(null);
   };
@@ -271,11 +349,11 @@ function Stages({ images, action, current, cl, setcl }) {
     moved.current = true;
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.map((annotation) =>
+              annotations: entry.annotations?.map((annotation) =>
                 annotation.class_id === selectedImage_ID.current
                   ? {
                       ...annotation,
@@ -309,16 +387,16 @@ function Stages({ images, action, current, cl, setcl }) {
   };
 
   const finalizeRectangle = () => {
-    const current_class = classes.find(
+    const current_class = classes?.find(
       (classItem) => classItem.class_label === class_label
     );
 
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.map((annotation) =>
+              annotations: entry.annotations?.map((annotation) =>
                 annotation.class_id === selectedImage_ID.current
                   ? {
                       ...annotation,
@@ -361,22 +439,6 @@ function Stages({ images, action, current, cl, setcl }) {
     setIsMouseOverStartPoint(false);
   };
 
-  const handleMouseEnterPolygon = (index) => {
-    setHoveredPolygonIndex(index);
-  };
-
-  const handleMouseLeavePolygon = () => {
-    setHoveredPolygonIndex(null);
-  };
-
-  const handleMouseEnterText = (index) => {
-    setHoveredTextIndex(index);
-  };
-
-  const handleMouseLeaveText = () => {
-    setHoveredTextIndex(null);
-  };
-
   const calculateCentroid = (points) => {
     const numPoints = points.length;
     let centroidX = 0;
@@ -392,11 +454,11 @@ function Stages({ images, action, current, cl, setcl }) {
 
   const handleDelete = (class_id) => {
     set_allAnnotations((prevAnnotations) =>
-      prevAnnotations.map((entry) =>
+      prevAnnotations?.map((entry) =>
         entry.image_id === current
           ? {
               ...entry,
-              annotations: entry.annotations.filter(
+              annotations: entry.annotations?.filter(
                 (annotation) => annotation.class_id !== class_id
               ),
             }
@@ -405,22 +467,7 @@ function Stages({ images, action, current, cl, setcl }) {
     );
   };
 
-  const handleMouseOver = (event, annotation) => {
-    setHoveredId(annotation.class_id);
-  };
-
-  const handleMouseOut = (event) => {
-    setHoveredId(null);
-  };
-
-
-  const resetAnnotations = () => {
-    const resetAnnotations = annotations.map((entry) =>
-      entry.image_id === current ? { ...entry, annotations: [] } : entry
-    );
-    set_allAnnotations(resetAnnotations);
-  };
-
+  
   const closeSegmentationMask = () => {
     if (segmentationPath.length > 1) {
       setSegmentationPath((prevPath) => [...prevPath, prevPath[0]]);
@@ -430,13 +477,11 @@ function Stages({ images, action, current, cl, setcl }) {
     isPainting.current = false;
     setSegmentationPath([]);
   };
-  
 
   useEffect(() => {
     setZoomEnabled(!action);
   }, [action]);
 
-  console.log(cl);
   return (
     <>
       {current_image && (
@@ -514,6 +559,7 @@ function Stages({ images, action, current, cl, setcl }) {
                     onMouseMove={onMouseMove}
                     onMouseUp={onPointerUp}
                     style={{ cursor: "pointer" }}
+                    onClick={() => setSelectedId(null)}
                   >
                     <Layer>
                       <Konvaimage image={current_image} />
@@ -526,16 +572,34 @@ function Stages({ images, action, current, cl, setcl }) {
                                 setHoveredId(annotation.class_id)
                               }
                               onMouseLeave={() => setHoveredId(null)}
+                              onClick={() => handleRectSelect(annotation)}
                             >
+
+                            
                               <Rect
+                                id={annotation.class_id.toString()}
                                 x={annotation.x}
                                 y={annotation.y}
                                 strokeWidth={2}
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
+                                draggable={action === "edit"}
+                                rotation={annotation.rotation}
+                                onDragEnd={(e) => handleDragEnd(e, annotation)}
+                                onTransformEnd={(e)=> handleTransformEnd(e, annotation)}
+                                onClick={(e) => {
+                                  e.cancelBubble = true; // Prevent click event from propagating to the stage
+                                  setSelectedId(annotation.class_id);
+                                }}
+                                onTap={(e) => {
+                                  e.cancelBubble = true; // Prevent click event from propagating to the stage
+                                  setSelectedId(annotation.class_id);
+                                }}
+                               
                               />
 
+                             
                               {hoveredId === annotation.class_id &&
                                 annotation.edit && (
                                   <>
@@ -553,7 +617,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x}
+                                      x={annotation.x - 15}
                                       y={annotation.y + 5}
                                       text="Delete"
                                       fontSize={16}
@@ -567,6 +631,23 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
                                   </>
                                 )}
+
+                                      {selectedId === annotation.class_id && action === "edit" && (
+                                        <Transformer
+                                        ref={transformerRef}
+                                        anchorSize={10}
+                                        borderStrokeWidth={2}
+                                        rotationSnaps={[0, 90, 180, 270]}
+                                        rotateEnabled={true}
+                                        resizeEnabled={true}
+                                        anchorStroke="black"
+                                        borderStroke="blue"
+                                        onTransformEnd={handleTransformEnd}
+                                      />
+                              )}
+
+                             
+
                             </Group>
                           );
                         } else if (annotation.type === "polygon") {
@@ -626,10 +707,9 @@ function Stages({ images, action, current, cl, setcl }) {
                               )}
                             </React.Fragment>
                           );
-                        }
-                        else if (annotation.type === "segmentation"){
-                          { 
-                            return(
+                        } else if (annotation.type === "segmentation") {
+                          {
+                            return (
                               <React.Fragment key={annotation.class_id}>
                                 <Line
                                   points={annotation.points.flatMap((point) => [
@@ -640,39 +720,50 @@ function Stages({ images, action, current, cl, setcl }) {
                                   strokeWidth={2}
                                   fill="transparent"
                                   closed={true} // Ensure the path is closed
-                                  onMouseEnter={() => setHoveredSegmentationIndex(index)}
-                                  onMouseLeave={() => setHoveredSegmentationIndex(null)}
+                                  onMouseEnter={() =>
+                                    setHoveredSegmentationIndex(index)
+                                  }
+                                  onMouseLeave={() =>
+                                    setHoveredSegmentationIndex(null)
+                                  }
                                 />
                                 {hoveredSegmentationIndex === index && (
-                                <>
-                                  <Rect
-                                    x={annotation.points[0].x - 25}
-                                    y={annotation.points[0].y - 15}
-                                    width={50}
-                                    height={30}
-                                    fill="transparent"
-                                    onClick={() => handleDelete(annotation.class_id)}
-                                  />
-                                  <Text
-                                    x={annotation.points[0].x - 20}
-                                    y={annotation.points[0].y - 10}
-                                    text="Delete"
-                                    fill="red"
-                                    fontSize={16}
-                                    onMouseEnter={() => setHoveredSegmentationIndex(index)}
-                                    onMouseLeave={() => setHoveredSegmentationIndex(null)}
-                                    onClick={() => handleDelete(annotation.class_id)}
-                                  />
-                                </>
-                              )}
+                                  <>
+                                    <Rect
+                                      x={annotation.points[0].x - 25}
+                                      y={annotation.points[0].y - 15}
+                                      width={50}
+                                      height={30}
+                                      fill="transparent"
+                                      onClick={() =>
+                                        handleDelete(annotation.class_id)
+                                      }
+                                    />
+                                    <Text
+                                      x={annotation.points[0].x - 20}
+                                      y={annotation.points[0].y - 10}
+                                      text="Delete"
+                                      fill="red"
+                                      fontSize={16}
+                                      onMouseEnter={() =>
+                                        setHoveredSegmentationIndex(index)
+                                      }
+                                      onMouseLeave={() =>
+                                        setHoveredSegmentationIndex(null)
+                                      }
+                                      onClick={() =>
+                                        handleDelete(annotation.class_id)
+                                      }
+                                    />
+                                  </>
+                                )}
                               </React.Fragment>
                             );
-
                           }
-
                         }
                         return null;
                       })}
+
                       {action === "polygon" && (
                         <Line
                           points={points.flatMap((point) => [point.x, point.y])}
@@ -681,18 +772,19 @@ function Stages({ images, action, current, cl, setcl }) {
                           closed={isFinished}
                         />
                       )}
-                      {action === "segmentation" && segmentationPath.length > 0 && (
-                        <Line
-                          points={segmentationPath.flatMap((p) => [p.x, p.y])}
-                          stroke="red" // Change this color to make the line visible
-                          strokeWidth={2}
-                          lineJoin="round"
-                          lineCap="round"
-                          closed={isFinished}
-                        />
-                      )}
+                      {action === "segmentation" &&
+                        segmentationPath.length > 0 && (
+                          <Line
+                            points={segmentationPath.flatMap((p) => [p.x, p.y])}
+                            stroke="red" // Change this color to make the line visible
+                            strokeWidth={2}
+                            lineJoin="round"
+                            lineCap="round"
+                            closed={isFinished}
+                          />
+                        )}
                       {action === "polygon" &&
-                        points.map((point, index) => {
+                        points?.map((point, index) => {
                           const width = 6;
                           const x = point.x - width / 2;
                           const y = point.y - width / 2;
@@ -720,6 +812,8 @@ function Stages({ images, action, current, cl, setcl }) {
                             />
                           );
                         })}
+                       
+
                     </Layer>
                   </Stage>
                 </TransformComponent>
