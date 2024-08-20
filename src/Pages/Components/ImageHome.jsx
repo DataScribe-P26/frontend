@@ -8,12 +8,36 @@ import Spinner from "./Image Project/loading_screen";
 import Main from "./Image Project/Main";
 
 function Imagehome() {
-  const { setImageSrc, imageSrc, clear_classes, setcurrent, setCurrentIndex } =
-    useStore();
+  const {
+    setImageSrc,
+    imageSrc,
+    clear_classes,
+    setcurrent,
+    setCurrentIndex,
+    setCreatedOn,
+    created_on,
+  } = useStore();
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
-  const [analysis_page, set_analysis_page] = useState(true); // Default to true
+  const [analysis_page, set_analysis_page] = useState(true);
+
+  if (created_on === "" || created_on == null) {
+    axios
+      .get("http://127.0.0.1:8000/projects")
+      .then((response) => {
+        const projects = response.data;
+        const project = projects.find((p) => p.name === projectName);
+        if (project) {
+          setCreatedOn(project.created_on);
+        } else {
+          console.log("Project not found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching projects:", error);
+      });
+  }
 
   useEffect(() => {
     const fetchImages = async () => {
