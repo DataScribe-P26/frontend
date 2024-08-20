@@ -5,7 +5,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function ProjectaddModal({ names }) {
-  const { isProjectModalOpen, closeProjectModal, addProject } = useStore();
+  const {
+    isProjectModalOpen,
+    closeProjectModal,
+    addProject,
+    setprojectname,
+    setCreatedOn,
+  } = useStore();
   const [name, setname] = useState("");
   const [description, setdescription] = useState("");
   const navigate = useNavigate();
@@ -22,6 +28,16 @@ function ProjectaddModal({ names }) {
   }
 
   if (!isProjectModalOpen) return null;
+  const currentDate = new Date();
+  function formatDateToCustomString(date) {
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "long" }); // Full month name
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
+  const isoDate = formatDateToCustomString(currentDate);
 
   return (
     <>
@@ -56,6 +72,8 @@ function ProjectaddModal({ names }) {
                   addProject(name, description);
                   submit_project();
                   toast.success("Project Added");
+                  setprojectname(name);
+                  setCreatedOn(isoDate);
                   setTimeout(() => {
                     navigate(`/project/${name}`);
                   }, 100);

@@ -630,7 +630,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                 action === "edit" && (
                                   <Transformer
                                     ref={transformerRef}
-                                    anchorSize={10}
+                                    anchorSize={5}
                                     borderStrokeWidth={2}
                                     rotationSnaps={[0, 90, 180, 270]}
                                     rotateEnabled={true}

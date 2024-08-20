@@ -13,6 +13,7 @@ function Analysis({ set_analysis_page }) {
     classes,
     project_name,
     setprojectname,
+    created_on,
   } = useStore();
   const [annotations, setAnnotations] = useState(all_annotations);
   const classesAddedRef = useRef(false);
@@ -79,7 +80,7 @@ function Analysis({ set_analysis_page }) {
     <div className="w-full h-screen flex">
       <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900">
         <div className="text-3xl font-bold text-white">{project_name}</div>
-        <div className="text-gray-400">Created On - </div>
+        <div className="text-gray-400">Created On : {created_on}</div>
 
         <div>
           <div className="text-2xl font-semibold text-white mt-10 pl-2">

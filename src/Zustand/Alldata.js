@@ -220,6 +220,8 @@ const useStore = create((set) => ({
       localStorage.setItem(`${project_name}_currentIndex`, JSON.stringify(0));
     }
   },
+  created_on: null,
+  setCreatedOn: (date) => set({ created_on: date }),
 }));
 
 export default useStore;

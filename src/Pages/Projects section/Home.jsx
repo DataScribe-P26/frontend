@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 function Home() {
-  const { isProjectModalOpen, openProjectModal, setprojectname } = useStore();
+  const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn } =
+    useStore();
   const [projects, setProjects] = useState([]);
   const [loading, setloading] = useState(false);
   const [names, setNames] = useState([]);
@@ -65,6 +66,7 @@ function Home() {
                       className="w-[80%] bg-slate-800 px-5 py-3 rounded-xl font-bold cursor-pointer mb-3 hover:bg-gray-700  duration-300 "
                       onClick={() => {
                         setprojectname(project.name);
+                        setCreatedOn(project.created_on);
                         navigate(`/project/${project.name}`);
                       }}
                     >
