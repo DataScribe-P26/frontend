@@ -77,22 +77,6 @@ function Main() {
   let currentImage = annotations?.find((image) => image.image_id === current);
 
   async function submit() {
-    if (
-      !currentImage ||
-      !imageSrc ||
-      typeof current !== "string" ||
-      !imageSrc.find((img) => img.src === current)
-    ) {
-      console.error("Invalid inputs:", {
-        currentImage,
-        imageSrc,
-        current,
-        projectName,
-      });
-      toast.error("Invalid input data.");
-      return;
-    }
-
     const src = current;
     const base64String = src.split(",")[1];
     const fileName = "abcd";
@@ -138,6 +122,7 @@ function Main() {
         })),
       }));
 
+    console.log(rectangle_annotations);
     const imageDetails = {
       width: currentImage.width || 0,
       height: currentImage.height || 0,

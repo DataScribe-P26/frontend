@@ -1,13 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Group, Layer, Rect, Stage, Text, Line } from "react-konva";
 import Konvaimage from "../image upload and display/Konvaimage";
-import toast from "react-hot-toast";
 import useStore from "../../../Zustand/Alldata";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
 import { Transformer } from "react-konva";
-import { all } from "axios";
 
 function Stages({ images, action, current, cl, setcl }) {
   // console.log("stages current", current);
@@ -496,7 +494,7 @@ function Stages({ images, action, current, cl, setcl }) {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   marginBottom: 10,
-                  marginRight: 30,
+                  marginRight: 0,
                 }}
               >
                 {zoomEnabled && (

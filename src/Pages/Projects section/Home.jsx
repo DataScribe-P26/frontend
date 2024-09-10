@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useStore from "../../Zustand/Alldata";
 import ProjectaddModal from "./ProjectaddModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -59,22 +59,20 @@ function Home() {
             )}
             <div className="w-full h-[90%] overflow-auto pb-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
-                {projects.map((project) => {
-                  return (
-                    <div
-                      key={project._id}
-                      className="w-[80%] bg-slate-800 px-5 py-3 rounded-xl font-bold cursor-pointer mb-3 hover:bg-gray-700  duration-300 "
-                      onClick={() => {
-                        setprojectname(project.name);
-                        setCreatedOn(project.created_on);
-                        navigate(`/project/${project.name}`);
-                      }}
-                    >
-                      <div className="text-xl text-white">{project.name}</div>
-                      <div className="text-gray-400">{project.description}</div>
-                    </div>
-                  );
-                })}
+                {projects.map((project) => (
+                  <div
+                    key={project._id}
+                    className="w-[80%] bg-slate-800 px-5 py-3 rounded-xl font-bold cursor-pointer mb-3 hover:bg-gray-700 duration-300"
+                    onClick={() => {
+                      setprojectname(project.name);
+                      setCreatedOn(project.created_on);
+                      navigate(`/project/${project.name}`);
+                    }}
+                  >
+                    <div className="text-xl text-white">{project.name}</div>
+                    <div className="text-gray-400">{project.description}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </>
