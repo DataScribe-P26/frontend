@@ -342,6 +342,7 @@ function Stages({ images, action, current, cl, setcl }) {
     }
   };
   const finalizeAnnotation = () => {
+    
     set_classlabel(null); // Reset class label
     setcl(null);
   };
@@ -415,11 +416,13 @@ function Stages({ images, action, current, cl, setcl }) {
     );
 
     if (!class_label) {
+      // Open modal if no class label is selected
       openModal();
       setPendingAnnotation({
         class_id: selectedImage_ID.current,
       });
-      finalizeAnnotation();
+       finalizeAnnotation();
+
     }
   };
 
@@ -468,6 +471,17 @@ function Stages({ images, action, current, cl, setcl }) {
           : entry
       )
     );
+  };
+
+
+
+  const handleEdit = (class_id) => {
+    openModal();
+      setPendingAnnotation({
+        class_id: class_id, // Set the class_id to the selected annotation's ID
+        type: "rectangle", // Adjust the type if needed
+      });
+      finalizeAnnotation();
   };
 
   const closeSegmentationMask = () => {
@@ -583,9 +597,13 @@ function Stages({ images, action, current, cl, setcl }) {
                                 x={annotation.x}
                                 y={annotation.y}
                                 strokeWidth={2}
+                                listening={true}
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
+                                fill={annotation.fill}
+                                zIndex={annotation.zIndex} // Add this property for z-index
+                                hitStrokeWidth={50} // Increase hit region size
                                 draggable={action === "edit"}
                                 rotation={annotation.rotation}
                                 onDragEnd={(e) => handleDragEnd(e, annotation)}
@@ -600,6 +618,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                   e.cancelBubble = true; // Prevent click event from propagating to the stage
                                   setSelectedId(annotation.class_id);
                                 }}
+                                
                               />
 
                               {hoveredId === annotation.class_id &&
@@ -619,13 +638,27 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x - 15}
-                                      y={annotation.y + 5}
-                                      text="Delete"
+                                      x={annotation.x}
+                                      y={annotation.y-10}
+                                      text="X"
                                       fontSize={16}
                                       fill="red"
                                       onClick={() =>
                                         handleDelete(
+                                          annotation.class_id,
+                                          annotation.type
+                                        )
+                                      }
+                                    />
+
+                                    <Text
+                                      x={annotation.x+20}
+                                      y={annotation.y-10}
+                                      text="E"
+                                      fontSize={16}
+                                      fill="green"
+                                      onClick={() =>
+                                        handleEdit(
                                           annotation.class_id,
                                           annotation.type
                                         )
@@ -689,7 +722,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                   <Text
                                     x={centroid[0] - 20}
                                     y={centroid[1] - 10}
-                                    text="Delete"
+                                    text="X"
                                     fill="red"
                                     fontSize={16}
                                     onMouseOver={() =>
@@ -698,6 +731,24 @@ function Stages({ images, action, current, cl, setcl }) {
                                     onMouseOut={() => setHoveredTextIndex(null)}
                                     onClick={() =>
                                       handleDelete(
+                                        annotation.class_id,
+                                        annotation.type
+                                      )
+                                    }
+                                  />
+
+                                  <Text
+                                    x={centroid[0] - 5}
+                                    y={centroid[1] - 10}
+                                    text="E"
+                                    fill="green"
+                                    fontSize={16}
+                                    onMouseOver={() =>
+                                      setHoveredTextIndex(index)
+                                    }
+                                    onMouseOut={() => setHoveredTextIndex(null)}
+                                    onClick={() =>
+                                      handleEdit(
                                         annotation.class_id,
                                         annotation.type
                                       )
@@ -742,7 +793,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     <Text
                                       x={annotation.points[0].x - 20}
                                       y={annotation.points[0].y - 10}
-                                      text="Delete"
+                                      text="X"
                                       fill="red"
                                       fontSize={16}
                                       onMouseEnter={() =>
@@ -753,6 +804,23 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                       onClick={() =>
                                         handleDelete(annotation.class_id)
+                                      }
+                                    />
+
+                                    <Text
+                                      x={annotation.points[0].x - 5}
+                                      y={annotation.points[0].y - 10}
+                                      text="E"
+                                      fill="green"
+                                      fontSize={16}
+                                      onMouseEnter={() =>
+                                        setHoveredSegmentationIndex(index)
+                                      }
+                                      onMouseLeave={() =>
+                                        setHoveredSegmentationIndex(null)
+                                      }
+                                      onClick={() =>
+                                        handleEdit(annotation.class_id)
                                       }
                                     />
                                   </>
@@ -813,6 +881,7 @@ function Stages({ images, action, current, cl, setcl }) {
                           );
                         })}
                     </Layer>
+                    
                   </Stage>
                 </TransformComponent>
               </div>

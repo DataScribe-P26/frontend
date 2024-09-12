@@ -117,6 +117,17 @@ const useStore = create((set) => ({
     }
   },
 
+  update_class_name: (class_id, new_class_name) => {
+    set((state) => ({
+      allAnnotations: state.allAnnotations.map((annotation) =>
+        annotation.class_id === class_id
+          ? { ...annotation, class_label: new_class_name }
+          : annotation
+      ),
+    }));
+  },
+  
+
   setAction: (action) => set({ action }),
 
   setcurrent: (current) => {
