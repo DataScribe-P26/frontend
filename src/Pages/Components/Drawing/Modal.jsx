@@ -27,15 +27,33 @@ function Modal({ classes, setcl }) {
     }
   }
 
+  // Handle click outside the modal box
+  const handleBackgroundClick = (e) => {
+    closeModal();
+  };
+
+  // Prevent modal close on click inside the modal content
+  const handleModalClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-start bg-black/30 w-full h-full pl-12 ">
-      <div className="bg-white rounded-lg p-6 w-3/4 max-w-md h-auto relative pt-14">
-        {/* <button
-          className="absolute top-5 right-5 font-semibold text-xl p-2 text-red-700"
-          onClick={() => closeModal()}
-        >
-          X
-        </button> */}
+    <div
+      className="fixed inset-0 z-10 flex items-center justify-start bg-black/30 w-full h-full pl-12 "
+      onClick={handleBackgroundClick} // Click event for outside the modal
+    >
+      <div
+        className="bg-white rounded-lg p-6 w-3/4 max-w-md h-auto relative pt-14"
+        onClick={handleModalClick} // Prevent click event from closing modal
+      >
+        {
+          <button
+            className="absolute top-5 right-5 font-semibold text-xl p-2 text-red-700"
+            onClick={() => closeModal()}
+          >
+            X
+          </button>
+        }
         <form
           onSubmit={handle_add_class}
           className="flex h-[5rem] items-center gap-5"

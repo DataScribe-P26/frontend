@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Group, Layer, Rect, Stage, Text, Line } from "react-konva";
 import Konvaimage from "../image upload and display/Konvaimage";
+import toast from "react-hot-toast";
 import useStore from "../../../Zustand/Alldata";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
 import { Transformer } from "react-konva";
+import { all } from "axios";
 
 function Stages({ images, action, current, cl, setcl }) {
   // console.log("stages current", current);
@@ -179,8 +181,6 @@ function Stages({ images, action, current, cl, setcl }) {
     const newX = node.x();
     const newY = node.y();
     const newRotation = node.rotation();
-    const newWidth = node.width();
-    const newHeight = node.height();
 
     const abcd = set_allAnnotations((prevAnnotations) =>
       prevAnnotations?.map((entry) =>
@@ -204,6 +204,13 @@ function Stages({ images, action, current, cl, setcl }) {
       )
     );
     console.log(abcd);
+    //  node.scaleX(1);
+    //  node.scaleY(1);
+    // Delay the scale reset slightly to ensure state update is applied.
+    setTimeout(() => {
+      node.scaleX(1);
+      node.scaleY(1);
+    }, 1);
   };
 
   useEffect(() => {
@@ -407,6 +414,7 @@ function Stages({ images, action, current, cl, setcl }) {
     );
 
     if (!class_label) {
+      // Open modal if no class label is selected
       openModal();
       setPendingAnnotation({
         class_id: selectedImage_ID.current,
@@ -462,6 +470,15 @@ function Stages({ images, action, current, cl, setcl }) {
     );
   };
 
+  const handleEdit = (class_id) => {
+    openModal();
+    setPendingAnnotation({
+      class_id: class_id, // Set the class_id to the selected annotation's ID
+      type: "rectangle", // Adjust the type if needed
+    });
+    finalizeAnnotation();
+  };
+
   const closeSegmentationMask = () => {
     if (segmentationPath.length > 1) {
       setSegmentationPath((prevPath) => [...prevPath, prevPath[0]]);
@@ -494,7 +511,7 @@ function Stages({ images, action, current, cl, setcl }) {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   marginBottom: 10,
-                  marginRight: 0,
+                  marginRight: 30,
                 }}
               >
                 {zoomEnabled && (
@@ -573,9 +590,13 @@ function Stages({ images, action, current, cl, setcl }) {
                                 x={annotation.x}
                                 y={annotation.y}
                                 strokeWidth={2}
+                                listening={true}
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
+                                fill={annotation.fill}
+                                zIndex={annotation.zIndex} // Add this property for z-index
+                                hitStrokeWidth={50} // Increase hit region size
                                 draggable={action === "edit"}
                                 rotation={annotation.rotation}
                                 onDragEnd={(e) => handleDragEnd(e, annotation)}
@@ -609,13 +630,40 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x - 15}
-                                      y={annotation.y + 5}
-                                      text="Delete"
+                                      x={annotation.x - 5 + 3} // 3px padding from the left edge of the Rect
+                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      text="X"
                                       fontSize={16}
                                       fill="red"
                                       onClick={() =>
                                         handleDelete(
+                                          annotation.class_id,
+                                          annotation.type
+                                        )
+                                      }
+                                    />
+
+                                    <Rect
+                                      x={annotation.x + 25 - 5} // Positioned for the next button, considering padding
+                                      y={annotation.y - 5}
+                                      width={40}
+                                      height={30}
+                                      fill="transparent"
+                                      onClick={() =>
+                                        handleEdit(
+                                          annotation.class_id,
+                                          annotation.type
+                                        )
+                                      }
+                                    />
+                                    <Text
+                                      x={annotation.x + 25 - 5 + 3} // 3px padding from the left edge of the Rect
+                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      text="E"
+                                      fontSize={16}
+                                      fill="green"
+                                      onClick={() =>
+                                        handleEdit(
                                           annotation.class_id,
                                           annotation.type
                                         )
@@ -628,7 +676,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                 action === "edit" && (
                                   <Transformer
                                     ref={transformerRef}
-                                    anchorSize={5}
+                                    anchorSize={10}
                                     borderStrokeWidth={2}
                                     rotationSnaps={[0, 90, 180, 270]}
                                     rotateEnabled={true}
@@ -679,7 +727,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                   <Text
                                     x={centroid[0] - 20}
                                     y={centroid[1] - 10}
-                                    text="Delete"
+                                    text="X"
                                     fill="red"
                                     fontSize={16}
                                     onMouseOver={() =>
@@ -688,6 +736,24 @@ function Stages({ images, action, current, cl, setcl }) {
                                     onMouseOut={() => setHoveredTextIndex(null)}
                                     onClick={() =>
                                       handleDelete(
+                                        annotation.class_id,
+                                        annotation.type
+                                      )
+                                    }
+                                  />
+
+                                  <Text
+                                    x={centroid[0] - 5}
+                                    y={centroid[1] - 10}
+                                    text="E"
+                                    fill="green"
+                                    fontSize={16}
+                                    onMouseOver={() =>
+                                      setHoveredTextIndex(index)
+                                    }
+                                    onMouseOut={() => setHoveredTextIndex(null)}
+                                    onClick={() =>
+                                      handleEdit(
                                         annotation.class_id,
                                         annotation.type
                                       )
@@ -732,7 +798,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     <Text
                                       x={annotation.points[0].x - 20}
                                       y={annotation.points[0].y - 10}
-                                      text="Delete"
+                                      text="X"
                                       fill="red"
                                       fontSize={16}
                                       onMouseEnter={() =>
@@ -743,6 +809,23 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                       onClick={() =>
                                         handleDelete(annotation.class_id)
+                                      }
+                                    />
+
+                                    <Text
+                                      x={annotation.points[0].x - 5}
+                                      y={annotation.points[0].y - 10}
+                                      text="E"
+                                      fill="green"
+                                      fontSize={16}
+                                      onMouseEnter={() =>
+                                        setHoveredSegmentationIndex(index)
+                                      }
+                                      onMouseLeave={() =>
+                                        setHoveredSegmentationIndex(null)
+                                      }
+                                      onClick={() =>
+                                        handleEdit(annotation.class_id)
                                       }
                                     />
                                   </>
