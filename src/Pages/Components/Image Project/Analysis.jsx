@@ -3,6 +3,19 @@ import ImageUpload from "../image upload and display/Imageupload";
 import useStore from "../../../Zustand/Alldata";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
+import { Bar } from "react-chartjs-2"; // Import the Bar chart
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function Analysis({}) {
   const { projectName } = useParams();
@@ -75,6 +88,35 @@ function Analysis({}) {
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
   const [loading, setloading] = useState(false);
 
+
+    // Data for bar chart
+    const data = {
+      labels: sorted_class.map((item) => item.class_name),
+      datasets: [
+        {
+          label: "Class Count",
+          data: sorted_class.map((item) => item.count),
+          backgroundColor: sorted_class.map((item) => item.Color),
+          borderColor: sorted_class.map((item) => item.Color),
+          borderWidth: 1,
+        },
+      ],
+    };
+  
+    // Options for bar chart
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Class Statistics",
+        },
+      },
+    };
+
   return (
     <div className="w-full h-screen flex">
       <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900">
@@ -108,6 +150,9 @@ function Analysis({}) {
                     ))}
                   </tbody>
                 </table>
+                <div>
+                  <Bar data={data} options={options} />
+                </div>
               </div>
             ) : (
               <div className="text-center text-gray-300 py-4 mt-5">
