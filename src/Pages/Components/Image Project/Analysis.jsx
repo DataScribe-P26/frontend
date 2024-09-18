@@ -118,8 +118,8 @@ function Analysis({}) {
     };
 
   return (
-    <div className="w-full h-screen flex">
-      <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900">
+    <div className="w-full h-screen flex  ">
+      <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900 overflow-y-auto custom-scrollbar">
         <div className="text-3xl font-bold text-white">{project_name}</div>
         <div className="text-gray-400">Created On - </div>
 
@@ -150,9 +150,7 @@ function Analysis({}) {
                     ))}
                   </tbody>
                 </table>
-                <div>
-                  <Bar data={data} options={options} />
-                </div>
+               
               </div>
             ) : (
               <div className="text-center text-gray-300 py-4 mt-5">
@@ -161,6 +159,9 @@ function Analysis({}) {
             )}
           </div>
         </div>
+        <div >
+                  <Bar data={data} options={options} />
+                </div>
 
         <div>
           <div className="text-2xl font-semibold text-white mt-10 pl-2">
