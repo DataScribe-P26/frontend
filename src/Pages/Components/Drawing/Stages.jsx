@@ -619,7 +619,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     <Rect
                                       x={annotation.x - 5}
                                       y={annotation.y - 5}
-                                      width={40}
+                                      width={25}
                                       height={30}
                                       fill="transparent"
                                       onClick={() =>
@@ -630,7 +630,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x - 5 + 3} // 3px padding from the left edge of the Rect
+                                      x={annotation.x + 5 + 3} // 3px padding from the left edge of the Rect
                                       y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="X"
                                       fontSize={16}
@@ -644,7 +644,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
 
                                     <Rect
-                                      x={annotation.x + 25 - 5} // Positioned for the next button, considering padding
+                                      x={annotation.x + 25 + 5} // Positioned for the next button, considering padding
                                       y={annotation.y - 5}
                                       width={40}
                                       height={30}
@@ -657,7 +657,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x + 25 - 5 + 3} // 3px padding from the left edge of the Rect
+                                      x={annotation.x + 25 + 5 + 3} // 3px padding from the left edge of the Rect
                                       y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="E"
                                       fontSize={16}
@@ -765,6 +765,10 @@ function Stages({ images, action, current, cl, setcl }) {
                           );
                         } else if (annotation.type === "segmentation") {
                           {
+                            const centroid = calculateCentroid(
+                              annotation.points
+                            );
+
                             return (
                               <React.Fragment key={annotation.class_id}>
                                 <Line
@@ -796,8 +800,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.points[0].x - 20}
-                                      y={annotation.points[0].y - 10}
+                                      x={centroid[0] - 20} // Move further left from centroid
+                                      y={centroid[1] - 10} // Keep the same vertical position
                                       text="X"
                                       fill="red"
                                       fontSize={16}
@@ -813,8 +817,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
 
                                     <Text
-                                      x={annotation.points[0].x - 5}
-                                      y={annotation.points[0].y - 10}
+                                      x={centroid[0] + 10} // Move further right from centroid
+                                      y={centroid[1] - 10} // Keep the same vertical position
                                       text="E"
                                       fill="green"
                                       fontSize={16}
