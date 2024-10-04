@@ -3,6 +3,7 @@ import ImageUpload from "../image upload and display/Imageupload";
 import useStore from "../../../Zustand/Alldata";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
+import { HiUpload } from "react-icons/hi";
 
 function Analysis({ set_analysis_page }) {
   const { projectName } = useParams();
@@ -87,7 +88,7 @@ function Analysis({ set_analysis_page }) {
             Class Statistics
           </div>
           <div
-            className={`w-[70%] min-h-[150px] max-h-[250px] bg-slate-600 rounded-xl mt-3 overflow-y-auto custom-scrollbar`}
+            className={`w-[70%] min-h-[150px] max-h-[250px] bg-slate-600 rounded-xl mt-3 overflow-y-auto image_scrollbar`}
           >
             {sorted_class.length > 0 ? (
               <div className="relative">
@@ -161,7 +162,7 @@ function Analysis({ set_analysis_page }) {
                     setloading={setloading}
                   />
                   <button
-                    className="px-6 py-3 rounded-lg bg-green-500 text-white mt-20 shadow-lg hover:bg-green-600 transition"
+                    className="mt-8 px-6 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-300 ease-in-out flex items-center"
                     onClick={() => set_analysis_page(false)}
                   >
                     Continue
