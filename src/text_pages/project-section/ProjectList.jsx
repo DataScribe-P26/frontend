@@ -2,10 +2,20 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectModal from "./ProjectModal";
 import { HiPlus, HiFolder } from "react-icons/hi";
+import textStore from "../zustand/Textdata";
 
 const ProjectList = () => {
-  const [projects, setProjects] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const {
+    projects,
+    setProjects,
+    showModal,
+    setShowModal,
+    projectname,
+    setprojectname,
+    project_type,
+    setproject_type,
+  } = textStore();
+
   const navigate = useNavigate();
 
   const addProject = (newProject) => {
@@ -59,7 +69,11 @@ const ProjectList = () => {
             {projects.map((project, index) => (
               <div
                 key={index}
-                onClick={() => handleProjectClick(project.name)}
+                onClick={() => {
+                  handleProjectClick(project.name);
+                  setprojectname(project.name);
+                  setproject_type(project.type);
+                }}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer p-5"
               >
                 <div className="flex items-center mb-3">

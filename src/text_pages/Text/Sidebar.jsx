@@ -10,7 +10,7 @@ import { LuDownload } from "react-icons/lu";
 import { Link, useParams } from "react-router-dom"; // Ensure this import is included
 
 const Sidebar = () => {
-  const [isDatasetOpen, setDatasetOpen] = useState(false);
+  const [isDatasetOpen, setDatasetOpen] = useState(true); // Initially open
   const { projectName } = useParams();
 
   return (
@@ -20,7 +20,7 @@ const Sidebar = () => {
         <li>
           <button
             className="flex items-center justify-between w-full text-left p-3 rounded-lg hover:bg-indigo-500 hover:text-white transition"
-            onClick={() => setDatasetOpen(!isDatasetOpen)}
+            onClick={() => setDatasetOpen(!isDatasetOpen)} // Toggle open/close
           >
             <div className="flex items-center">
               <AiOutlineDatabase className="mr-2" />
@@ -32,7 +32,7 @@ const Sidebar = () => {
             <ul className="pl-4 mt-2 space-y-1">
               <li>
                 <Link
-                  to={`/text/${projectName}/upload`}
+                  to={`/text/${projectName}/content`}
                   className="flex items-center w-full text-left p-2 rounded-lg hover:bg-indigo-100 transition"
                 >
                   <FiUpload className="mr-2" />

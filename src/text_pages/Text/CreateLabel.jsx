@@ -9,45 +9,32 @@ const CreateLabel = ({
   editMode,
 }) => {
   const [labelName, setLabelName] = useState("");
-  const [labelKey, setLabelKey] = useState("");
-  const [labelColor, setLabelColor] = useState("#000000");
+
   useEffect(() => {
     if (currentLabel) {
       setLabelName(currentLabel.name);
-      setLabelKey(currentLabel.key);
-      setLabelColor(currentLabel.color);
     } else {
       setLabelName("");
-      setLabelKey("");
-      setLabelColor("#000000");
     }
   }, [currentLabel]);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    if (!labelName || !labelKey) {
-      alert("Please fill out all the fields.");
+    if (!labelName) {
+      alert("Please enter a label name.");
       return;
     }
 
-    const newLabel = {
-      name: labelName,
-      key: labelKey,
-      color: labelColor,
-    };
+    const newLabel = { name: labelName };
 
-    // If in edit mode, update the label, otherwise create a new one
     if (editMode && currentLabel) {
-      onUpdateLabel(newLabel, currentLabel.key); // Use original key for comparison
+      onUpdateLabel(newLabel);
     } else {
       onCreateLabel(newLabel);
     }
 
-    // Reset form fields after submit
     setLabelName("");
-    setLabelKey("");
-    setLabelColor("#000000");
     onClose();
   };
 
@@ -61,7 +48,7 @@ const CreateLabel = ({
       ></div>
       <div
         className="bg-white rounded-lg shadow-lg z-10 p-5"
-        style={{ width: "60%", height: "70%" }}
+        style={{ width: "60%", height: "40%" }}
       >
         <button
           onClick={onClose}
@@ -73,8 +60,7 @@ const CreateLabel = ({
           {editMode ? "Edit Label" : "Create a New Label"}
         </h2>
         <form onSubmit={handleFormSubmit} className="space-y-4 overflow-auto">
-          {/* Label Name Input */}
-          <div className="group">
+          <div className="group mb-8">
             <label className="block text-lg font-semibold text-gray-800 mb-2">
               Label Name
             </label>
@@ -87,36 +73,6 @@ const CreateLabel = ({
               required
             />
           </div>
-
-          {/* Label Key Input */}
-          <div className="group">
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
-              Label Key
-            </label>
-            <input
-              type="text"
-              value={labelKey}
-              onChange={(e) => setLabelKey(e.target.value)}
-              className="border-2 border-gray-300 p-3 rounded-lg w-full text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-200 transition"
-              placeholder="Enter a unique key"
-              required
-            />
-          </div>
-
-          {/* Color Picker */}
-          <div className="group">
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
-              Label Color
-            </label>
-            <input
-              type="color"
-              value={labelColor}
-              onChange={(e) => setLabelColor(e.target.value)}
-              className="w-16 h-10 p-1 rounded-lg border border-gray-300 shadow-md hover:shadow-lg transition"
-            />
-          </div>
-
-          {/* Submit Button */}
           <div className="flex justify-center">
             <button
               type="submit"

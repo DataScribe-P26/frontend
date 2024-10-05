@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import textStore from "../zustand/Textdata";
 
 const ProjectModal = ({ onAddProject, onClose }) => {
+  const { projects } = textStore();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("NER"); // Default to NER
@@ -8,20 +11,20 @@ const ProjectModal = ({ onAddProject, onClose }) => {
   const handleSubmit = () => {
     // Ensure all fields are filled before submission
     if (!name || !description) {
-      alert("Please fill out all fields before submitting!");
+      toast.error("Please fill out all fields!");
       return;
     }
+    const projectExists = projects.find((project) => project.name === name);
 
-    // Add new project
-    onAddProject({ name, description, type });
-
-    // Clear form inputs after submission
-    setName("");
-    setDescription("");
-    setType("NER"); // Reset to default type
-
-    // Close the modal
-    onClose();
+    if (projectExists) {
+      toast.error("Project Already Exists");
+    } else {
+      onAddProject({ name, description, type });
+      setName("");
+      setDescription("");
+      setType("NER");
+      onClose();
+    }
   };
 
   return (

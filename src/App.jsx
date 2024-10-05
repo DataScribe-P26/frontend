@@ -5,9 +5,8 @@ import Imagehome from "./image_pages/Components/ImageHome.jsx";
 import Mainhome from "./Main home/Mainhome.jsx";
 import ProjectList from "./text_pages/project-section/ProjectList.jsx";
 import HomePage from "./text_pages/Text/HomePage.jsx";
-import UploadPage from "./text_pages/Text/UploadPage.jsx";
-import FileContentDisplay from "./text_pages/Text/FileContentDisplay.jsx";
 import LabelManager from "./text_pages/Text/LabelManager.jsx";
+import CombinedFileContent from "./text_pages/Text/CombinedFileContent.jsx";
 
 function App() {
   return (
@@ -21,10 +20,9 @@ function App() {
 
         <Route path="/text" element={<ProjectList />} />
         <Route path="/text/:projectName" element={<HomePage />} />
-        <Route path="/text/:projectName/upload" element={<UploadPage />} />
         <Route
           path="/text/:projectName/content"
-          element={<FileContentDisplay />}
+          element={<CombinedFileContent />}
         />
         <Route
           path="/text/:projectName/labelManager"
