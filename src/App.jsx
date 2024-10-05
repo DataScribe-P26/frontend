@@ -1,17 +1,35 @@
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import Home from "./Pages/Projects section/Home.jsx";
-import Imagehome from "./Pages/Components/ImageHome.jsx";
-import Main from "./Pages/Components/Image Project/Main.jsx";
+import Home from "./image_pages/Projects section/Home.jsx";
+import Imagehome from "./image_pages/Components/ImageHome.jsx";
+import Mainhome from "./Main home/Mainhome.jsx";
+import ProjectList from "./text_pages/project-section/ProjectList.jsx";
+import HomePage from "./text_pages/Text/HomePage.jsx";
+import LabelManager from "./text_pages/Text/LabelManager.jsx";
+import CombinedFileContent from "./text_pages/Text/CombinedFileContent.jsx";
 
 function App() {
   return (
-    <div className="select-none">
+    <div className="">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/project/:projectName" element={<Imagehome />} />
-        <Route path="/project/:projectName/main" element={<Main />} />
+        <Route path="/" element={<Mainhome />} />
+        <Route path="/image" element={<Home />} />
+        <Route path="/image/:projectName" element={<Imagehome />} />
+
+        {/* text */}
+
+        <Route path="/text" element={<ProjectList />} />
+        <Route path="/text/:projectName" element={<HomePage />} />
+        <Route
+          path="/text/:projectName/content"
+          element={<CombinedFileContent />}
+        />
+        <Route
+          path="/text/:projectName/labelManager"
+          element={<LabelManager />}
+        />
       </Routes>
+
       <Toaster />
     </div>
   );

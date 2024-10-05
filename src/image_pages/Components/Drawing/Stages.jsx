@@ -181,7 +181,6 @@ function Stages({ images, action, current, cl, setcl }) {
     const newX = node.x();
     const newY = node.y();
     const newRotation = node.rotation();
-    
 
     const abcd = set_allAnnotations((prevAnnotations) =>
       prevAnnotations?.map((entry) =>
@@ -208,10 +207,10 @@ function Stages({ images, action, current, cl, setcl }) {
     //  node.scaleX(1);
     //  node.scaleY(1);
     // Delay the scale reset slightly to ensure state update is applied.
-  setTimeout(() => {
-    node.scaleX(1);
-    node.scaleY(1);
-  }, 1);
+    setTimeout(() => {
+      node.scaleX(1);
+      node.scaleY(1);
+    }, 1);
   };
 
   useEffect(() => {
@@ -342,7 +341,6 @@ function Stages({ images, action, current, cl, setcl }) {
     }
   };
   const finalizeAnnotation = () => {
-    
     set_classlabel(null); // Reset class label
     setcl(null);
   };
@@ -421,8 +419,7 @@ function Stages({ images, action, current, cl, setcl }) {
       setPendingAnnotation({
         class_id: selectedImage_ID.current,
       });
-       finalizeAnnotation();
-
+      finalizeAnnotation();
     }
   };
 
@@ -473,15 +470,13 @@ function Stages({ images, action, current, cl, setcl }) {
     );
   };
 
-
-
   const handleEdit = (class_id) => {
     openModal();
-      setPendingAnnotation({
-        class_id: class_id, // Set the class_id to the selected annotation's ID
-        type: "rectangle", // Adjust the type if needed
-      });
-      finalizeAnnotation();
+    setPendingAnnotation({
+      class_id: class_id, // Set the class_id to the selected annotation's ID
+      type: "rectangle", // Adjust the type if needed
+    });
+    finalizeAnnotation();
   };
 
   const closeSegmentationMask = () => {
@@ -498,20 +493,6 @@ function Stages({ images, action, current, cl, setcl }) {
     setZoomEnabled(!action);
   }, [action]);
 
-
-  const handlePointDragMove = (e, index) => {
-    const newPoints = [...points];
-    newPoints[index] = {
-      x: e.target.x(),
-      y: e.target.y(),
-    };
-    
-    setPoints(newPoints);  // Update the state with the new points
-  };
-
-  
-  
-  
   return (
     <>
       {current_image && (
@@ -630,7 +611,6 @@ function Stages({ images, action, current, cl, setcl }) {
                                   e.cancelBubble = true; // Prevent click event from propagating to the stage
                                   setSelectedId(annotation.class_id);
                                 }}
-                                
                               />
 
                               {hoveredId === annotation.class_id &&
@@ -639,7 +619,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     <Rect
                                       x={annotation.x - 5}
                                       y={annotation.y - 5}
-                                      width={40}
+                                      width={25}
                                       height={30}
                                       fill="transparent"
                                       onClick={() =>
@@ -650,8 +630,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x}
-                                      y={annotation.y-10}
+                                      x={annotation.x + 5 + 3} // 3px padding from the left edge of the Rect
+                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="X"
                                       fontSize={16}
                                       fill="red"
@@ -663,9 +643,22 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
 
+                                    <Rect
+                                      x={annotation.x + 25 + 5} // Positioned for the next button, considering padding
+                                      y={annotation.y - 5}
+                                      width={40}
+                                      height={30}
+                                      fill="transparent"
+                                      onClick={() =>
+                                        handleEdit(
+                                          annotation.class_id,
+                                          annotation.type
+                                        )
+                                      }
+                                    />
                                     <Text
-                                      x={annotation.x+20}
-                                      y={annotation.y-10}
+                                      x={annotation.x + 25 + 5 + 3} // 3px padding from the left edge of the Rect
+                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="E"
                                       fontSize={16}
                                       fill="green"
@@ -707,7 +700,6 @@ function Stages({ images, action, current, cl, setcl }) {
                                 stroke={annotation.Color}
                                 strokeWidth={2}
                                 closed
-                                
                                 onMouseOver={() =>
                                   setHoveredPolygonIndex(index)
                                 }
@@ -731,7 +723,6 @@ function Stages({ images, action, current, cl, setcl }) {
                                         annotation.type
                                       )
                                     }
-            
                                   />
                                   <Text
                                     x={centroid[0] - 20}
@@ -774,6 +765,10 @@ function Stages({ images, action, current, cl, setcl }) {
                           );
                         } else if (annotation.type === "segmentation") {
                           {
+                            const centroid = calculateCentroid(
+                              annotation.points
+                            );
+
                             return (
                               <React.Fragment key={annotation.class_id}>
                                 <Line
@@ -805,8 +800,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.points[0].x - 20}
-                                      y={annotation.points[0].y - 10}
+                                      x={centroid[0] - 20} // Move further left from centroid
+                                      y={centroid[1] - 10} // Keep the same vertical position
                                       text="X"
                                       fill="red"
                                       fontSize={16}
@@ -822,8 +817,8 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
 
                                     <Text
-                                      x={annotation.points[0].x - 5}
-                                      y={annotation.points[0].y - 10}
+                                      x={centroid[0] + 10} // Move further right from centroid
+                                      y={centroid[1] - 10} // Keep the same vertical position
                                       text="E"
                                       fill="green"
                                       fontSize={16}
@@ -881,9 +876,6 @@ function Stages({ images, action, current, cl, setcl }) {
                               fill={isStartPoint ? "gold" : "white"}
                               stroke={isStartPoint ? "gold" : "black"}
                               strokeWidth={1}
-                              draggable//={action === "edit"}
-                              onDragMove={(e) => handlePointDragMove(e, index)}
-        
                               onMouseOver={
                                 isStartPoint
                                   ? handleMouseOverStartPoint
@@ -898,7 +890,6 @@ function Stages({ images, action, current, cl, setcl }) {
                           );
                         })}
                     </Layer>
-                    
                   </Stage>
                 </TransformComponent>
               </div>

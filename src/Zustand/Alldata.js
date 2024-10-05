@@ -2,26 +2,26 @@ import create from "zustand";
 
 const isValidColor = (color) => /^#[0-9A-F]{6}$/i.test(color);
 const brightColors = [
-  "#FF7F50",
-  "#FF69B4",
-  "#00FF00",
-  "#0000FF",
-  "#FFFF00",
-  "#FF00FF",
-  "#00FFFF",
-  "#FF4500",
-  "#32CD32",
-  "#8A2BE2",
-  "#FFD700",
-  "#ADFF2F",
-  "#FF69B4",
-  "#00CED1",
-  "#FF6347",
-  "#7FFF00",
-  "#40E0D0",
-  "#DA70D6",
-  "#EEE8AA",
-  "#8B0000",
+  "#FFB3BA",  // Soft Pink
+  "#FFDFBA",  // Soft Peach
+  "#FFFFBA",  // Soft Yellow
+  "#B3FFBA",  // Soft Green
+  "#BAE1FF",  // Soft Blue
+  "#FFCCF9",  // Soft Lavender
+  "#C6E2FF",  // Light Sky Blue
+  "#FFD1DC",  // Soft Coral
+  "#FDFD96",  // Pastel Yellow
+  "#D3FFCE",  // Pastel Mint Green
+  "#B19CD9",  // Soft Purple
+  "#FFDAC1",  // Peach
+  "#C2C2F0",  // Light Lilac
+  "#FFFFCC",  // Light Cream
+  "#FFC0CB",  // Pastel Pink
+  "#E0BBE4",  // Light Lavender
+  "#C8A2C8",  // Soft Mauve
+  "#F4B8F7",  // Soft Pinkish Purple
+  "#FFDEAD",  // Navajo White
+  "#E6E6FA"   // Lavender
 ];
 
 const randomBrightColor = (index) => brightColors[index % brightColors.length];
@@ -126,7 +126,6 @@ const useStore = create((set) => ({
       ),
     }));
   },
-  
 
   setAction: (action) => set({ action }),
 
@@ -231,6 +230,8 @@ const useStore = create((set) => ({
       localStorage.setItem(`${project_name}_currentIndex`, JSON.stringify(0));
     }
   },
+  created_on: null,
+  setCreatedOn: (date) => set({ created_on: date }),
 }));
 
 export default useStore;
