@@ -1,16 +1,13 @@
-import React, { useState } from "react"; // Import useState
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata";
-import FileContentDisplay from "./FileContentDisplay";
 
 const CombinedFileContent = () => {
-  const { fileType, setFileType, file, setFile, content, setContent } =
-    textStore();
+  const { fileType, setFileType, file, setFile, setContent, isUploaded, setIsUploaded } = textStore();
   const { projectName } = useParams();
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [isUploaded, setIsUploaded] = useState(false); // New state variable
+  const navigate = useNavigate();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -32,9 +29,7 @@ const CombinedFileContent = () => {
       } else if (fileType === "json") {
         try {
           const jsonContent = JSON.parse(fileContent);
-          processedContent = Array.isArray(jsonContent)
-            ? jsonContent
-            : [jsonContent];
+          processedContent = Array.isArray(jsonContent) ? jsonContent : [jsonContent];
         } catch (error) {
           alert("Invalid JSON file. Please upload a valid JSON file.");
           return;
@@ -43,18 +38,19 @@ const CombinedFileContent = () => {
 
       setContent(processedContent);
       setIsUploaded(true); // Mark that the file has been uploaded
-      navigate(`/text/${projectName}/filecontentdisplay`); // Navigate to Workspace
     };
 
     reader.readAsText(file);
   };
 
+  const handleGoToWorkspace = () => {
+    navigate(`/text/${projectName}/filecontentdisplay`);
+  };
+
   const renderUploadPage = () => (
-    <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100">
+    <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100 flex flex-col justify-start">
       <h2 className="text-3xl font-bold mb-6">Upload File</h2>
-      <p className="text-gray-700 mb-4">
-        Please select the type of file you want to upload.
-      </p>
+      <p className="text-gray-700 mb-4">Please select the type of file you want to upload.</p>
 
       <div className="mb-4">
         <label className="block text-gray-700 mb-2">Select File Type:</label>
@@ -75,11 +71,26 @@ const CombinedFileContent = () => {
         className="border border-gray-300 p-2 rounded-lg w-full mb-4"
       />
 
+        
+          <button
+            onClick={handleFileUpload}
+            className="bg-indigo-600 text-white px-1 py-2 rounded-lg hover:bg-indigo-500 transition-shadow shadow-lg"
+          >
+            Upload
+          </button>
+        
+    </div>
+  );
+
+  const renderAlreadyUploadedPage = () => (
+    <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100 flex flex-col justify-start items-center text-center">
+      <h2 className="text-3xl font-bold mb-4">File Already Uploaded</h2>
+      <p className="text-gray-700 mb-4">You have already uploaded a file for this project.</p>
       <button
-        onClick={handleFileUpload}
+        onClick={handleGoToWorkspace}
         className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-500 transition-shadow shadow-lg"
       >
-        Upload
+        Go to Workspace
       </button>
     </div>
   );
@@ -89,8 +100,7 @@ const CombinedFileContent = () => {
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar />
-        {/* Render upload page if not uploaded, otherwise navigate to Workspace */}
-        {isUploaded ? null : content ? <FileContentDisplay /> : renderUploadPage()}
+        {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
       </div>
     </div>
   );

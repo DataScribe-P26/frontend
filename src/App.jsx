@@ -33,6 +33,12 @@ function App() {
           path="/text/:projectName/labelManager"
           element={<LabelManager />}
         />
+        <Route
+          path="/text/:projectName/filecontentdisplay"
+          element={<FileContentDisplay />}
+        />
+
+
 
         <Route 
           path="/text/:projectName/filecontentdisplay" 

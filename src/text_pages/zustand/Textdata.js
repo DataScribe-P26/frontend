@@ -35,6 +35,10 @@ const textStore = create((set) => ({
   showModal: false,
   setShowModal: (isVisible) => set(() => ({ showModal: isVisible })),
 
+
+  isUploaded: false,
+  setIsUploaded: (status) => set({ isUploaded: status }),
+  
   //current project
   projectname: "",
   project_type: "",

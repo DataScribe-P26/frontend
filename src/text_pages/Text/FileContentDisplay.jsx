@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import Navbar from "./Navbar"; // Import Navbar
+import Sidebar from "./Sidebar"; // Import Sidebar
 import textStore from "../zustand/Textdata";
 
 const FileContentDisplay = () => {
@@ -165,47 +167,47 @@ const FileContentDisplay = () => {
   };
 
   return (
-    <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100 overflow-y-auto custom-scrollbar">
-      <div className="max-w-[74vw] mx-auto">
-        <h2 className="text-3xl font-bold mb-6">File Content Display</h2>
+    <div className="flex flex-col h-screen">
+      <Navbar /> {/* Add Navbar */}
+      <div className="flex flex-grow">
+        <Sidebar /> {/* Add Sidebar */}
+        <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100 overflow-y-auto custom-scrollbar">
+          <div className="max-w-[74vw] mx-auto">
+            <h2 className="text-3xl font-bold mb-6">File Content Display</h2>
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)} // Navigate back to the previous page
-          className="mb-4 px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
-        >
-          Back
-        </button>
+           
 
-        <div className="flex flex-col gap-4">
-          <div
-            className="bg-white p-4 rounded-lg shadow relative"
-            onMouseUp={handleTextSelect}
-          >
-            <div className="text-xl font-semibold max-h-[calc(100vh-400px)] overflow-y-auto overflow-x-auto custom-scrollbar">
-              {renderContent()}
-            </div>
+            <div className="flex flex-col gap-4">
+              <div
+                className="bg-white p-4 rounded-lg shadow relative"
+                onMouseUp={handleTextSelect}
+              >
+                <div className="text-xl font-semibold max-h-[calc(100vh-400px)] overflow-y-auto overflow-x-auto custom-scrollbar">
+                  {renderContent()}
+                </div>
 
-            {selectedText && (
-              <div className="mt-4">
-                <select
-                  onChange={handleLabelChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                  value=""
-                >
-                  <option value="">Select a label</option>
-                  {labels.map((label) => (
-                    <option key={label.name} value={label.name}>
-                      {label.name}
-                    </option>
-                  ))}
-                </select>
+                {selectedText && (
+                  <div className="mt-4">
+                    <select
+                      onChange={handleLabelChange}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      value=""
+                    >
+                      <option value="">Select a label</option>
+                      {labels.map((label) => (
+                        <option key={label.name} value={label.name}>
+                          {label.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {renderNavigation()}
-          {renderAnnotations()}
+              {renderNavigation()}
+              {renderAnnotations()}
+            </div>
+          </div>
         </div>
       </div>
     </div>
