@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import textStore from "../zustand/Textdata";
 
 const FileContentDisplay = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const {
     content,
     fileType,
@@ -166,6 +168,14 @@ const FileContentDisplay = () => {
     <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100 overflow-y-auto custom-scrollbar">
       <div className="max-w-[74vw] mx-auto">
         <h2 className="text-3xl font-bold mb-6">File Content Display</h2>
+
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)} // Navigate back to the previous page
+          className="mb-4 px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+        >
+          Back
+        </button>
 
         <div className="flex flex-col gap-4">
           <div

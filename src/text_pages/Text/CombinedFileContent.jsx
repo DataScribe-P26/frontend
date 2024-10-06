@@ -1,15 +1,16 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react"; // Import useState
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata";
-
 import FileContentDisplay from "./FileContentDisplay";
 
 const CombinedFileContent = () => {
   const { fileType, setFileType, file, setFile, content, setContent } =
     textStore();
   const { projectName } = useParams();
+  const navigate = useNavigate(); // Initialize useNavigate
+  const [isUploaded, setIsUploaded] = useState(false); // New state variable
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -41,6 +42,8 @@ const CombinedFileContent = () => {
       }
 
       setContent(processedContent);
+      setIsUploaded(true); // Mark that the file has been uploaded
+      navigate(`/text/${projectName}/filecontentdisplay`); // Navigate to Workspace
     };
 
     reader.readAsText(file);
@@ -86,7 +89,8 @@ const CombinedFileContent = () => {
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar />
-        {content ? <FileContentDisplay /> : renderUploadPage()}
+        {/* Render upload page if not uploaded, otherwise navigate to Workspace */}
+        {isUploaded ? null : content ? <FileContentDisplay /> : renderUploadPage()}
       </div>
     </div>
   );
