@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -71,14 +71,12 @@ const CombinedFileContent = () => {
         className="border border-gray-300 p-2 rounded-lg w-full mb-4"
       />
 
-        
-          <button
-            onClick={handleFileUpload}
-            className="bg-indigo-600 text-white px-1 py-2 rounded-lg hover:bg-indigo-500 transition-shadow shadow-lg"
-          >
-            Upload
-          </button>
-        
+      <button
+        onClick={handleFileUpload}
+        className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-500 transition-shadow shadow-lg"
+      >
+        Upload
+      </button>
     </div>
   );
 
@@ -99,7 +97,7 @@ const CombinedFileContent = () => {
     <div className="flex flex-col h-screen">
       <Navbar />
       <div className="flex flex-grow">
-        <Sidebar />
+        <Sidebar isUploaded={isUploaded} /> {/* Pass isUploaded as a prop */}
         {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
       </div>
     </div>
