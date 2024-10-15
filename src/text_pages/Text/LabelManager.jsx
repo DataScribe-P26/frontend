@@ -1,16 +1,47 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import CreateLabel from "./CreateLabel";
 import textStore from "../zustand/Textdata";
+import axios from "axios";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
+  const { projectName } = useParams();
+  const [fetchedLabels, setFetchedLabels] = useState(false);
+  
+  useEffect(() => {
+    const fetchLabels = async () => {
+      if (fetchedLabels|| labels.length > 0) return;
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
+        
+        const uniqueLabels = Array.from(new Set(response.data[0].entities.map(entity => entity.label)));
+
+        const newLabels = uniqueLabels.map((name) => {
+          const labelEntity = response.data[0].entities.find(entity => entity.label === name);
+          return {
+            name,
+            color: labelEntity.color,
+            bgColor: labelEntity.bColor,
+            textColor: labelEntity.textColor,
+          };
+        });
+        setLabels(newLabels);
+        setFetchedLabels(true);
+      } catch (error) {
+        console.error("Error fetching annotations:", error);
+      }
+    };
+
+    fetchLabels();
+  }, [projectName, setLabels, labels.length, fetchedLabels]);
 
   const handleCreateLabel = (newLabel) => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
@@ -19,7 +50,7 @@ const LabelManager = () => {
       alert("Label Name must be unique.");
       return;
     }
-
+    console.log(newLabel)
     addLabel(newLabel.name);
   };
 
@@ -50,7 +81,7 @@ const LabelManager = () => {
     setModalOpen(false);
     setCurrentLabel(null);
   };
-
+  console.log(labels)
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
