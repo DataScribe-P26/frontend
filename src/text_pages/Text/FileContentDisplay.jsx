@@ -237,7 +237,7 @@ const FileContentDisplay = () => {
         textColor: annotation.label.textColor,
       })),
     };
-  
+    console.log(dataToSend);
     try {
       const response = await fetch(`http://127.0.0.1:8000/annotate/${projectName}/ner`, {
         method: "POST",
@@ -275,7 +275,8 @@ const FileContentDisplay = () => {
                 className="bg-white p-4 rounded-lg shadow relative"
                 onMouseUp={handleTextSelect}
               >
-                <div className="text-xl font-semibold max-h-[calc(100vh-400px)] overflow-y-auto overflow-x-auto custom-scrollbar">
+                
+                <div className="text-l font-semibold max-h-[calc(100vh-400px)] overflow-y-auto overflow-x-auto custom-scrollbar">
                   {renderContent()}
                 </div>
 
