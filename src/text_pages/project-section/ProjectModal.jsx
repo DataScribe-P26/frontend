@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import textStore from "../zustand/Textdata";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProjectModal = ({ onAddProject, onClose }) => {
   const { projects } = textStore();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("NER"); // Default to NER
+  const [annotation_type, setType] = useState("NER"); // Default to NER
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     // Ensure all fields are filled before submission
@@ -19,13 +22,31 @@ const ProjectModal = ({ onAddProject, onClose }) => {
     if (projectExists) {
       toast.error("Project Already Exists");
     } else {
-      onAddProject({ name, description, type });
+      alert("Project creation!");
+      onAddProject({ name, description, annotation_type });
+      submit_project();
+      setName(name);
+      setDescription(description);
+      setType(annotation_type);
+      setTimeout(() => {
+        navigate(`/text/${name}`);
+      }, 100);
       setName("");
       setDescription("");
-      setType("NER");
       onClose();
     }
   };
+    function submit_project() {
+    axios
+      .post("http://127.0.0.1:8000/textprojects", { name, description,annotation_type })
+      .then((result) => {
+        console.log(result.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Project creation failed!");
+      });
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -64,7 +85,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
           </label>
           <select
             className="w-full border border-gray-300 rounded-md p-2"
-            value={type}
+            value={annotation_type}
             onChange={(e) => setType(e.target.value)}
           >
             <option value="NER">NER</option>
@@ -87,6 +108,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
           >
             Create
           </button>
+          
         </div>
       </div>
     </div>

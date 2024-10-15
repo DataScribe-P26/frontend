@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectModal from "./ProjectModal";
 import { HiPlus, HiFolder } from "react-icons/hi";
 import textStore from "../zustand/Textdata";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ProjectList = () => {
   const {
@@ -17,10 +19,11 @@ const ProjectList = () => {
   } = textStore();
 
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const addProject = (newProject) => {
     const isDuplicate = projects.some(
-      (project) => project.name.toLowerCase() === newProject.name.toLowerCase()
+      (project) => project.name === newProject.name
     );
     if (isDuplicate) {
       alert("Project name already exists!");
@@ -34,6 +37,25 @@ const ProjectList = () => {
   const handleProjectClick = (projectName) => {
     navigate(`/text/${projectName}`);
   };
+
+    // Fetch projects when the component mounts
+    useEffect(() => {
+      const fetchProjects = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get("http://127.0.0.1:8000/textprojects");
+          setProjects(response.data);
+          setprojectname(response.data.map((project) => project.name));
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+          toast.error("Failed to fetch projects");
+          setLoading(false);
+        }
+      };
+  
+      fetchProjects();
+    }, [showModal]);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -57,7 +79,11 @@ const ProjectList = () => {
           </button>
         </div>
 
-        {projects.length === 0 ? (
+        {loading ? ( // Show a loading state if data is being fetched
+          <div className="text-center py-8">
+            <p className="text-xl text-gray-600">Loading projects...</p>
+          </div>
+          ) : projects.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-xl text-gray-600">No projects available</p>
             <p className="mt-2 text-gray-500">
@@ -67,6 +93,7 @@ const ProjectList = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => (
+              project.name && (
               <div
                 key={index}
                 onClick={() => {
@@ -91,11 +118,11 @@ const ProjectList = () => {
                   className="text-sm font-medium px-2 py-1 rounded-full bg-opacity-50"
                   style={{
                     backgroundColor:
-                      project.type.toLowerCase() === "ner"
+                      project.type === "ner"
                         ? "rgba(59, 130, 246, 0.5)"
                         : "rgba(16, 185, 129, 0.5)",
                     color:
-                      project.type.toLowerCase() === "ner"
+                      project.type === "ner"
                         ? "#1e40af"
                         : "#065f46",
                   }}
@@ -103,6 +130,7 @@ const ProjectList = () => {
                   {project.type}
                 </span>
               </div>
+              )
             ))}
           </div>
         )}
