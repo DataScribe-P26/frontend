@@ -10,6 +10,7 @@ import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
+
 function Main() {
   const {
     imageSrc,

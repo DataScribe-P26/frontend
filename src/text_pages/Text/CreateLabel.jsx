@@ -47,8 +47,8 @@ const CreateLabel = ({
         onClick={onClose}
       ></div>
       <div
-        className="bg-white rounded-lg shadow-lg z-10 p-5"
-        style={{ width: "60%", height: "40%" }}
+        className="bg-purple-50 rounded-lg shadow-lg z-10 p-5"
+        style={{ width: "400px", height: "300px" }}
       >
         <button
           onClick={onClose}
@@ -68,7 +68,7 @@ const CreateLabel = ({
               type="text"
               value={labelName}
               onChange={(e) => setLabelName(e.target.value)}
-              className="border-2 border-gray-300 p-3 rounded-lg w-full text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-200 transition"
+              className="border-2 border-gray-300 p-3 rounded-lg w-full text-gray-700 focus:border-purple-600 focus:outline-none focus:ring focus:ring-purple-300 transition"
               placeholder="Enter label name"
               required
             />
@@ -76,7 +76,7 @@ const CreateLabel = ({
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-500 transition-shadow shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              className="bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
             >
               {editMode ? "Update Label" : "Create Label"}
             </button>

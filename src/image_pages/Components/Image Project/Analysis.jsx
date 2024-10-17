@@ -7,6 +7,7 @@ import { HiUpload } from "react-icons/hi";
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
+
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -125,6 +126,8 @@ function Analysis({ set_analysis_page }) {
 
   return (
     <div className="w-full h-screen flex ">
+
+      
       {/* Left Section: Scrollable */}
       <div className="w-[60%] h-screen pt-12 px-12 rounded-r-3xl border-r-4 border-purple-900 overflow-y-auto custom-scrollbar">
         <div className="text-3xl font-bold text-white">{project_name}</div>

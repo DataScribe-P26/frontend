@@ -40,10 +40,7 @@ function App() {
 
 
 
-        <Route 
-          path="/text/:projectName/filecontentdisplay" 
-          element={<FileContentDisplay />} 
-        /> 
+       
       </Routes>
 
       <Toaster />

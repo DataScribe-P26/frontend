@@ -5,6 +5,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { HiPlus, HiFolder, HiAnnotation } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 function Home() {
   const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn } =
@@ -36,13 +37,16 @@ function Home() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       <ProjectaddModal names={names} />
-      <nav className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
-            Datascribe.
+      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
+      <div className=" flex items-center justify-between">
+        <Link className="flex items-center">
+          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
+          <h1 className="text-3xl font-extrabold tracking-wide">
+            Datascribe.ai{" "}
           </h1>
-        </div>
-      </nav>
+        </Link>
+      </div>
+    </nav>
 
       <main className="container mx-auto px-12 py-8">
         <div className="flex justify-between items-center mb-8">
@@ -58,7 +62,7 @@ function Home() {
 
         {loading ? (
           <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading projects...</p>
           </div>
         ) : projects.length === 0 ? (
@@ -82,7 +86,7 @@ function Home() {
               >
                 <div className="p-6">
                   <div className="flex items-center mb-3">
-                    <HiFolder className="text-2xl text-indigo-600 mr-3" />
+                    <HiFolder className="text-2xl text-purple-700 mr-3" />
                     <h3 className="text-xl font-semibold text-gray-800">
                       {project.name}
                     </h3>

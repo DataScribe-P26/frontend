@@ -2,16 +2,21 @@ import React from "react";
 import { HiAnnotation, HiPhotograph, HiDocumentText } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
+
+
 const Mainhome = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <nav className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
-            Datascribe.
+      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
+      <div className=" flex items-center justify-between">
+        <Link className="flex items-center">
+          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
+          <h1 className="text-3xl font-extrabold tracking-wide">
+            Datascribe.ai{" "}
           </h1>
-        </div>
-      </nav>
+        </Link>
+      </div>
+    </nav>
 
       <main className="container mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-center mb-8">
@@ -26,9 +31,9 @@ const Mainhome = () => {
             to="/image"
             className="transform hover:scale-105 transition-transform duration-300"
           >
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow">
-              <div className="flex items-center mb-4">
-                <HiPhotograph className="text-4xl text-indigo-600 mr-4" />
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out">              
+            <div className="flex items-center mb-4">
+                <HiPhotograph className="text-4xl text-purple-700 mr-4" />
                 <h3 className="text-2xl font-semibold">Image Annotations</h3>
               </div>
               <p className="text-gray-600">
@@ -40,9 +45,9 @@ const Mainhome = () => {
             to="/text"
             className="transform hover:scale-105 transition-transform duration-300 cursor-pointer"
           >
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow">
-              <div className="flex items-center mb-4">
-                <HiDocumentText className="text-4xl text-indigo-600 mr-4" />
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out">              
+            <div className="flex items-center mb-4">
+                <HiDocumentText className="text-4xl text-purple-700 mr-4" />
                 <h3 className="text-2xl font-semibold">Text Annotations</h3>
               </div>
               <p className="text-gray-600">

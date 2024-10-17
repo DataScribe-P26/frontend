@@ -16,11 +16,11 @@ const Workspace = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       {!isAnnotationStarted && <Navbar />} {/* Conditionally render Navbar */}
       <div className="flex flex-grow">
         {!isAnnotationStarted && <Sidebar />} {/* Conditionally render Sidebar */}
-        <div className="flex-grow p-8 bg-gradient-to-r from-blue-50 to-blue-100">
+        <div className="flex-grow p-8 bg-gradient-to-r from-gray-100 to-gray-150">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             {projectName} - Annotation Workspace
           </h2>

@@ -1,16 +1,48 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import CreateLabel from "./CreateLabel";
 import textStore from "../zustand/Textdata";
+import axios from "axios";
+import Footer from "./Footer";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
+  const { projectName } = useParams();
+  const [fetchedLabels, setFetchedLabels] = useState(false);
+  
+  useEffect(() => {
+    const fetchLabels = async () => {
+      if (fetchedLabels|| labels.length > 0) return;
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
+        
+        const uniqueLabels = Array.from(new Set(response.data[0].entities.map(entity => entity.label)));
+
+        const newLabels = uniqueLabels.map((name) => {
+          const labelEntity = response.data[0].entities.find(entity => entity.label === name);
+          return {
+            name,
+            color: labelEntity.color,
+            bgColor: labelEntity.bColor,
+            textColor: labelEntity.textColor,
+          };
+        });
+        setLabels(newLabels);
+        setFetchedLabels(true);
+      } catch (error) {
+        console.error("Error fetching annotations:", error);
+      }
+    };
+
+    fetchLabels();
+  }, [projectName, setLabels, labels.length, fetchedLabels]);
 
   const handleCreateLabel = (newLabel) => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
@@ -19,7 +51,7 @@ const LabelManager = () => {
       alert("Label Name must be unique.");
       return;
     }
-
+    console.log(newLabel)
     addLabel(newLabel.name);
   };
 
@@ -50,9 +82,9 @@ const LabelManager = () => {
     setModalOpen(false);
     setCurrentLabel(null);
   };
-
+  console.log(labels)
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar />
@@ -64,32 +96,33 @@ const LabelManager = () => {
               setEditMode(false);
               setModalOpen(true);
             }}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-500 transition-shadow shadow-lg hover:shadow-xl mb-4"
+            className="bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl mb-4"
           >
             Create Label
           </button>
           {labels.length > 0 ? (
-            <table className="min-w-full border text-sm text-left bg-white shadow-md rounded-lg">
+            <div className="overflow-auto items-center h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <table className="min-w-full border border-gray-300 text-sm text-left bg-white shadow-md rounded-lg">
               <thead>
                 <tr className="bg-gray-100 border-b">
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Color</th>
-                  <th className="p-2"></th>
+                  <th className="p-2 border-b border-gray-300 text-center">Name</th>
+                  <th className="p-2 border-b border-gray-300 text-center">Color</th>
+                  <th className="p-2 border-b border-gray-300 text-center"></th>
                 </tr>
               </thead>
               <tbody>
                 {labels.map((label, index) => (
                   <tr key={index} className="border-b">
-                    <td className="p-2">{label.name}</td>
-                    <td className="p-2">
-                      <div className="flex items-center">
+                    <td className="p-2 border-b border-gray-300 text-center">{label.name}</td>
+                    <td className="p-2 border-b border-gray-300 text-center">
+                      <div className="flex justify-center items-center">
                         <div
                           className="w-6 h-6 rounded-full mr-2"
                           style={{ backgroundColor: label.color }}
                         ></div>
                       </div>
                     </td>
-                    <td className="p-2 flex space-x-2">
+                    <td className="p-2 border-b border-gray-300 text-center flex justify-center space-x-2">
                       <button
                         onClick={() => handleEditLabel(label)}
                         className="text-yellow-500 p-2 hover:text-yellow-600 transition"
@@ -107,6 +140,11 @@ const LabelManager = () => {
                 ))}
               </tbody>
             </table>
+           
+          </div>
+          
+          
+          
           ) : (
             <p>No labels created yet.</p>
           )}
@@ -118,9 +156,20 @@ const LabelManager = () => {
             currentLabel={currentLabel}
             editMode={editMode}
           />
+          <div className="mb-8 flex justify-center"> {/* This div adds margin above the Footer and centers it */}
+  <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
+    <Footer />
+  </div>
+</div>
+
         </div>
+        
+        
       </div>
+      
     </div>
+    
+    
   );
 };
 
