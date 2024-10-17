@@ -1,7 +1,7 @@
-import React, { useState,useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; 
-import Navbar from "./Navbar"; 
-import Sidebar from "./Sidebar"; 
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata";
 import axios from "axios";
 
@@ -32,52 +32,55 @@ const FileContentDisplay = () => {
     }
   };
 
-    // Fetch the annotations and labels when the component mounts
-    useEffect(() => {
-      const fetchAnnotationsAndLabels = async () => {
-        try {
-          const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
-          const { text, entities, labels } = response.data;
-          setContent(response.data[0].text);
-          console.log(content);
-                  // Iterate over entities and add annotations
-          response.data[0].entities.forEach((entity) => {
-            const newAnnotation = {
-              text: entity.entity,
-              label: {
-                name: entity.label,
-                color: entity.color,
-                bgColor: entity.bColor,
-                textColor: entity.textColor,
-              },
-              index: -1
-            };
-            addAnnotation(newAnnotation);
-          });
-
-          //console.log(response.data[0].entities);
-          // Extract unique labels and update the labels state
-          if (labels.length === 0) {
-            const uniqueLabels = Array.from(new Set(response.data[0].entities.map(entity => entity.label)));
-            const newLabels = uniqueLabels.map((name) => {
-              const labelEntity = response.data[0].entities.find(entity => entity.label === name);
-              return {
-                name,
-                color: labelEntity.color,
-                bgColor: labelEntity.bColor,
-                textColor: labelEntity.textColor,
-              };
-            });
-            setLabels(newLabels);
+  useEffect(() => {
+    const fetchAnnotationsAndLabels = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
+        );
+        const { text, entities, labels } = response.data;
+        setContent(response.data[0].text);
+        console.log(content);
+        // Iterate over entities and add annotations
+        response.data[0].entities.forEach((entity) => {
+          const newAnnotation = {
+            text: entity.entity,
+            label: {
+              name: entity.label,
+              color: entity.color,
+              bgColor: entity.bColor,
+              textColor: entity.textColor,
+            },
+            index: -1,
           };
-        } catch (error) {
-          console.error("Error fetching annotations:", error);
+          addAnnotation(newAnnotation);
+        });
+
+        if (labels.length === 0) {
+          const uniqueLabels = Array.from(
+            new Set(response.data[0].entities.map((entity) => entity.label))
+          );
+          const newLabels = uniqueLabels.map((name) => {
+            const labelEntity = response.data[0].entities.find(
+              (entity) => entity.label === name
+            );
+            return {
+              name,
+              color: labelEntity.color,
+              bgColor: labelEntity.bColor,
+              textColor: labelEntity.textColor,
+            };
+          });
+          setLabels(newLabels);
         }
-      };
-  
-      fetchAnnotationsAndLabels();
-    }, [projectName, setAnnotations, labels, setLabels]);
-    console.log(labels);
+      } catch (error) {
+        console.error("Error fetching annotations:", error);
+      }
+    };
+
+    fetchAnnotationsAndLabels();
+  }, [projectName, setAnnotations, labels, setLabels]);
+  console.log(labels);
 
   const handleLabelChange = (event) => {
     const labelName = event.target.value;
@@ -142,7 +145,7 @@ const FileContentDisplay = () => {
   };
 
   const renderAnnotations = () => {
-      // Use reduce to filter out duplicate annotations by their text property
+    // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
       // Check if the annotation text already exists in the unique array
       if (!unique.some((annotation) => annotation.text === current.text)) {
@@ -239,26 +242,29 @@ const FileContentDisplay = () => {
     };
     console.log(dataToSend);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/annotate/${projectName}/ner`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      });
-      console.log(projectName)
-      console.log(dataToSend)
+      const response = await fetch(
+        `http://127.0.0.1:8000/annotate/${projectName}/ner`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
+      console.log(projectName);
+      console.log(dataToSend);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const result = await response.json();
       console.log("Success:", result);
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
+
   return (
     <div className="flex flex-col h-screen">
       <Navbar /> {/* Add Navbar */}
@@ -268,14 +274,11 @@ const FileContentDisplay = () => {
           <div className="max-w-[74vw] mx-auto">
             <h2 className="text-3xl font-bold mb-6">File Content Display</h2>
 
-           
-
             <div className="flex flex-col gap-4">
               <div
                 className="bg-white p-4 rounded-lg shadow relative"
                 onMouseUp={handleTextSelect}
               >
-                
                 <div className="text-l font-semibold max-h-[calc(100vh-400px)] overflow-y-auto overflow-x-auto custom-scrollbar">
                   {renderContent()}
                 </div>

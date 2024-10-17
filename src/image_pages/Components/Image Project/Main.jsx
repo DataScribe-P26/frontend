@@ -218,17 +218,17 @@ function Main() {
   }, [handleNext, handlePrev]);
 
   return (
-    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
+    <div className="select-none w-full h-screen flex justify-center items-center bg-slate-50 overflow-hidden">
       {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
       {imageSrc.length > 0 ? (
         <div className="flex w-full h-screen">
-          <div className="w-[20vw] h-screen rounded-r-xl bg-gradient-to-t from-purple-900 to-neutral-900 border-r-4 border-purple-900 py-6 pt-10 px-[20px]">
+          <div className="w-[20vw] h-screen bg-white border-r border-slate-200 py-6 pt-10 px-[20px] shadow-sm">
             <AnnotationsLabels currentImage={currentImage} classes={classes} />
           </div>
-          <div className="w-[80vw] h-screen flex-col">
-            <div className="w-full h-[100vh] ">
+          <div className="w-[80vw] h-screen flex-col bg-slate-50">
+            <div className="w-full h-[100vh]">
               <div className="w-full h-[10vh] flex items-end justify-end gap-3 px-10"></div>
-              <div className=" h-[70vh] gap-4 flex justify-center items-center mt-5">
+              <div className="h-[70vh] gap-4 flex justify-center items-center mt-5">
                 <Stages
                   imageSrc={imageSrc.find((img) => img.src === current)}
                   action={action}
@@ -246,27 +246,39 @@ function Main() {
                 </div>
               </div>
               <div className="w-full h-[15vh] flex justify-center">
-                <div className="h-[4rem] flex items-center">
+                <div className="h-[4rem] flex items-center bg-white rounded-lg shadow-sm">
                   <button
-                    className="h-[3rem] py-3 bg-slate-400 px-4 flex items-center rounded-l-xl"
+                    className={`h-[3rem] py-3 px-6 flex items-center rounded-l-lg transition-all duration-200 
+                      ${
+                        currentIndex === 0
+                          ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+                          : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+                      }`}
                     onClick={handlePrev}
                     disabled={currentIndex === 0}
                   >
                     <FaArrowLeft />
                   </button>
-                  <div className="h-[3rem] py-1 flex items-center bg-slate-300 pr-5 pl-2">
+                  <div className="h-[3rem] py-1 flex items-center bg-white px-4 border-x border-slate-100">
                     <input
                       type="number"
                       value={currentIndex + 1}
                       onChange={handleInputChange}
                       min={1}
                       max={imageSrc.length}
-                      className="text-end bg-slate-300 flex justify-end no-spinner w-5 min-w-[20px] max-w-[30px]"
+                      className="text-end bg-white flex justify-end no-spinner w-6 text-slate-600"
                     />
-                    /{imageSrc.length}
+                    <span className="text-slate-600 ml-1">
+                      /{imageSrc.length}
+                    </span>
                   </div>
                   <button
-                    className="h-[3rem] py-1 bg-slate-400 px-4 flex items-center rounded-r-xl"
+                    className={`h-[3rem] py-1 px-6 flex items-center rounded-r-lg transition-all duration-200
+                      ${
+                        currentIndex === imageSrc.length - 1
+                          ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+                          : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+                      }`}
                     onClick={handleNext}
                     disabled={currentIndex === imageSrc.length - 1}
                   >

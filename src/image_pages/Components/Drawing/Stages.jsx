@@ -505,59 +505,31 @@ function Stages({ images, action, current, cl, setcl }) {
         >
           {({ zoomIn, zoomOut, resetTransform }) => (
             <>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  marginBottom: 10,
-                  marginRight: 30,
-                }}
-              >
+              <div className="flex gap-3 mb-4">
                 {zoomEnabled && (
-                  <>
-                    <button
-                      onClick={() => zoomIn()}
-                      style={{
-                        marginBottom: 10,
-                        padding: "5px 11px",
-                        fontSize: "24px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        backgroundColor: "#fff",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FiZoomIn />
-                    </button>
-                    <button
-                      onClick={() => zoomOut()}
-                      style={{
-                        marginBottom: 10,
-                        padding: "5px 11px",
-                        fontSize: "24px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        backgroundColor: "#fff",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FiZoomOut />
-                    </button>
-                    <button
-                      onClick={() => resetTransform()}
-                      style={{
-                        padding: "5px 11px",
-                        fontSize: "24px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        backgroundColor: "#fff",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <RxReset />
-                    </button>
-                  </>
+                  <div className="flex flex-col gap-3 mr-4">
+                    <div className="w-[3.43rem] bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-sm">
+                      <button
+                        onClick={() => zoomIn()}
+                        className="rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+                      >
+                        <FiZoomIn className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => zoomOut()}
+                        className="rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+                      >
+                        <FiZoomOut className="w-5 h-5" />
+                      </button>
+                      <div className="w-8 border-t border-slate-200 my-1"></div>
+                      <button
+                        onClick={() => resetTransform()}
+                        className="rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+                      >
+                        <RxReset className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
               <div className="overflow-hidden border-2">
@@ -573,7 +545,18 @@ function Stages({ images, action, current, cl, setcl }) {
                     onClick={() => setSelectedId(null)}
                   >
                     <Layer>
-                      <Konvaimage image={current_image} />
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          padding: "1rem",
+                          borderRadius: "0.5rem",
+                          boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+                          border: "1px solid #e2e8f0",
+                        }}
+                      >
+                        <Konvaimage image={current_image} />
+                      </div>
+
                       {currentImage?.annotations?.map((annotation, index) => {
                         if (annotation.type === "rectangle") {
                           return (

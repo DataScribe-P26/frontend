@@ -39,8 +39,8 @@ input[type="number"] {
 }
 
 .image_scrollbar {
-  --sb-track-color: #280f2f;
-  --sb-thumb-color: #ce3dff;
+  --sb-track-color: #ececec;
+  --sb-thumb-color: #6f59ca;
   --sb-size-horizontal: 5px;
   --sb-size-vertical: 4px;
 }
