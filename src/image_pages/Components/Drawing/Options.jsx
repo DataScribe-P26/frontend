@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 function Options({ action, setAction, submit }) {
   return (
     <div>
-      <div className="w-[3.43rem] h-auto bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-sm">
+      <div className="w-[3.43rem] h-auto bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-md">
         <button
           className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${

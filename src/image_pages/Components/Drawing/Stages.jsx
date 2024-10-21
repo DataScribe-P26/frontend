@@ -508,7 +508,7 @@ function Stages({ images, action, current, cl, setcl }) {
               <div className="flex gap-3 mb-4">
                 {zoomEnabled && (
                   <div className="flex flex-col gap-3 mr-4">
-                    <div className="w-[3.43rem] bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-sm">
+                    <div className="w-[3.43rem] bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-md">
                       <button
                         onClick={() => zoomIn()}
                         className="rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
