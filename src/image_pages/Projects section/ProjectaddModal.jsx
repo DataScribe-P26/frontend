@@ -75,7 +75,7 @@ function ProjectaddModal({ names }) {
                   setprojectname(name);
                   setCreatedOn(isoDate);
                   setTimeout(() => {
-                    navigate(`/project/${name}`);
+                    navigate(`/image/${name}`);
                   }, 100);
                   setname("");
                   setdescription("");
