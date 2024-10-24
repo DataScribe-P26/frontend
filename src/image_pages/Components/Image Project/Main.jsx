@@ -28,6 +28,7 @@ function Main() {
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
   const [annotations, setAnnotations] = useState(all_annotations);
+  const [darkMode, setDarkMode] = useState(false); // State for dark mode
 
   const navigate = useNavigate();
 
@@ -217,26 +218,33 @@ function Main() {
     };
   }, [handleNext, handlePrev]);
 
+  // Toggle dark mode function
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+    document.body.classList.toggle("dark", !darkMode);
+  };
+
   return (
     <>
-      <nav className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
+      <nav className={`bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg ${darkMode ? 'bg-gray-900' : ''}`}>
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
-            Datascribe.
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">Datascribe.</h1>
+          <button
+          onClick={toggleDarkMode}
+          className={`w-10 h-8 rounded-full transition-colors duration-300 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
+        >
+          <span className={`block w-6 h-6 rounded-full transition-transform duration-300 ${darkMode ? 'transform translate-x-2 bg-gray-800' : 'bg-white'}`}></span>
+        </button>
         </div>
       </nav>
-      <div className="select-none w-full h-[85vh] flex justify-center items-center bg-slate-150 overflow-hidden">
+      <div className={`select-none w-full h-[85vh] flex justify-center items-center ${darkMode ? 'bg-gray-800' : 'bg-slate-150'} overflow-hidden`}>
         {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
         {imageSrc.length > 0 ? (
           <div className="flex w-full h-full">
-            <div className="w-[20vw] h-screen bg-white border-r border-slate-200 py-6 pt-10 px-[20px] shadow-sm">
-              <AnnotationsLabels
-                currentImage={currentImage}
-                classes={classes}
-              />
+            <div className={`w-[20vw] h-screen bg-white border-r border-slate-200 py-6 pt-10 px-[20px] shadow-sm ${darkMode ? 'bg-gray-700' : ''}`}>
+              <AnnotationsLabels currentImage={currentImage} classes={classes} />
             </div>
-            <div className="w-[80vw] h-full flex-col bg-slate-50">
+            <div className={`w-[80vw] h-full flex-col ${darkMode ? 'bg-gray-800' : 'bg-slate-50'}`}>
               <div className="w-full h-full">
                 <div className="w-full h-[10%] flex items-end justify-end gap-3 px-10"></div>
                 <div className="h-[67.9%] gap-4 flex justify-center items-center mt-5">
@@ -257,14 +265,9 @@ function Main() {
                   </div>
                 </div>
                 <div className="w-full h-[11%] flex justify-center mt-8">
-                  <div className="h-[3rem] flex items-center bg-white rounded-lg shadow-sm">
+                  <div className={`h-[3rem] flex items-center ${darkMode ? 'bg-gray-600' : 'bg-white'} rounded-lg shadow-sm`}>
                     <button
-                      className={`h-[2.25rem] py-2 px-4 flex items-center rounded-l-lg transition-all duration-200 
-          ${
-            currentIndex === 0
-              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
-              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
-          }`}
+                      className={`h-[2.25rem] py-2 px-4 flex items-center rounded-l-lg transition-all duration-200 ${currentIndex === 0 ? "bg-slate-50 text-slate-300 cursor-not-allowed" : darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800'}`}
                       onClick={handlePrev}
                       disabled={currentIndex === 0}
                     >
@@ -279,17 +282,10 @@ function Main() {
                         max={imageSrc.length}
                         className="text-end bg-white flex justify-end no-spinner w-6 text-slate-600"
                       />
-                      <span className="text-slate-600 ml-1">
-                        /{imageSrc.length}
-                      </span>
+                      <span className="text-slate-600 ml-1">/{imageSrc.length}</span>
                     </div>
                     <button
-                      className={`h-[2.25rem] py-1 px-4 flex items-center rounded-r-lg transition-all duration-200
-          ${
-            currentIndex === imageSrc.length - 1
-              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
-              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
-          }`}
+                      className={`h-[2.25rem] py-1 px-4 flex items-center rounded-r-lg transition-all duration-200 ${currentIndex === imageSrc.length - 1 ? "bg-slate-50 text-slate-300 cursor-not-allowed" : darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800'}`}
                       onClick={handleNext}
                       disabled={currentIndex === imageSrc.length - 1}
                     >

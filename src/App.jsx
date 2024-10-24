@@ -8,6 +8,8 @@ import HomePage from "./text_pages/Text/HomePage.jsx";
 import LabelManager from "./text_pages/Text/LabelManager.jsx";
 import CombinedFileContent from "./text_pages/Text/CombinedFileContent.jsx";
 import FileContentDisplay from "./text_pages/Text/FileContentDisplay.jsx";
+import Login from "./login/Login.jsx";"";
+import Register from "./login/Register.jsx";
 
 function App() {
   return (
@@ -37,13 +39,21 @@ function App() {
           path="/text/:projectName/filecontentdisplay"
           element={<FileContentDisplay />}
         />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
 
 
-        <Route 
-          path="/text/:projectName/filecontentdisplay" 
-          element={<FileContentDisplay />} 
-        /> 
+        <Route
+          path="/text/:projectName/filecontentdisplay"
+          element={<FileContentDisplay />}
+        />
       </Routes>
 
       <Toaster />

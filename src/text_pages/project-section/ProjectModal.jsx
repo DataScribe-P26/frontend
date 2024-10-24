@@ -50,7 +50,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-md shadow-lg w-full max-w-md">
+      <div className="bg-gray-800 p-6 rounded-md shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Create New Project</h2>
 
         {/* Project Name */}
@@ -58,7 +58,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
           <label className="block text-sm font-medium mb-1">Project Name</label>
           <input
             type="text"
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2 text-black"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter project name"
@@ -70,7 +70,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2 text-black"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter project description"
@@ -84,7 +84,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
             Annotation Type
           </label>
           <select
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 text-black rounded-md p-2"
             value={annotation_type}
             onChange={(e) => setType(e.target.value)}
           >
@@ -108,7 +108,7 @@ const ProjectModal = ({ onAddProject, onClose }) => {
           >
             Create
           </button>
-          
+
         </div>
       </div>
     </div>

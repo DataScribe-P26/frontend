@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
@@ -15,13 +15,16 @@ const LabelManager = () => {
   const [currentLabel, setCurrentLabel] = useState(null);
   const { projectName } = useParams();
   const [fetchedLabels, setFetchedLabels] = useState(false);
-  
+
+  // State for dark mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   useEffect(() => {
     const fetchLabels = async () => {
-      if (fetchedLabels|| labels.length > 0) return;
+      if (fetchedLabels || labels.length > 0) return;
       try {
         const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
-        
+
         const uniqueLabels = Array.from(new Set(response.data[0].entities.map(entity => entity.label)));
 
         const newLabels = uniqueLabels.map((name) => {
@@ -50,8 +53,7 @@ const LabelManager = () => {
       alert("Label Name must be unique.");
       return;
     }
-    console.log(newLabel)
-    addLabel(newLabel.name);
+    addLabel(newLabel);
   };
 
   const handleEditLabel = (label) => {
@@ -81,13 +83,18 @@ const LabelManager = () => {
     setModalOpen(false);
     setCurrentLabel(null);
   };
-  console.log(labels)
+
+  // Function to toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
+    <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+      <Navbar toggleDarkMode={toggleDarkMode} darkMode={isDarkMode} />
       <div className="flex flex-grow">
         <Sidebar />
-        <div className="flex-grow p-8 bg-gradient-to-r from-gray-50 to-gray-100">
+        <div className={`flex-grow p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-r from-gray-50 to-gray-100'}`}>
           <h1 className="text-3xl font-bold mb-4">Label Manager</h1>
           <button
             onClick={() => {
@@ -102,7 +109,7 @@ const LabelManager = () => {
           {labels.length > 0 ? (
             <table className="min-w-full border text-sm text-left bg-white shadow-md rounded-lg">
               <thead>
-                <tr className="bg-gray-100 border-b">
+                <tr className={`border-b ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                   <th className="p-2">Name</th>
                   <th className="p-2">Color</th>
                   <th className="p-2"></th>
@@ -110,7 +117,7 @@ const LabelManager = () => {
               </thead>
               <tbody>
                 {labels.map((label, index) => (
-                  <tr key={index} className="border-b">
+                  <tr key={index} className={`border-b ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
                     <td className="p-2">{label.name}</td>
                     <td className="p-2">
                       <div className="flex items-center">

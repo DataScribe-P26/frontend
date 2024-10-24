@@ -37,6 +37,7 @@ function Analysis({ set_analysis_page }) {
   } = useStore();
   const [annotations, setAnnotations] = useState(all_annotations);
   const classesAddedRef = useRef(false);
+  const [darkMode, setDarkMode] = useState(false); // State for dark mode
 
   if (project_name === "") {
     setprojectname(projectName);
@@ -133,7 +134,7 @@ function Analysis({ set_analysis_page }) {
       title: {
         display: true,
         text: "Class Count Statistics",
-        color: "#1f2937", // Dark gray text
+        color: darkMode ? "#f9fafb" : "#1f2937", // Change text color based on theme
         font: {
           size: 16,
           weight: "bold",
@@ -143,7 +144,7 @@ function Analysis({ set_analysis_page }) {
     scales: {
       x: {
         ticks: {
-          color: "#4b5563", // Gray text for x-axis
+          color: darkMode ? "#e5e7eb" : "#4b5563", // Change tick color based on theme
           font: {
             size: 14,
           },
@@ -151,7 +152,7 @@ function Analysis({ set_analysis_page }) {
       },
       y: {
         ticks: {
-          color: "#4b5563", // Gray text for y-axis
+          color: darkMode ? "#e5e7eb" : "#4b5563", // Change tick color based on theme
           font: {
             size: 14,
           },
@@ -162,24 +163,29 @@ function Analysis({ set_analysis_page }) {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
+      <nav className={`bg-gradient-to-r ${darkMode ? "from-gray-800 to-gray-900" : "from-indigo-600 to-indigo-800"} text-white shadow-lg`}>
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
           <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
             Datascribe.
           </h1>
+          <button className={`w-10 h-8 rounded-full transition-colors duration-300 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
+            onClick={() => setDarkMode((prev) => !prev)} // Toggle dark mode
+          >
+            <span className={`block w-6 h-6 rounded-full transition-transform duration-300 ${darkMode ? 'transform translate-x-2 bg-gray-800' : 'bg-white'}`}></span>
+          </button>
         </div>
       </nav>
-      <div className="w-full h-screen flex bg-gray-50">
-        <div className="w-[60%] h-screen pt-12 px-12 pb-36 rounded-r-3xl overflow-y-auto image_scrollbar">
-          <div className="text-3xl font-bold text-gray-900">{project_name}</div>
-          <div className="text-gray-600">Created On: {formattedDate}</div>
+      <div className={`w-full h-screen flex ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`w-[60%] h-screen pt-12 px-12 pb-36 rounded-r-3xl overflow-y-auto image_scrollbar ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
+          <div className="text-3xl font-bold">{project_name}</div>
+          <div>{`Created On: ${formattedDate}`}</div>
 
           <div>
-            <div className="text-2xl font-semibold text-gray-800 mt-10 pl-2">
+            <div className="text-2xl font-semibold mt-10 pl-2">
               Class Statistics
             </div>
             {sorted_class.length > 0 && (
-              <div className="w-[70%] bg-white rounded-xl mt-3 p-4 shadow-md ">
+              <div className="w-[70%] bg-white rounded-xl mt-3 p-4 shadow-md">
                 <Bar data={chartData} options={chartOptions} />
               </div>
             )}
@@ -220,7 +226,7 @@ function Analysis({ set_analysis_page }) {
           </div>
 
           <div>
-            <div className="text-2xl font-semibold text-gray-800 mt-10 pl-2">
+            <div className="text-2xl font-semibold mt-10 pl-2">
               Images Statistics
             </div>
             <div className="w-[40%] bg-white rounded-xl mt-3 overflow-y-auto shadow-md">
@@ -253,46 +259,27 @@ function Analysis({ set_analysis_page }) {
         </div>
 
         {/* Right Section: Non-scrollable */}
-        <div className="w-[40%] h-screen flex flex-col justify-center items-center p-6 bg-gray-100">
-          <>
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                {imageSrc.length > 0 ? (
-                  <div className="flex flex-col items-center">
-                    <div className="text-gray-700 text-lg mb-4">
-                      Upload More Images?
-                    </div>
-                    <ImageUpload
-                      projectName={projectName}
-                      loading={loading}
-                      setloading={setloading}
-                    />
-                    <button
+        <div className={`w-[40%] h-screen flex flex-col justify-center items-center p-6 ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+            <ImageUpload
+              set_analysis_page={set_analysis_page}
+              project_name={project_name}
+              navigate={navigate}
+
+            />
+            <button
                       className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
                       onClick={() => set_analysis_page(false)}
                     >
                       Continue
                     </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center min-h-screen">
-                    <div className="text-center">
-                      <div className="mb-8 text-gray-700 text-xl">
-                        No Images Uploaded Yet.
-                      </div>
-                      <ImageUpload
-                        projectName={projectName}
-                        loading={loading}
-                        setloading={setloading}
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </>
+
+</>
+          )}
+
         </div>
       </div>
     </>

@@ -34,11 +34,13 @@ const textStore = create((set) => ({
   setProjects: (newProjects) => set(() => ({ projects: newProjects })),
   showModal: false,
   setShowModal: (isVisible) => set(() => ({ showModal: isVisible })),
+  isDarkMode: false, // Add dark mode state
+  setIsDarkMode: (isDarkMode) => set({ isDarkMode }), // Function to set dark mode
 
 
   isUploaded: false,
   setIsUploaded: (status) => set({ isUploaded: status }),
-  
+
   //current project
   projectname: "",
   project_type: "",

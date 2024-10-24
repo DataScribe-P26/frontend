@@ -65,3 +65,19 @@ input[type="number"] {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
+/* index.css or App.css */
+
+/* Base styles for light mode */
+body {
+    background-color: #f0f4f8; /* Light background */
+    color: #333; /* Light text color */
+  }
+
+  /* Styles for dark mode */
+  html.dark {
+    background-color: #1a202c; /* Dark background */
+    color: #edf2f4; /* Light text color */
+  }
+
+  /* Add any other dark mode specific styles here */
+

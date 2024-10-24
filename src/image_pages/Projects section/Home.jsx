@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from "react";
 import useStore from "../../Zustand/Alldata";
 import ProjectaddModal from "./ProjectaddModal";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { HiPlus, HiFolder, HiAnnotation } from "react-icons/hi";
+import { HiPlus, HiFolder } from "react-icons/hi";
 
 function Home() {
-  const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn } =
-    useStore();
+  const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn } = useStore();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [names, setNames] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   const navigate = useNavigate();
+
+  // Load dark mode preference from localStorage on component mount
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "true") {
+      setDarkMode(true);
+    }
+  }, []);
+
+  // Toggle dark mode and update localStorage
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => {
+      const newMode = !prevMode;
+      localStorage.setItem("darkMode", newMode);
+      return newMode;
+    });
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -34,13 +51,17 @@ function Home() {
   }, [isProjectModalOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+    <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-gray-200" : "bg-gray-50 text-gray-800"} font-sans`}>
       <ProjectaddModal names={names} />
-      <nav className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
+      <nav className={`bg-gradient-to-r ${darkMode ? "from-gray-800 to-gray-900" : "from-indigo-600 to-indigo-800"} text-white shadow-lg`}>
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
-            Datascribe.
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-wide flex items-center">Datascribe.</h1>
+          <button
+            onClick={toggleDarkMode}
+            className={`flex items-center w-10 h-8 rounded-full transition-colors duration-300 ${darkMode ? "bg-gray-700" : "bg-gray-300"}`}
+          >
+            <span className={`block w-6 h-6 rounded-full transition-transform duration-300 ${darkMode ? "transform translate-x-4 bg-gray-800" : "bg-white"}`}></span>
+          </button>
         </div>
       </nav>
 
@@ -64,16 +85,14 @@ function Home() {
         ) : projects.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-xl text-gray-600">No projects available</p>
-            <p className="mt-2 text-gray-500">
-              Click 'Add Project' to create your first project.
-            </p>
+            <p className="mt-2 text-gray-500">Click 'Add Project' to create your first project.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (
               <div
                 key={project._id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer"
+                className={`bg-white ${darkMode ? "text-black" : "text-gray-800"} rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer`}
                 onClick={() => {
                   setprojectname(project.name);
                   setCreatedOn(project.created_on);
@@ -83,9 +102,7 @@ function Home() {
                 <div className="p-6">
                   <div className="flex items-center mb-3">
                     <HiFolder className="text-2xl text-indigo-600 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      {project.name}
-                    </h3>
+                    <h3 className="text-xl font-semibold">{project.name}</h3>
                   </div>
                   <p className="text-gray-600 mb-4">
                     {project.description.length > 100
@@ -93,8 +110,7 @@ function Home() {
                       : project.description}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Created on:{" "}
-                    {new Date(project.created_on).toLocaleDateString()}
+                    Created on: {new Date(project.created_on).toLocaleDateString()}
                   </p>
                 </div>
               </div>
