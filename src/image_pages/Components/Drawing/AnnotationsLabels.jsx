@@ -16,27 +16,37 @@ function AnnotationsLabels({ currentImage, classes }) {
 
   return (
     <>
-      <div className="text-white text-center text-3xl font-semibold">
+      <div className="text-gray-800 text-center text-2xl font-semibold mb-6">
         Annotations
       </div>
-      <div className="px-3 mt-5">
-        <div>
-          {counts.map((item) => (
-            <div
-              key={item.class_label}
-              className="flex justify-between items-center text-white mb-2 bg-gray-700 py-3 rounded-lg px-4"
-            >
-              <div className="w-[30%] font-medium">{item.class_label}</div>
-              <div className="w-[30%] text-center">{item.count}</div>
-              <div className="w-[30%] flex justify-center">
-                <div
-                  className="w-[50px] h-[22px] rounded-full"
-                  style={{ backgroundColor: item.color }}
-                ></div>
+      <div className="px-3">
+        {counts.length > 0 ? (
+          <div className="space-y-2">
+            {counts.map((item) => (
+              <div
+                key={item.class_label}
+                className="flex justify-between items-center bg-white border border-gray-200 py-3 rounded-lg px-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+              >
+                <div className="w-[30%] font-medium text-gray-700">
+                  {item.class_label}
+                </div>
+                <div className="w-[30%] text-center text-gray-600">
+                  {item.count}
+                </div>
+                <div className="w-[30%] flex justify-center">
+                  <div
+                    className="w-[50px] h-[22px] rounded-full shadow-sm"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            No annotations available
+          </div>
+        )}
       </div>
     </>
   );

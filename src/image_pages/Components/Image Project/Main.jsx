@@ -8,8 +8,8 @@ import axios from "axios";
 import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
-
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Navbar from "../../../text_pages/Text/Navbar.jsx";
 
 function Main() {
   const {
@@ -219,69 +219,87 @@ function Main() {
   }, [handleNext, handlePrev]);
 
   return (
-    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
-      {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
-      {imageSrc.length > 0 ? (
-        <div className="flex w-full h-screen">
-          <div className="w-[20vw] h-screen rounded-r-xl bg-gradient-to-t from-purple-900 to-neutral-900 border-r-4 border-purple-900 py-6 pt-10 px-[20px]">
-            <AnnotationsLabels currentImage={currentImage} classes={classes} />
-          </div>
-          <div className="w-[80vw] h-screen flex-col">
-            <div className="w-full h-[100vh] ">
-              <div className="w-full h-[10vh] flex items-end justify-end gap-3 px-10"></div>
-              <div className=" h-[70vh] gap-4 flex justify-center items-center mt-5">
-                <Stages
-                  imageSrc={imageSrc.find((img) => img.src === current)}
-                  action={action}
-                  images={imageSrc}
-                  current={current}
-                  cl={cl}
-                  setcl={setcl}
-                />
-                <div>
-                  <Options
-                    setAction={setAction}
+    <>
+     <Navbar />
+      <div className="select-none w-full h-[85vh] flex justify-center items-center bg-slate-150 overflow-hidden">
+        {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
+        {imageSrc.length > 0 ? (
+          <div className="flex w-full h-full">
+            <div className="w-[20vw] h-screen bg-white border-r border-slate-200 py-6 pt-10 px-[20px] shadow-sm">
+              <AnnotationsLabels
+                currentImage={currentImage}
+                classes={classes}
+              />
+            </div>
+            <div className="w-[80vw] h-full flex-col bg-slate-50">
+              <div className="w-full h-full">
+                <div className="w-full h-[10%] flex items-end justify-end gap-3 px-10"></div>
+                <div className="h-[67.9%] gap-4 flex justify-center items-center mt-5">
+                  <Stages
+                    imageSrc={imageSrc.find((img) => img.src === current)}
                     action={action}
-                    submit={submit}
+                    images={imageSrc}
+                    current={current}
+                    cl={cl}
+                    setcl={setcl}
                   />
-                </div>
-              </div>
-              <div className="w-full h-[15vh] flex justify-center">
-                <div className="h-[4rem] flex items-center">
-                  <button
-                    className="h-[3rem] py-3 bg-slate-400 px-4 flex items-center rounded-l-xl"
-                    onClick={handlePrev}
-                    disabled={currentIndex === 0}
-                  >
-                    <FaArrowLeft />
-                  </button>
-                  <div className="h-[3rem] py-1 flex items-center bg-slate-300 pr-5 pl-2">
-                    <input
-                      type="number"
-                      value={currentIndex + 1}
-                      onChange={handleInputChange}
-                      min={1}
-                      max={imageSrc.length}
-                      className="text-end bg-slate-300 flex justify-end no-spinner w-5 min-w-[20px] max-w-[30px]"
+                  <div>
+                    <Options
+                      setAction={setAction}
+                      action={action}
+                      submit={submit}
                     />
-                    /{imageSrc.length}
                   </div>
-                  <button
-                    className="h-[3rem] py-1 bg-slate-400 px-4 flex items-center rounded-r-xl"
-                    onClick={handleNext}
-                    disabled={currentIndex === imageSrc.length - 1}
-                  >
-                    <FaArrowRight />
-                  </button>
+                </div>
+                <div className="w-full h-[11%] flex justify-center mt-8">
+                  <div className="h-[3rem] flex items-center bg-white rounded-lg shadow-sm">
+                    <button
+                      className={`h-[2.25rem] py-2 px-4 flex items-center rounded-l-lg transition-all duration-200 
+          ${
+            currentIndex === 0
+              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+          }`}
+                      onClick={handlePrev}
+                      disabled={currentIndex === 0}
+                    >
+                      <FaArrowLeft />
+                    </button>
+                    <div className="h-[2.25rem] py-1 flex items-center bg-white px-3 border-x border-slate-100">
+                      <input
+                        type="number"
+                        value={currentIndex + 1}
+                        onChange={handleInputChange}
+                        min={1}
+                        max={imageSrc.length}
+                        className="text-end bg-white flex justify-end no-spinner w-6 text-slate-600"
+                      />
+                      <span className="text-slate-600 ml-1">
+                        /{imageSrc.length}
+                      </span>
+                    </div>
+                    <button
+                      className={`h-[2.25rem] py-1 px-4 flex items-center rounded-r-lg transition-all duration-200
+          ${
+            currentIndex === imageSrc.length - 1
+              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
+          }`}
+                      onClick={handleNext}
+                      disabled={currentIndex === imageSrc.length - 1}
+                    >
+                      <FaArrowRight />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <Imageupload setImageSrc={setImageSrc} />
-      )}
-    </div>
+        ) : (
+          <Imageupload setImageSrc={setImageSrc} />
+        )}
+      </div>
+    </>
   );
 }
 

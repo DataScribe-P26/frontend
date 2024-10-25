@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import useStore from "../../Zustand/Alldata";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
 import Main from "./Image Project/Main";
+import Navbar from "../../text_pages/Text/Navbar.jsx";
 
 function Imagehome() {
   const {
@@ -36,6 +37,14 @@ function Imagehome() {
       })
       .catch((error) => {
         console.error("Error fetching projects:", error);
+        toast.error("Error loading project details", {
+          style: {
+            background: "#fff",
+            color: "#1f2937",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+          },
+        });
       });
   }
 
@@ -68,7 +77,14 @@ function Imagehome() {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching images:", error);
-        toast.error("Project Not Found");
+        toast.error("Project Not Found", {
+          style: {
+            background: "#fff",
+            color: "#1f2937",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+          },
+        });
         setLoading(false);
       }
     };
@@ -79,14 +95,29 @@ function Imagehome() {
   }, [projectName, clear_classes, setImageSrc]);
 
   return (
-    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-purple-900 to-slate-900 overflow-hidden">
-      {loading ? (
-        <Spinner />
-      ) : analysis_page ? (
-        <Analysis set_analysis_page={set_analysis_page} />
-      ) : (
-        <Main />
-      )}
+    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-gray-100 to-white overflow-hidden">
+      <div className="w-full h-full">
+        {loading ? (
+          <div className="h-screen flex flex-col">
+            <Navbar />
+
+            <div className="h-[100vh] flex items-center justify-center pb-80">
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading project</p>
+              </div>{" "}
+            </div>
+          </div>
+        ) : analysis_page ? (
+          <div className="w-full h-full bg-gray-50">
+            <Analysis set_analysis_page={set_analysis_page} />
+          </div>
+        ) : (
+          <div className="w-full h-full bg-gray-50">
+            <Main />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

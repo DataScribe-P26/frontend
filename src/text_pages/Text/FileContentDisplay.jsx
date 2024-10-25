@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer"; 
 import textStore from "../zustand/Textdata";
 import axios from "axios";
+import CreateLabel from "./CreateLabel.jsx";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -18,11 +19,53 @@ const FileContentDisplay = () => {
     setAnnotations,
     addAnnotation,
     deleteAnnotation,
+    addLabel,
   } = textStore();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedText, setSelectedText] = useState("");
   const { projectName } = useParams();
+
+   
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentLabel, setCurrentLabel] = useState(null);
+ 
+  const [fetchedLabels, setFetchedLabels] = useState(false);
+
+
+  const handleCreateLabel = (newLabel) => {
+    const isDuplicate = labels.some((label) => label.name === newLabel.name);
+
+    if (isDuplicate) {
+      toast.error("Label Name must be unique.");
+      return;
+    }
+    console.log(newLabel)
+    addLabel(newLabel.name);
+  };
+
+  const handleUpdateLabel = (updatedLabel) => {
+    const isDuplicate = labels.some(
+      (label) =>
+        label.name === updatedLabel.name && label.name !== currentLabel.name
+    );
+
+    if (isDuplicate) {
+     toast.error ("Label Name must be unique.");
+      return;
+    }
+
+    const updatedLabels = labels.map((label) =>
+      label.name === currentLabel.name
+        ? { ...label, name: updatedLabel.name }
+        : label
+    );
+    setLabels(updatedLabels);
+    setEditMode(false);
+    setModalOpen(false);
+    setCurrentLabel(null);
+  };
 
   const handleTextSelect = () => {
     const selection = window.getSelection().toString().trim();
@@ -295,6 +338,16 @@ const FileContentDisplay = () => {
                         </option>
                       ))}
                     </select>
+                    <button
+                    className="mt-2 bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={() => {
+                      setEditMode(false); // Switch to create mode
+                      setCurrentLabel(null); // Clear current label for creation
+                      setModalOpen(true); // Open the modal
+                    }}
+                  >
+                    + Create New Label
+                  </button>
                   </div>
                 )}
               </div>
@@ -310,13 +363,21 @@ const FileContentDisplay = () => {
               >
                 Submit Annotations
               </button>
+              <CreateLabel
+            isOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            onCreateLabel={handleCreateLabel}
+            onUpdateLabel={handleUpdateLabel}
+            currentLabel={currentLabel}
+            editMode={editMode}
+          />
 
               </div>
-              <div className="mb-8 flex justify-center"> {/* This div adds margin above the Footer and centers it */}
-  <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
-    <Footer />
-  </div>
-</div>
+                          <div className="mb-8 flex justify-center"> {/* This div adds margin above the Footer and centers it */}
+              <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
+                <Footer />
+              </div>
+            </div>
             </div>
           </div>
         </div>

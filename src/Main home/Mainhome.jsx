@@ -1,22 +1,15 @@
 import React from "react";
 import { HiAnnotation, HiPhotograph, HiDocumentText } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import Navbar from "../text_pages/Text/Navbar.jsx";
+
 
 
 
 const Mainhome = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
-      <div className=" flex items-center justify-between">
-        <Link className="flex items-center">
-          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">
-            Datascribe.ai{" "}
-          </h1>
-        </Link>
-      </div>
-    </nav>
+    <Navbar />
 
       <main className="container mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-center mb-8">

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import toast from "react-hot-toast";
 import CreateLabel from "./CreateLabel";
 import textStore from "../zustand/Textdata";
 import axios from "axios";
@@ -48,7 +49,7 @@ const LabelManager = () => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
 
     if (isDuplicate) {
-      alert("Label Name must be unique.");
+      toast.error("Label Name must be unique.");
       return;
     }
     console.log(newLabel)
@@ -68,7 +69,7 @@ const LabelManager = () => {
     );
 
     if (isDuplicate) {
-      alert("Label Name must be unique.");
+     toast.error ("Label Name must be unique.");
       return;
     }
 
@@ -96,11 +97,12 @@ const LabelManager = () => {
               setEditMode(false);
               setModalOpen(true);
             }}
-            className="bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl mb-4"
+            className="bg-purple-700 text-white  mt-14 mb-14 px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl mb-4"
           >
             Create Label
           </button>
           {labels.length > 0 ? (
+            <div>
             <div className="overflow-auto items-center h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <table className="min-w-full border border-gray-300 text-sm text-left bg-white shadow-md rounded-lg">
               <thead>
@@ -142,12 +144,22 @@ const LabelManager = () => {
             </table>
            
           </div>
+          <div className="mt-10">
+            <Footer />
+            </div>
+            </div>
           
           
           
           ) : (
-            <p>No labels created yet.</p>
+            
+            <div className="mb-8">
+              No labels created yet.
+            </div>
+          
+            
           )}
+          
           <CreateLabel
             isOpen={isModalOpen}
             onClose={() => setModalOpen(false)}
@@ -156,12 +168,11 @@ const LabelManager = () => {
             currentLabel={currentLabel}
             editMode={editMode}
           />
-          <div className="mb-8 flex justify-center"> {/* This div adds margin above the Footer and centers it */}
-  <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
-    <Footer />
-  </div>
-</div>
+          <div className="mt-96">
+          <Footer />
 
+          </div>
+        
         </div>
         
         

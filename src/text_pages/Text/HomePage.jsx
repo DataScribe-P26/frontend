@@ -32,14 +32,14 @@ const HomePage = () => {
             <h2 className="text-4xl font-bold mb-6 text-gray-800">
               Welcome to the {projectName} Project
             </h2>
-            <p className="text-gray-700 text-lg mb-4 text-center">
+            <p className="text-gray-700 text-lg mb-8 text-center">
               Use the options in the sidebar to manage datasets and labels for
               your text annotation tasks related to {projectName}.
             </p>
-            <p className="text-gray-500 mb-6 text-center">
+            <p className="text-gray-500 mb-8 text-center">
               Get started by selecting a dataset or creating a label!
             </p>
-            <div className="mt-4 mb-80">
+            <div className="mt-4 mb-96">
               <button
                 className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg"
                 onClick={handleStartAnnotation} // Add onClick handler
@@ -48,7 +48,9 @@ const HomePage = () => {
               </button>
             </div>
             {/* Footer positioned near the bottom but within visible screen */}
+          <div className="mt-70 ">
           <Footer /> 
+          </div>
           </div>
 
           

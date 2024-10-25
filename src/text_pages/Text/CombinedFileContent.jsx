@@ -73,14 +73,17 @@ const CombinedFileContent = () => {
           className="border border-gray-300 p-2 rounded-lg w-full mb-4"
         />
 
-          <div className="flex flex-col items-center mb-80 flex-grow">
+          <div className="flex flex-col items-center mt-8 mb-96 flex-grow">
           <button
             onClick={handleFileUpload}
             className="bg-purple-700 text-white px-6 py-2 rounded-lg mb-60 hover:bg-purple-600 transition-shadow shadow-lg"
           >
             Upload
           </button>
+          <div className="mt-12">
           <Footer />
+          </div>
+          
         </div>
       
       </div>
@@ -106,7 +109,7 @@ const CombinedFileContent = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar isUploaded={isUploaded} /> {/* Pass isUploaded as a prop */}

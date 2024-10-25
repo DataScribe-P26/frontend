@@ -21,7 +21,7 @@ const Navbar = () => {
 
         {/* Right side: Icons including Help */}
         <div className="flex space-x-6 items-center">
-          <FaBell className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+          
           <FaQuestionCircle 
             className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" 
             onClick={openHelpModal} // Open modal on click

@@ -47,7 +47,7 @@ const CreateLabel = ({
         onClick={onClose}
       ></div>
       <div
-        className="bg-purple-50 rounded-lg shadow-lg z-10 p-5"
+        className="bg-gray-200 rounded-lg shadow-lg z-10 p-5"
         style={{ width: "400px", height: "300px" }}
       >
         <button

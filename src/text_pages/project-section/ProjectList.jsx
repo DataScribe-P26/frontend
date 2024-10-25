@@ -5,8 +5,8 @@ import { HiPlus, HiFolder } from "react-icons/hi";
 import textStore from "../zustand/Textdata";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { HiAnnotation } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import Navbar from "../Text/Navbar.jsx";
+
 
 const ProjectList = () => {
   const {
@@ -61,16 +61,7 @@ const ProjectList = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
-      <div className=" flex items-center justify-between">
-        <Link className="flex items-center">
-          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">
-            Datascribe.ai{" "}
-          </h1>
-        </Link>
-      </div>
-    </nav>
+    <Navbar />
 
       <main className="container mx-auto px-12 py-8">
         <div className="flex justify-between items-center mb-8">
