@@ -6,7 +6,7 @@ import { useParams, Link } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
 import Main from "./Image Project/Main";
-import { HiAnnotation } from "react-icons/hi";
+import Navbar from "../../text_pages/Text/Navbar.jsx";
 
 function Imagehome() {
   const {
@@ -99,16 +99,7 @@ function Imagehome() {
       <div className="w-full h-full">
         {loading ? (
           <div className="h-screen flex flex-col">
-            <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
-              <div className=" flex items-center justify-between">
-                <Link className="flex items-center">
-                  <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-                  <h1 className="text-3xl font-extrabold tracking-wide">
-                    Datascribe.ai{" "}
-                  </h1>
-                </Link>
-              </div>
-            </nav>
+            <Navbar />
 
             <div className="h-[100vh] flex items-center justify-center pb-80">
               <div className="text-center py-8">

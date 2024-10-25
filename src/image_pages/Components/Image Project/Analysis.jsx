@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
 import { HiAnnotation, HiUpload } from "react-icons/hi";
 import { Bar } from "react-chartjs-2";
+import Navbar from "../../../text_pages/Text/Navbar.jsx";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -162,16 +163,7 @@ function Analysis({ set_analysis_page }) {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
-        <div className=" flex items-center justify-between">
-          <Link className="flex items-center">
-            <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-            <h1 className="text-3xl font-extrabold tracking-wide">
-              Datascribe.ai{" "}
-            </h1>
-          </Link>
-        </div>
-      </nav>
+     <Navbar />
       <div className="w-full h-screen flex bg-gray-50">
         <div className="w-[60%] h-screen pt-12 px-12 pb-36 rounded-r-3xl overflow-y-auto image_scrollbar">
           <div className="text-3xl font-bold text-gray-900">{project_name}</div>

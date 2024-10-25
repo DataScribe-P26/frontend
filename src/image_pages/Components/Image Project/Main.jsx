@@ -9,7 +9,7 @@ import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { HiAnnotation } from "react-icons/hi";
+import Navbar from "../../../text_pages/Text/Navbar.jsx";
 
 function Main() {
   const {
@@ -220,16 +220,7 @@ function Main() {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-6 py-5 shadow-lg">
-        <div className=" flex items-center justify-between">
-          <Link className="flex items-center">
-            <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-            <h1 className="text-3xl font-extrabold tracking-wide">
-              Datascribe.ai{" "}
-            </h1>
-          </Link>
-        </div>
-      </nav>
+     <Navbar />
       <div className="select-none w-full h-[85vh] flex justify-center items-center bg-slate-150 overflow-hidden">
         {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
         {imageSrc.length > 0 ? (

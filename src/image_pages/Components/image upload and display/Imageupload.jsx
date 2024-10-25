@@ -136,7 +136,7 @@ function ImageUpload({ projectName, loading, setloading }) {
           />
           <label
             htmlFor="file-upload"
-            className="group flex items-center px-6 py-3 rounded-lg bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200 ease-in-out shadow-sm hover:shadow-md"
+            className="group flex items-center px-6 py-3 rounded-lg bg-purple-600 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200 ease-in-out shadow-sm hover:shadow-md"
           >
             <MdCloudUpload className="text-xl mr-2 group-hover:scale-110 transition-transform duration-200" />
             <span className="font-medium">Choose Files</span>
