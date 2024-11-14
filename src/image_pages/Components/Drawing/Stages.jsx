@@ -583,7 +583,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                 height={annotation.height}
                                 width={annotation.width}
                                 stroke={annotation.Color}
-                                fill={annotation.fill}
+                                fillEnabled={false}
                                 zIndex={annotation.zIndex} // Add this property for z-index
                                 hitStrokeWidth={50} // Increase hit region size
                                 draggable={action === "edit"}
@@ -620,7 +620,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
                                     <Text
                                       x={annotation.x + 5 + 3} // 3px padding from the left edge of the Rect
-                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      y={annotation.y - 15} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="X"
                                       fontSize={16}
                                       fill="red"
@@ -647,7 +647,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
                                     <Text
                                       x={annotation.x + 25 + 5 + 3} // 3px padding from the left edge of the Rect
-                                      y={annotation.y - 5 + 20} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      y={annotation.y - 15} // 3px padding from the top edge of the Rect, adjusted to center vertically
                                       text="E"
                                       fontSize={16}
                                       fill="green"
