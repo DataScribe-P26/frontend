@@ -619,11 +619,12 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x + 5 + 3} // 3px padding from the left edge of the Rect
-                                      y={annotation.y - 15} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      x={annotation.x + 5 + 3}
+                                      y={annotation.y - 20}
                                       text="X"
                                       fontSize={16}
                                       fill="red"
+                                      rotation={annotation.rotation}
                                       onClick={() =>
                                         handleDelete(
                                           annotation.class_id,
@@ -633,7 +634,7 @@ function Stages({ images, action, current, cl, setcl }) {
                                     />
 
                                     <Rect
-                                      x={annotation.x + 25 + 5} // Positioned for the next button, considering padding
+                                      x={annotation.x - 5}
                                       y={annotation.y - 5}
                                       width={40}
                                       height={30}
@@ -646,11 +647,12 @@ function Stages({ images, action, current, cl, setcl }) {
                                       }
                                     />
                                     <Text
-                                      x={annotation.x + 25 + 5 + 3} // 3px padding from the left edge of the Rect
-                                      y={annotation.y - 15} // 3px padding from the top edge of the Rect, adjusted to center vertically
+                                      x={annotation.x + 5+3 }
+                                      y={annotation.y +10}
                                       text="E"
                                       fontSize={16}
                                       fill="green"
+                                      rotation={annotation.rotation}
                                       onClick={() =>
                                         handleEdit(
                                           annotation.class_id,

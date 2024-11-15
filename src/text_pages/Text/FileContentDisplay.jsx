@@ -69,10 +69,8 @@ const FileContentDisplay = () => {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
   
-    // Get the text container by ID (ensure this ID matches the correct element)
     const textContainer = document.getElementById('text-container');
     
-    // Ensure the container exists before proceeding
     if (!textContainer) {
       console.error("Text container not found!");
       return;
@@ -81,43 +79,37 @@ const FileContentDisplay = () => {
     if (selectedText) {
       const range = selection.getRangeAt(0);
       const startContainer = range.startContainer;
-  
-      const start = calculateOffsetFromStart(textContainer, startContainer, range.startOffset);
+      const { offset: start, lineNumber } = calculateOffsetAndLineNumber(textContainer, startContainer, range.startOffset);
       const end = start + selectedText.length;
   
       setSelectedText({
         text: selectedText,
         start: start,
         end: end,
+        lineNumber: lineNumber,
       });
   
-      console.log("Start: ", start, " End: ", end);
+      console.log("Start:", start, "End:", end, "Line Number:", lineNumber);
     } else {
       setSelectedText("");
     }
   };
-  
-// Function to calculate the offset of the selected node with respect to the container's text, accounting for line breaks
-const calculateOffsetFromStart = (textContainer, startContainer, startOffset) => {
-  const walker = document.createTreeWalker(textContainer, NodeFilter.SHOW_TEXT, null, false);
+
+const calculateOffsetAndLineNumber = (textContainer, startContainer, startOffset) => {
+  const allText = textContainer.innerText;
+  const selectedTextNode = startContainer.textContent.slice(0, startOffset);
+  const totalOffset = allText.indexOf(selectedTextNode) + startOffset;
+  const lines = allText.split("\n"); 
   let offset = 0;
-  let currentNode;
-  
-  // Walk through the text nodes and accumulate their lengths until the startContainer is found
-  while ((currentNode = walker.nextNode())) {
-    if (currentNode === startContainer) {
-      // Add the current startOffset within this node
-      offset += startOffset;
-      break;
-    }
-    
-    // Count the number of newlines in the current node
-    const lineBreaks = (currentNode.nodeValue.match(/\n/g) || []).length;
-    // Add the current node's length to the offset
-    offset += currentNode.nodeValue.length + lineBreaks; // Include the line breaks as part of the offset
+  let lineNumber = 0;
+
+  for (let line of lines) {
+    if (offset + line.length >= totalOffset) break;
+    offset += line.length + 1; 
+    lineNumber++;
   }
-  
-  return offset;  // Return the total offset
+
+  return { offset: totalOffset, lineNumber: lineNumber + 1 }; 
 };
 
 useEffect(() => {
@@ -125,9 +117,7 @@ useEffect(() => {
     try {
       const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
       
-      // If there is content from the response
       if (response.data && response.data.length > 0) {
-        // Set content if it's different
         if (!content || content !== response.data[0].text) {
           setContent(response.data[0].text);
         }
