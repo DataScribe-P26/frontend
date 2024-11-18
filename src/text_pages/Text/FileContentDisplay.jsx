@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer"; 
 import textStore from "../zustand/Textdata";
 import CreateLabel from "./CreateLabel.jsx";
+import { useTheme } from "./ThemeContext.jsx";
 import axios from "axios";
 
 const FileContentDisplay = () => {
@@ -21,7 +22,7 @@ const FileContentDisplay = () => {
     deleteAnnotation,
     addLabel,
   } = textStore();
-
+  const isDarkMode = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedText, setSelectedText] = useState("");
   const { projectName } = useParams();
@@ -271,7 +272,7 @@ useEffect(() => {
     );
 
     return (
-      <div className="mt-4 p-4 bg-white rounded-lg shadow ">
+      <div className={`mt-4 p-4 bg-white rounded-lg shadow ${isDarkMode ? "bg-black": "bg-gray-700"}`}>
         <h3 className="text-xl font-semibold mb-2">Annotations</h3>
         {filteredAnnotations.length === 0 ? (
           <p className="text-gray-500">No annotations yet</p>

@@ -10,6 +10,7 @@ import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../../text_pages/Text/Navbar.jsx";
+import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 
 function Main() {
   const {
@@ -26,6 +27,7 @@ function Main() {
     setCurrentIndex,
     project_name,
   } = useStore();
+  const { isDarkMode } = useTheme();
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
   const [annotations, setAnnotations] = useState(all_annotations);
@@ -220,18 +222,25 @@ function Main() {
 
   return (
     <>
-     <Navbar />
-      <div className="select-none w-full h-[85vh] flex justify-center items-center bg-slate-150 overflow-hidden">
+      <Navbar />
+      <div
+        className={`select-none w-full h-[85vh] flex justify-center items-center overflow-hidden ${
+          isDarkMode ? "bg-black" : "bg-white"
+        }`}
+      >
         {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
         {imageSrc.length > 0 ? (
           <div className="flex w-full h-full">
-            <div className="w-[20vw] h-screen bg-white border-r border-slate-200 py-6 pt-10 px-[20px] shadow-sm">
-              <AnnotationsLabels
-                currentImage={currentImage}
-                classes={classes}
-              />
+            <div
+              className={`w-[20vw] h-screen py-6 pt-10 px-[20px] shadow-sm ${
+                isDarkMode ? "bg-slate-800" : "bg-white"
+              }`}
+            >
+              <AnnotationsLabels currentImage={currentImage} classes={classes} />
             </div>
-            <div className="w-[80vw] h-full flex-col bg-slate-50">
+            <div
+              className={`w-[80vw] h-full flex-col ${isDarkMode ? "bg-slate-900" : "bg-slate-50"}`}
+            >
               <div className="w-full h-full">
                 <div className="w-full h-[10%] flex items-end justify-end gap-3 px-10"></div>
                 <div className="h-[67.9%] gap-4 flex justify-center items-center mt-5">
@@ -244,51 +253,31 @@ function Main() {
                     setcl={setcl}
                   />
                   <div>
-                    <Options
-                      setAction={setAction}
-                      action={action}
-                      submit={submit}
-                    />
+                    <Options setAction={setAction} action={action} />
                   </div>
                 </div>
-                <div className="w-full h-[11%] flex justify-center mt-8">
-                  <div className="h-[3rem] flex items-center bg-white rounded-lg shadow-sm">
+                <div className="flex justify-center items-center p-8">
+                  <div className="flex gap-3">
                     <button
-                      className={`h-[2.25rem] py-2 px-4 flex items-center rounded-l-lg transition-all duration-200 
-          ${
-            currentIndex === 0
-              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
-              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
-          }`}
+                      className={`px-3 py-5 rounded-lg ${
+                        isDarkMode ? "bg-gray-800" : "bg-gray-300"
+                      }`}
                       onClick={handlePrev}
-                      disabled={currentIndex === 0}
                     >
                       <FaArrowLeft />
                     </button>
-                    <div className="h-[2.25rem] py-1 flex items-center bg-white px-3 border-x border-slate-100">
-                      <input
-                        type="number"
-                        value={currentIndex + 1}
-                        onChange={handleInputChange}
-                        min={1}
-                        max={imageSrc.length}
-                        className="text-end bg-white flex justify-end no-spinner w-6 text-slate-600"
-                      />
-                      <span className="text-slate-600 ml-1">
-                        /{imageSrc.length}
-                      </span>
-                    </div>
+                    <input
+                      className={`w-14 px-2 py-1 rounded text-center ${isDarkMode ? "text-black": "text-black"}`}
+                      value={currentIndex + 1}
+                      onChange={handleInputChange}
+                    />
                     <button
-                      className={`h-[2.25rem] py-1 px-4 flex items-center rounded-r-lg transition-all duration-200
-          ${
-            currentIndex === imageSrc.length - 1
-              ? "bg-slate-50 text-slate-300 cursor-not-allowed"
-              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
-          }`}
+                      className={`px-4 py-2 rounded-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-300 text-black"
+                      }`}
                       onClick={handleNext}
-                      disabled={currentIndex === imageSrc.length - 1}
                     >
-                      <FaArrowRight />
+                      <FaArrowRight  />
                     </button>
                   </div>
                 </div>
@@ -296,7 +285,7 @@ function Main() {
             </div>
           </div>
         ) : (
-          <Imageupload setImageSrc={setImageSrc} />
+          <div>Loading...</div>
         )}
       </div>
     </>

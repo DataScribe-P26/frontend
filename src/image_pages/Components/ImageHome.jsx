@@ -7,6 +7,7 @@ import Analysis from "./Image Project/Analysis";
 import Spinner from "./Image Project/loading_screen";
 import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
+import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 
 function Imagehome() {
   const {
@@ -22,6 +23,23 @@ function Imagehome() {
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
   const [analysis_page, set_analysis_page] = useState(true);
+
+  // Access dark mode state
+  const { isDarkMode } = useTheme();
+
+  useEffect(() => {
+    // Apply the dark mode class to the body tag
+    if (isDarkMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+
+    return () => {
+      // Clean up on component unmount
+      document.body.classList.remove("dark");
+    };
+  }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
     axios
@@ -95,12 +113,13 @@ function Imagehome() {
   }, [projectName, clear_classes, setImageSrc]);
 
   return (
-    <div className="select-none w-full h-screen flex justify-center items-center bg-gradient-to-t from-gray-100 to-white overflow-hidden">
+    <div
+      className={`select-none w-full h-screen flex justify-center items-center ${isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gradient-to-t from-gray-100 to-white text-gray-800"} overflow-hidden`}
+    >
       <div className="w-full h-full">
         {loading ? (
           <div className="h-screen flex flex-col">
             <Navbar />
-
             <div className="h-[100vh] flex items-center justify-center pb-80">
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
@@ -109,11 +128,11 @@ function Imagehome() {
             </div>
           </div>
         ) : analysis_page ? (
-          <div className="w-full h-full bg-gray-50">
+          <div className={`w-full h-full ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
             <Analysis set_analysis_page={set_analysis_page} />
           </div>
         ) : (
-          <div className="w-full h-full bg-gray-50">
+          <div className={`w-full h-full ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
             <Main />
           </div>
         )}

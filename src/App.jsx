@@ -3,6 +3,8 @@ import { Toaster } from "react-hot-toast";
 import Home from "./image_pages/Projects section/Home.jsx";
 import Imagehome from "./image_pages/Components/ImageHome.jsx";
 import Mainhome from "./Main home/Mainhome.jsx";
+import Login from "./login/Login.jsx"
+import Register from "./login/Register.jsx";
 import ProjectList from "./text_pages/project-section/ProjectList.jsx";
 import HomePage from "./text_pages/Text/HomePage.jsx";
 import LabelManager from "./text_pages/Text/LabelManager.jsx";
@@ -13,9 +15,11 @@ function App() {
   return (
     <div className="">
       <Routes>
-        <Route path="/" element={<Mainhome />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Mainhome />} />
         <Route path="/image" element={<Home />} />
         <Route path="/image/:projectName" element={<Imagehome />} />
+        <Route path="/register" element={<Register />} />
 
         {/* text */}
 

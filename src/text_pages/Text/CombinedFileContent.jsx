@@ -4,11 +4,13 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata";
 import Footer from "./Footer"; // Importing footer component
+import { useTheme } from "../../text_pages/Text/ThemeContext"; // Import useTheme hook
 
 const CombinedFileContent = () => {
   const { fileType, setFileType, file, setFile, setContent, isUploaded, setIsUploaded } = textStore();
   const { projectName } = useParams();
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -49,53 +51,60 @@ const CombinedFileContent = () => {
   };
 
   const renderUploadPage = () => (
-    <div className="flex-grow p-8 bg-gradient-to-r from-gray-50 to-gray-100 flex flex-col justify-between">
+    <div className={`flex-grow p-8 ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gradient-to-r from-gray-50 to-gray-100'} flex flex-col justify-between`}>
       <div>
-        <h2 className="text-3xl font-bold mb-6">Upload File</h2>
-        <p className="text-gray-700 mb-4">Please select the type of file you want to upload.</p>
+        <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Upload File</h2>
+        <p className={`mb-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Please select the type of file you want to upload.</p>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Select File Type:</label>
-          <select
-            value={fileType}
-            onChange={(e) => setFileType(e.target.value)}
-            className="border border-gray-300 p-2 rounded-lg w-full"
-          >
-            <option value="text">Text File (.txt)</option>
-            <option value="json">JSON File (.json)</option>
-          </select>
-        </div>
+  <label className={`block mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+    Select File Type:
+  </label>
+  <select
+    value={fileType}
+    onChange={(e) => setFileType(e.target.value)}
+    className={`${
+      isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'
+    } p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-purple-500`}
+  >
+    <option value="text" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
+      Text File (.txt)
+    </option>
+    <option value="json" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
+      JSON File (.json)
+    </option>
+  </select>
+</div>
+
 
         <input
           type="file"
           accept={fileType === "text" ? ".txt" : ".json"}
           onChange={handleFileChange}
-          className="border border-gray-300 p-2 rounded-lg w-full mb-4"
+          className={`border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'} p-2 rounded-lg w-full mb-4`}
         />
 
-          <div className="flex flex-col items-center mb-80 flex-grow">
+        <div className="flex flex-col items-center mb-80 flex-grow">
           <button
             onClick={handleFileUpload}
-            className="bg-purple-700 text-white px-6 py-2 rounded-lg mb-60 hover:bg-purple-600 transition-shadow shadow-lg"
+            className={`bg-purple-700 text-white px-6 py-2 rounded-lg mb-60 hover:bg-purple-600 transition-shadow shadow-lg ${isDarkMode ? 'hover:bg-purple-500' : ''}`}
           >
             Upload
           </button>
           <Footer />
         </div>
-      
       </div>
-      
     </div>
   );
 
   const renderAlreadyUploadedPage = () => (
-    <div className="flex-grow p-8 bg-gradient-to-r from-gray-100 to-gray-150 flex flex-col justify-between items-center text-center">
+    <div className={`flex-grow p-8 ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gradient-to-r from-gray-100 to-gray-150'} flex flex-col justify-between items-center text-center`}>
       <div>
-        <h2 className="text-3xl font-bold mb-4">File Already Uploaded</h2>
-        <p className="text-gray-700 mb-4">You have already uploaded a file for this project.</p>
+        <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>File Already Uploaded</h2>
+        <p className={`mb-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>You have already uploaded a file for this project.</p>
         <button
           onClick={handleGoToWorkspace}
-          className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg"
+          className={`bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg ${isDarkMode ? 'hover:bg-purple-500' : ''}`}
         >
           Go to Workspace
         </button>
@@ -106,7 +115,7 @@ const CombinedFileContent = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gray-900' : ''}`}>
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar isUploaded={isUploaded} /> {/* Pass isUploaded as a prop */}
