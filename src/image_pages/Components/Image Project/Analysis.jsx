@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUpload from "../image upload and display/Imageupload";
 import useStore from "../../../Zustand/Alldata";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
-import { HiAnnotation, HiUpload } from "react-icons/hi";
 import { Bar } from "react-chartjs-2";
 import Navbar from "../../../text_pages/Text/Navbar.jsx";
+import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,6 +16,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +24,8 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels
 );
 
 function Analysis({ set_analysis_page }) {
@@ -36,12 +39,14 @@ function Analysis({ set_analysis_page }) {
     setprojectname,
     created_on,
   } = useStore();
+  const { isDarkMode } = useTheme();
   const [annotations, setAnnotations] = useState(all_annotations);
   const classesAddedRef = useRef(false);
 
   if (project_name === "") {
     setprojectname(projectName);
   }
+
   const date = new Date(created_on);
   const monthNames = [
     "January",
@@ -57,7 +62,6 @@ function Analysis({ set_analysis_page }) {
     "November",
     "December",
   ];
-
   const formattedDate = `${date.getDate().toString().padStart(2, "0")} ${
     monthNames[date.getMonth()]
   } ${date.getFullYear()}`;
@@ -69,8 +73,6 @@ function Analysis({ set_analysis_page }) {
   const classes_used = [];
   const totalImages = annotations?.length || 0;
   let imagesAnnotated = 0;
-
-  const navigate = useNavigate();
 
   annotations?.forEach((annotation) => {
     const { annotations: annotationList } = annotation;
@@ -112,7 +114,21 @@ function Analysis({ set_analysis_page }) {
     }
   }, [classes_used, add_classes, classes]);
 
-  const sorted_class = classes_used.sort((a, b) => b.count - a.count);
+  // Calculate the average count of annotations
+  const totalClassCount = classes_used.reduce((acc, curr) => acc + curr.count, 0);
+  const avgClassCount = totalClassCount / classes_used.length;
+
+  // Determine if classes are balanced or imbalanced
+  const classStatus = classes_used.map((item) => {
+    const deviation = Math.abs(item.count - avgClassCount);
+    const percentageDeviation = (deviation / avgClassCount) * 100;
+    const status = percentageDeviation < 20 ? "Balanced" : "Imbalanced";
+    return { ...item, status };
+  });
+
+  // Sort the classes by count
+  const sorted_class = classStatus.sort((a, b) => b.count - a.count);
+
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
   const [loading, setloading] = useState(false);
 
@@ -131,30 +147,31 @@ function Analysis({ set_analysis_page }) {
     responsive: true,
     plugins: {
       legend: { position: "top" },
-      title: {
-        display: true,
-        text: "Class Count Statistics",
-        color: "#1f2937", // Dark gray text
+     
+      datalabels: {
+        anchor: "end",
+        align: "top",
+        color: isDarkMode ? "#E5E7EB" : "#1f2937",
         font: {
-          size: 16,
-          weight: "bold",
+          size: 11,
         },
+        formatter: (value) => value,
       },
     },
     scales: {
       x: {
         ticks: {
-          color: "#4b5563", // Gray text for x-axis
+          color: isDarkMode ? "#D1D5DB" : "#4b5563",
           font: {
-            size: 14,
+            size: 11,
           },
         },
       },
       y: {
         ticks: {
-          color: "#4b5563", // Gray text for y-axis
+          color: isDarkMode ? "#D1D5DB" : "#4b5563",
           font: {
-            size: 14,
+            size: 11,
           },
         },
       },
@@ -163,132 +180,103 @@ function Analysis({ set_analysis_page }) {
 
   return (
     <>
-     <Navbar />
-      <div className="w-full h-screen flex bg-gray-50">
-        <div className="w-[60%] h-screen pt-12 px-12 pb-36 rounded-r-3xl overflow-y-auto image_scrollbar">
-          <div className="text-3xl font-bold text-gray-900">{project_name}</div>
-          <div className="text-gray-600">Created On: {formattedDate}</div>
-
-          <div>
-            <div className="text-2xl font-semibold text-gray-800 mt-10 pl-2">
-              Class Statistics
-            </div>
+      <Navbar />
+      <div
+        className={`w-full h-screen overflow-y-auto px-12 pt-12 pb-36 ${
+          isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
+        }`}
+      >
+        <div className="text-3xl font-bold">{project_name}</div>
+        <div>{formattedDate}</div>
+  
+        <div className="mt-8 flex justify-between gap-12">
+          {/* Class Statistics Section */}
+          <div className="flex-1">
+            <div className="text-2xl font-semibold mb-4">Class Statistics</div>
             {sorted_class.length > 0 && (
-              <div className="w-[70%] bg-white rounded-xl mt-3 p-4 shadow-md ">
+              <div className="w-full">
                 <Bar data={chartData} options={chartOptions} />
               </div>
             )}
-            <div className="w-[70%] min-h-[150px] max-h-[250px] bg-white rounded-xl mt-3 overflow-y-auto image_scrollbar shadow-md">
-              {sorted_class.length > 0 ? (
-                <div className="relative">
-                  <table className="w-full text-gray-800">
-                    <thead className="sticky top-0 bg-gray-100">
-                      <tr>
-                        <th className="py-3 px-4 border-b">Number</th>
-                        <th className="py-3 px-4 border-b">Class Name</th>
-                        <th className="py-3 px-4 border-b">Count</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sorted_class?.map(({ class_name, count }, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-2 px-4 text-center border-b">
-                            {index + 1}
-                          </td>
-                          <td className="py-2 px-4 text-center border-b">
-                            {class_name}
-                          </td>
-                          <td className="py-2 px-4 text-center border-b">
-                            {count}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center text-gray-500 py-4 mt-5">
-                  No annotations available.
-                </div>
-              )}
-            </div>
-          </div>
+            {/* Display Class Balance Status */}
+            <div className="mt-4">
+  {sorted_class.map((item) => (
+    <div
+      key={item.class_name}
+      className={`flex justify-between items-center p-2 mb-1 rounded-lg shadow-sm ${
+        item.status === "Balanced" ? "bg-green-100" : "bg-red-100"
+      }`}
+    >
+      <div className="flex items-center">
+        <div
+          className={`w-2 h-2 rounded-full mr-2 ${
+            item.status === "Balanced" ? "bg-green-500" : "bg-red-500"
+          }`}
+        ></div>
+        <span className="font-medium text-base">{item.class_name}</span>
+      </div>
+      <div
+        className={`font-semibold text-sm ${
+          item.status === "Balanced" ? "text-green-600" : "text-red-600"
+        }`}
+      >
+        {item.status}
+      </div>
+    </div>
+  ))}
+</div>
 
-          <div>
-            <div className="text-2xl font-semibold text-gray-800 mt-10 pl-2">
-              Images Statistics
-            </div>
-            <div className="w-[40%] bg-white rounded-xl mt-3 overflow-y-auto shadow-md">
-              <table className="w-full text-gray-800">
-                <tbody>
-                  <tr className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b">Images Uploaded</td>
-                    <td className="py-2 px-4 text-center border-b">
-                      {totalImages}
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b">Images Annotated</td>
-                    <td className="py-2 px-4 text-center border-b">
-                      {imagesAnnotated}
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b">
-                      Images Without Annotation
-                    </td>
-                    <td className="py-2 px-4 text-center border-b">
-                      {imagesWithoutAnnotation}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
 
-        {/* Right Section: Non-scrollable */}
-        <div className="w-[40%] h-screen flex flex-col justify-center items-center p-6 bg-gray-100">
-          <>
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                {imageSrc.length > 0 ? (
-                  <div className="flex flex-col items-center">
-                    <div className="text-gray-700 text-lg mb-4">
-                      Upload More Images?
-                    </div>
-                    <ImageUpload
-                      projectName={projectName}
-                      loading={loading}
-                      setloading={setloading}
-                    />
-                    <button
-                      className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
-                      onClick={() => set_analysis_page(false)}
-                    >
-                      Continue
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center min-h-screen">
-                    <div className="text-center">
-                      <div className="mb-8 text-gray-700 text-xl">
-                        No Images Uploaded Yet.
-                      </div>
-                      <ImageUpload
-                        projectName={projectName}
-                        loading={loading}
-                        setloading={setloading}
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </>
+          </div>
+  
+          {/* Image Statistics Section */}
+          <div className="flex-1">
+            <div className="text-2xl font-semibold mb-10">Image Statistics</div>
+            <div
+              className={`bg-${isDarkMode ? "gray-700" : "gray-100"} p-6 rounded-lg shadow-md space-y-4`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-lg font-medium">Images Uploaded</div>
+                <div className="text-xl font-bold text-green-500">{totalImages}</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-lg font-medium">Images Annotated</div>
+                <div className="text-xl font-bold text-blue-500">{imagesAnnotated}</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-lg font-medium">Images Without Annotation</div>
+                <div className="text-xl font-bold text-red-500">
+                  {imagesWithoutAnnotation}
+                </div>
+              </div>
+            </div>
+            {/* Remaining Content */}
+        <div className="mt-12 flex flex-col items-center">
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              <div className="text-lg mb-4">Upload More Images?</div>
+              <ImageUpload
+                projectName={projectName}
+                loading={loading}
+                setloading={setloading}
+              />
+              <button
+                className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                onClick={() => set_analysis_page(false)}
+              >
+                Continue
+              </button>
+            </>
+          )}
         </div>
+          </div>
+          
+          
+        </div>
+  
+        
       </div>
     </>
   );
