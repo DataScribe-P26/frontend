@@ -10,6 +10,7 @@ import HomePage from "./text_pages/Text/HomePage.jsx";
 import LabelManager from "./text_pages/Text/LabelManager.jsx";
 import CombinedFileContent from "./text_pages/Text/CombinedFileContent.jsx";
 import FileContentDisplay from "./text_pages/Text/FileContentDisplay.jsx";
+import Analysis from "./image_pages/Components/Image Project/Analysis.jsx";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/image" element={<Home />} />
         <Route path="/image/:projectName" element={<Imagehome />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/project/:name" element={<Analysis />} />
 
         {/* text */}
 

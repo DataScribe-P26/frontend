@@ -136,22 +136,7 @@ const ProjectList = () => {
                         ? `${project.description.substring(0, 40)}....`
                         : project.description}
                     </p>
-                    <span
-                      className="text-sm font-medium px-2 py-1 rounded-full bg-opacity-50"
-                      style={{
-                        backgroundColor:
-                          project.type === "ner"
-                            ? isDarkMode
-                              ? "rgba(59, 130, 246, 0.3)"
-                              : "rgba(59, 130, 246, 0.5)"
-                            : isDarkMode
-                            ? "rgba(16, 185, 129, 0.3)"
-                            : "rgba(16, 185, 129, 0.5)",
-                        color: project.type === "ner" ? "#1e40af" : "#065f46",
-                      }}
-                    >
-                      {project.type}
-                    </span>
+                    
                   </div>
                 )
             )}
