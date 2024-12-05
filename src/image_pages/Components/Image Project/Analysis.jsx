@@ -262,17 +262,18 @@ const balancedAverage =
           <div className="flex-1">
           <div className="relative group">
           <div className="relative flex items-center text-2xl font-semibold mb-4 group">
-  Class Statistics
-  <HiOutlineQuestionMarkCircle className="ml-2" />
+            Class Statistics
+            <HiOutlineQuestionMarkCircle className="ml-2" />
 
-  {/* Tooltip Popup */}
-<div className="absolute z-10 hidden group-hover:block px-12 py-3 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-140px] left-1/2 transform -translate-x-1/2 max-w-[1600px] w-auto flex flex-row">
-  <p>Class statistics graph displays the count of each class, with a median line showing balanced classes. Below the median are the underbalanced classes, and above are the overbalanced classes.</p>
-</div>
+            {/* Tooltip Popup */}
+            <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+            <p>• The graph shows each class and its count.</p>
+          <p>• Dotted green line represents a median line which indicates the average class balance.</p>
+          </div>
 
-</div>
+          </div>
 
-</div>
+          </div>
 
 
             {sorted_class.length > 0 && (
@@ -283,11 +284,12 @@ const balancedAverage =
                   Class Insights
                   <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
 
-                  <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-100 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
-  <p>Balanced: Near the median.</p>
-  <p>Underbalanced: Below the median.</p>
-  <p>Overbalanced: Above the median.</p>
-</div>
+                  <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-70px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
+                  <p>•Balanced: Near the median.</p>
+                  <p>•Underbalanced: Below the median.</p>
+                  <p>•Overbalanced: Above the median.</p>
+                  <p>•Imbalanced: Far from median.</p>
+                </div>
 
 
                 </h4>
@@ -313,20 +315,35 @@ const balancedAverage =
   
           {/* Image Statistics Section */}
           <div className="flex-1">
-            <div className="flex items-center text-2xl font-semibold mb-4">Image Statistics<HiOutlineQuestionMarkCircle className="ml-2"/></div>
+          <div className="relative group">
+            <div className="flex items-center text-2xl font-semibold mb-4">
+              Image Statistics
+              <HiOutlineQuestionMarkCircle className="ml-2" />
+            </div>
+
+            {/* Tooltip */}
+            <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+              <p>• Displays the total number of images.</p>
+              <p>• Tracks annotated vs unannotated images.</p>
+            
+            </div>
+          </div>
+
             <div
               className={`bg-${isDarkMode ? "gray-700" : "gray-100"} p-6 rounded-lg shadow-md space-y-4`}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">Images Uploaded<HiOutlineQuestionMarkCircle className="ml-2"/></div>
-                <div className="text-xl font-bold text-green-500">{totalImages}</div>
+                <div className="relative group">
+                  <div className="flex items-center text-lg font-medium">Images Uploaded</div>
+                </div>
+                 <div className="text-xl font-bold text-green-500">{totalImages}</div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">Images Annotated<HiOutlineQuestionMarkCircle className="ml-2"/></div>
+                <div className="flex items-center text-lg font-medium">Images Annotated</div>
                 <div className="text-xl font-bold text-blue-500">{imagesAnnotated}</div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">Images Without Annotation<HiOutlineQuestionMarkCircle className="ml-2"/></div>
+                <div className="flex items-center text-lg font-medium">Images Without Annotation</div>
                 <div className="text-xl font-bold text-red-500">
                   {imagesWithoutAnnotation}
                 </div>
@@ -338,7 +355,7 @@ const balancedAverage =
             <Spinner />
           ) : (
             <>
-              <div className="flex items-center text-lg mb-2">Upload More Images<HiOutlineQuestionMarkCircle className="ml-2"/></div>
+              <div className="flex items-center text-lg mb-2">Upload More Images</div>
               <ImageUpload
                 projectName={projectName}
                 loading={loading}
