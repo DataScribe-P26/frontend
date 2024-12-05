@@ -6,6 +6,7 @@ import Spinner from "./loading_screen";
 import { Bar } from "react-chartjs-2";
 import Navbar from "../../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
+import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 
 import {
   Chart as ChartJS,
@@ -17,8 +18,10 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import annotationPlugin from "chartjs-plugin-annotation";
 
 ChartJS.register(
+  annotationPlugin,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -114,10 +117,9 @@ function Analysis({ set_analysis_page }) {
     }
   }, [classes_used, add_classes, classes]);
 
-  // Calculate the average count of annotations
-  const totalClassCount = classes_used.reduce((acc, curr) => acc + curr.count, 0);
-  const avgClassCount = totalClassCount / classes_used.length;
-
+   // Calculate the average count of annotations
+   const totalClassCount = classes_used.reduce((acc, curr) => acc + curr.count, 0);
+   const avgClassCount = totalClassCount / classes_used.length;
   // Determine if classes are balanced or imbalanced
   const classStatus = classes_used.map((item) => {
     const deviation = Math.abs(item.count - avgClassCount);
@@ -126,28 +128,39 @@ function Analysis({ set_analysis_page }) {
     return { ...item, status };
   });
 
+  // Calculate the average count of balanced classes
+const balancedClasses = classStatus.filter((item) => item.status === "Balanced");
+const balancedAverage =
+  balancedClasses.reduce((acc, curr) => acc + curr.count, 0) / balancedClasses.length;
+
   // Sort the classes by count
   const sorted_class = classStatus.sort((a, b) => b.count - a.count);
 
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
   const [loading, setloading] = useState(false);
 
-  const chartData = {
-    labels: sorted_class.map((item) => item.class_name),
-    datasets: [
-      {
-        label: "Count",
-        data: sorted_class.map((item) => item.count),
-        backgroundColor: sorted_class.map((item) => item.Color),
-      },
-    ],
-  };
-
+ 
+  
+  const categorizedClasses = classStatus.map((item) => {
+    if (item.status === "Balanced") {
+      if (item.count === balancedAverage) {
+        return { ...item, balanceType: "Balanced" };
+      } else if (item.count > balancedAverage) {
+        return { ...item, balanceType: "Overbalanced" };
+      } else {
+        return { ...item, balanceType: "Underbalanced" };
+      }
+    }
+    return { ...item, balanceType: "Imbalanced" };
+  });
+  
+  // Updated chart options with annotation
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: { position: "top" },
-     
+      legend: {
+        display: false,
+      },
       datalabels: {
         anchor: "end",
         align: "top",
@@ -157,9 +170,44 @@ function Analysis({ set_analysis_page }) {
         },
         formatter: (value) => value,
       },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => `Count: ${tooltipItem.raw}`,
+        },
+        backgroundColor: isDarkMode ? "#1f2937" : "#fff",
+        titleColor: isDarkMode ? "#E5E7EB" : "#1f2937",
+        bodyColor: isDarkMode ? "#E5E7EB" : "#1f2937",
+        borderColor: isDarkMode ? "#E5E7EB" : "#1f2937",
+        borderWidth: 1,
+      },
+      annotation: {
+        annotations: {
+          averageLine: {
+            type: "line",
+            yMin: balancedAverage,
+            yMax: balancedAverage,
+            borderColor: "green",
+            borderWidth: 2,
+            borderDash: [5, 5],
+            label: {
+              content: `Avg Balanced (${balancedAverage.toFixed(1)})`,
+              enabled: true,
+              position: "end",
+              color: isDarkMode ? "#E5E7EB" : "#1f2937",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              font: {
+                size: 12,
+              },
+            },
+          },
+        },
+      },
     },
     scales: {
       x: {
+        grid: {
+          display: false,
+        },
         ticks: {
           color: isDarkMode ? "#D1D5DB" : "#4b5563",
           font: {
@@ -168,6 +216,10 @@ function Analysis({ set_analysis_page }) {
         },
       },
       y: {
+        grid: {
+          borderDash: [5, 5],
+          color: isDarkMode ? "#374151" : "#e5e7eb",
+        },
         ticks: {
           color: isDarkMode ? "#D1D5DB" : "#4b5563",
           font: {
@@ -176,8 +228,24 @@ function Analysis({ set_analysis_page }) {
         },
       },
     },
+    animation: {
+      duration: 2000,
+      easing: "easeInOutCubic",
+    },
   };
-
+  
+  // Updated chart data
+  const chartData = {
+    labels: categorizedClasses.map((item) => item.class_name),
+    datasets: [
+      {
+        label: "Count",
+        data: categorizedClasses.map((item) => item.count),
+        backgroundColor: categorizedClasses.map((item) => item.Color),
+      },
+    ],
+  };
+  
   return (
     <>
       <Navbar />
@@ -192,78 +260,92 @@ function Analysis({ set_analysis_page }) {
         <div className="mt-8 flex justify-between gap-12">
           {/* Class Statistics Section */}
           <div className="flex-1">
-            <div className="text-2xl font-semibold mb-4">Class Statistics</div>
+          <div className="relative group">
+          <div className="relative flex items-center text-2xl font-semibold mb-4 group">
+  Class Statistics
+  <HiOutlineQuestionMarkCircle className="ml-2" />
+
+  {/* Tooltip Popup */}
+<div className="absolute z-10 hidden group-hover:block px-12 py-3 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-140px] left-1/2 transform -translate-x-1/2 max-w-[1600px] w-auto flex flex-row">
+  <p>Class statistics graph displays the count of each class, with a median line showing balanced classes. Below the median are the underbalanced classes, and above are the overbalanced classes.</p>
+</div>
+
+</div>
+
+</div>
+
+
             {sorted_class.length > 0 && (
               <div className="w-full">
                 <Bar data={chartData} options={chartOptions} />
-              </div>
-            )}
-            {/* Display Class Balance Status */}
-            <div className="mt-4">
-  {sorted_class.map((item) => (
-    <div
-      key={item.class_name}
-      className={`flex justify-between items-center p-2 mb-1 rounded-lg shadow-sm ${
-        item.status === "Balanced" ? "bg-green-100" : "bg-red-100"
-      }`}
-    >
-      <div className="flex items-center">
-        <div
-          className={`w-2 h-2 rounded-full mr-2 ${
-            item.status === "Balanced" ? "bg-green-500" : "bg-red-500"
-          }`}
-        ></div>
-        <span className="font-medium text-base">{item.class_name}</span>
-      </div>
-      <div
-        className={`font-semibold text-sm ${
-          item.status === "Balanced" ? "text-green-600" : "text-red-600"
-        }`}
-      >
-        {item.status}
-      </div>
-    </div>
-  ))}
+                <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
+                <h4 className="flex items-center font-semibold mb-2 group relative">
+                  Class Insights
+                  <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
+
+                  <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-100 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
+  <p>Balanced: Near the median.</p>
+  <p>Underbalanced: Below the median.</p>
+  <p>Overbalanced: Above the median.</p>
 </div>
 
+
+                </h4>
+
+
+
+            {categorizedClasses.map((item) => (
+              <p key={item.class_name} className="text-sm mb-1">
+                <span
+                  className="inline-block w-4 h-4 rounded-full mr-2"
+                  style={{ backgroundColor: item.Color }}
+                ></span>
+                <strong>{item.class_name}:</strong> {item.count} annotations -{" "}
+                {item.balanceType}
+              </p>
+            ))}
+          </div>
+              </div>
+            )}
+            
 
           </div>
   
           {/* Image Statistics Section */}
           <div className="flex-1">
-            <div className="text-2xl font-semibold mb-10">Image Statistics</div>
+            <div className="flex items-center text-2xl font-semibold mb-4">Image Statistics<HiOutlineQuestionMarkCircle className="ml-2"/></div>
             <div
               className={`bg-${isDarkMode ? "gray-700" : "gray-100"} p-6 rounded-lg shadow-md space-y-4`}
             >
               <div className="flex items-center justify-between">
-                <div className="text-lg font-medium">Images Uploaded</div>
+                <div className="flex items-center text-lg font-medium">Images Uploaded<HiOutlineQuestionMarkCircle className="ml-2"/></div>
                 <div className="text-xl font-bold text-green-500">{totalImages}</div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-lg font-medium">Images Annotated</div>
+                <div className="flex items-center text-lg font-medium">Images Annotated<HiOutlineQuestionMarkCircle className="ml-2"/></div>
                 <div className="text-xl font-bold text-blue-500">{imagesAnnotated}</div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-lg font-medium">Images Without Annotation</div>
+                <div className="flex items-center text-lg font-medium">Images Without Annotation<HiOutlineQuestionMarkCircle className="ml-2"/></div>
                 <div className="text-xl font-bold text-red-500">
                   {imagesWithoutAnnotation}
                 </div>
               </div>
             </div>
             {/* Remaining Content */}
-        <div className="mt-12 flex flex-col items-center">
+        <div className="mt-6 flex flex-col items-center">
           {loading ? (
             <Spinner />
           ) : (
             <>
-              <div className="text-lg mb-4">Upload More Images?</div>
+              <div className="flex items-center text-lg mb-2">Upload More Images<HiOutlineQuestionMarkCircle className="ml-2"/></div>
               <ImageUpload
                 projectName={projectName}
                 loading={loading}
                 setloading={setloading}
               />
               <button
-                className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
                 onClick={() => set_analysis_page(false)}
               >
                 Continue
