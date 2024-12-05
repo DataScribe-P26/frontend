@@ -32,7 +32,7 @@ const Navbar = () => {
                 checked={isDarkMode}
                 onChange={toggleTheme}
               />
-              <div className="w-12 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-400 dark:bg-gray-700 transition-colors duration-300">
+              <div className="w-12 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-400 dark:bg-gray-700 transition-colors duration-300 flex items-center">
                 <div
                   className={`${
                     isDarkMode ? "translate-x-6" : "translate-x-1"
