@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 
 const MainhomeNavbar = () => {
   return (
-    <nav className="  text-purple-400 bg-opacity-70 backdrop-filter backdrop-blur-md  px-6 py-5 shadow-lg transition-all duration-300">
+    <nav className="  text-white  px-6 py-5 shadow-lg transition-all duration-300">
       <div className="flex items-center justify-between">
         {/* Left side: Datascribe.ai */}
         <Link to="/home" className="flex items-center">
-          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
+          <HiAnnotation className="mr-3 text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110" />
           <h1 className="text-3xl font-extrabold tracking-wide">Datascribe.ai</h1>
         </Link>
 

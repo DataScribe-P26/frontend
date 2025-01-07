@@ -38,7 +38,7 @@ const Mainhome = () => {
             >
               <div className="bg-opacity-90 p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 text-gray-200">
                 <div className="flex items-center mb-4">
-                  <HiPhotograph className="text-4xl mr-4 text-purple-400" />
+                  <HiPhotograph className="text-4xl mr-4 text-white" />
                   <h3 className="text-2xl font-semibold">Image Annotations</h3>
                 </div>
                 <p className="text-gray-400">
@@ -52,7 +52,7 @@ const Mainhome = () => {
             >
               <div className=" p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 bg-opacity-90 text-gray-200">
                 <div className="flex items-center mb-4">
-                  <HiDocumentText className="text-4xl mr-4 text-purple-400" />
+                  <HiDocumentText className="text-4xl mr-4 text-white" />
                   <h3 className="text-2xl font-semibold">Text Annotations</h3>
                 </div>
                 <p className="text-gray-400">

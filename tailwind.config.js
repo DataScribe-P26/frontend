@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       animation: {
-        'fade-in': 'fadeIn 2s ease-out', // fade-in animation
-        'fade-out': 'fadeOut 2s ease-out', // fade-out animation (to create the effect when it loops)
+        'fade-in': 'fadeIn 1s ease-out', // fade-in animation
+        'fade-out': 'fadeOut 1s ease-out', // fade-out animation (to create the effect when it loops)
       },
       keyframes: {
         fadeIn: {
