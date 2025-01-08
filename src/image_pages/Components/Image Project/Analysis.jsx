@@ -117,9 +117,12 @@ function Analysis({ set_analysis_page }) {
     }
   }, [classes_used, add_classes, classes]);
 
-   // Calculate the average count of annotations
-   const totalClassCount = classes_used.reduce((acc, curr) => acc + curr.count, 0);
-   const avgClassCount = totalClassCount / classes_used.length;
+  // Calculate the average count of annotations
+  const totalClassCount = classes_used.reduce(
+    (acc, curr) => acc + curr.count,
+    0
+  );
+  const avgClassCount = totalClassCount / classes_used.length;
   // Determine if classes are balanced or imbalanced
   const classStatus = classes_used.map((item) => {
     const deviation = Math.abs(item.count - avgClassCount);
@@ -129,9 +132,12 @@ function Analysis({ set_analysis_page }) {
   });
 
   // Calculate the average count of balanced classes
-const balancedClasses = classStatus.filter((item) => item.status === "Balanced");
-const balancedAverage =
-  balancedClasses.reduce((acc, curr) => acc + curr.count, 0) / balancedClasses.length;
+  const balancedClasses = classStatus.filter(
+    (item) => item.status === "Balanced"
+  );
+  const balancedAverage =
+    balancedClasses.reduce((acc, curr) => acc + curr.count, 0) /
+    balancedClasses.length;
 
   // Sort the classes by count
   const sorted_class = classStatus.sort((a, b) => b.count - a.count);
@@ -139,8 +145,6 @@ const balancedAverage =
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
   const [loading, setloading] = useState(false);
 
- 
-  
   const categorizedClasses = classStatus.map((item) => {
     if (item.status === "Balanced") {
       if (item.count === balancedAverage) {
@@ -153,7 +157,7 @@ const balancedAverage =
     }
     return { ...item, balanceType: "Imbalanced" };
   });
-  
+
   // Updated chart options with annotation
   const chartOptions = {
     responsive: true,
@@ -233,7 +237,7 @@ const balancedAverage =
       easing: "easeInOutCubic",
     },
   };
-  
+
   // Updated chart data
   const chartData = {
     labels: categorizedClasses.map((item) => item.class_name),
@@ -245,7 +249,7 @@ const balancedAverage =
       },
     ],
   };
-  
+
   return (
     <>
       <Navbar />
@@ -256,126 +260,127 @@ const balancedAverage =
       >
         <div className="text-3xl font-bold">{project_name}</div>
         <div>{formattedDate}</div>
-  
+
         <div className="mt-8 flex justify-between gap-12">
           {/* Class Statistics Section */}
           <div className="flex-1">
-          <div className="relative group">
-          <div className="relative flex items-center text-2xl font-semibold mb-4 group">
-            Class Statistics
-            <HiOutlineQuestionMarkCircle className="ml-2" />
-
-            {/* Tooltip Popup */}
-            <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
-            <p>• The graph shows each class and its count.</p>
-          <p>• Dotted green line represents a median line which indicates the average class balance.</p>
-          </div>
-
-          </div>
-
-          </div>
-
+            <div className="relative group">
+              <div className="relative flex items-center text-2xl font-semibold mb-4 group">
+                Class Statistics
+                <HiOutlineQuestionMarkCircle className="ml-2" />
+                {/* Tooltip Popup */}
+                <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+                  <p>• The graph shows each class and its count.</p>
+                  <p>
+                    • Dotted green line represents a median line which indicates
+                    the average class balance.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {sorted_class.length > 0 && (
               <div className="w-full">
                 <Bar data={chartData} options={chartOptions} />
                 <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
-                <h4 className="flex items-center font-semibold mb-2 group relative">
-                  Class Insights
-                  <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
+                  <h4 className="flex items-center font-semibold mb-2 group relative">
+                    Class Insights
+                    <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
+                    <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-70px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
+                      <p>•Balanced: Near the median.</p>
+                      <p>•Underbalanced: Below the median.</p>
+                      <p>•Overbalanced: Above the median.</p>
+                      <p>•Imbalanced: Far from median.</p>
+                    </div>
+                  </h4>
 
-                  <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-70px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
-                  <p>•Balanced: Near the median.</p>
-                  <p>•Underbalanced: Below the median.</p>
-                  <p>•Overbalanced: Above the median.</p>
-                  <p>•Imbalanced: Far from median.</p>
+                  {categorizedClasses.map((item) => (
+                    <p key={item.class_name} className="text-sm mb-1">
+                      <span
+                        className="inline-block w-4 h-4 rounded-full mr-2"
+                        style={{ backgroundColor: item.Color }}
+                      ></span>
+                      <strong>{item.class_name}:</strong> {item.count}{" "}
+                      annotations - {item.balanceType}
+                    </p>
+                  ))}
                 </div>
-
-
-                </h4>
-
-
-
-            {categorizedClasses.map((item) => (
-              <p key={item.class_name} className="text-sm mb-1">
-                <span
-                  className="inline-block w-4 h-4 rounded-full mr-2"
-                  style={{ backgroundColor: item.Color }}
-                ></span>
-                <strong>{item.class_name}:</strong> {item.count} annotations -{" "}
-                {item.balanceType}
-              </p>
-            ))}
-          </div>
               </div>
             )}
-            
-
           </div>
-  
+
           {/* Image Statistics Section */}
           <div className="flex-1">
-          <div className="relative group">
-            <div className="flex items-center text-2xl font-semibold mb-4">
-              Image Statistics
-              <HiOutlineQuestionMarkCircle className="ml-2" />
-            </div>
+            <div className="relative group">
+              <div className="flex items-center text-2xl font-semibold mb-4">
+                Image Statistics
+                <HiOutlineQuestionMarkCircle className="ml-2" />
+              </div>
 
-            {/* Tooltip */}
-            <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
-              <p>• Displays the total number of images.</p>
-              <p>• Tracks annotated vs unannotated images.</p>
-            
+              {/* Tooltip */}
+              <div className="absolute z-10 hidden group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+                <p>• Displays the total number of images.</p>
+                <p>• Tracks annotated vs unannotated images.</p>
+              </div>
             </div>
-          </div>
 
             <div
-              className={`bg-${isDarkMode ? "gray-700" : "gray-100"} p-6 rounded-lg shadow-md space-y-4`}
+              className={`bg-${
+                isDarkMode ? "gray-700" : "gray-100"
+              } p-6 rounded-lg shadow-md space-y-4`}
             >
               <div className="flex items-center justify-between">
                 <div className="relative group">
-                  <div className="flex items-center text-lg font-medium">Images Uploaded</div>
+                  <div className="flex items-center text-lg font-medium">
+                    Images Uploaded
+                  </div>
                 </div>
-                 <div className="text-xl font-bold text-green-500">{totalImages}</div>
+                <div className="text-xl font-bold text-green-500">
+                  {totalImages}
+                </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">Images Annotated</div>
-                <div className="text-xl font-bold text-blue-500">{imagesAnnotated}</div>
+                <div className="flex items-center text-lg font-medium">
+                  Images Annotated
+                </div>
+                <div className="text-xl font-bold text-blue-500">
+                  {imagesAnnotated}
+                </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">Images Without Annotation</div>
+                <div className="flex items-center text-lg font-medium">
+                  Images Without Annotation
+                </div>
                 <div className="text-xl font-bold text-red-500">
                   {imagesWithoutAnnotation}
                 </div>
               </div>
             </div>
             {/* Remaining Content */}
-        <div className="mt-6 flex flex-col items-center">
-          {loading ? (
-            <Spinner />
-          ) : (
-            <>
-              <div className="flex items-center text-lg mb-2">Upload More Images</div>
-              <ImageUpload
-                projectName={projectName}
-                loading={loading}
-                setloading={setloading}
-              />
-              <button
-                className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
-                onClick={() => set_analysis_page(false)}
-              >
-                Continue
-              </button>
-            </>
-          )}
-        </div>
+            <div className="mt-6 flex flex-col items-center">
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <div className="flex items-center text-lg mb-2">
+                    Upload More Images
+                  </div>
+                  <ImageUpload
+                    projectName={projectName}
+                    loading={loading}
+                    setloading={setloading}
+                  />
+                  <button
+                    className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                    onClick={() => set_analysis_page(false)}
+                  >
+                    Continue
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          
-          
         </div>
-  
-        
       </div>
     </>
   );

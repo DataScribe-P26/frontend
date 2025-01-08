@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import useStore from "../../../Zustand/Alldata";
 import toast from "react-hot-toast";
+import { useTheme } from "../../../text_pages/Text/ThemeContext";
 
 function Modal({ classes, setcl }) {
+  const { isDarkMode } = useTheme();
+
   const { isModalOpen, closeModal, add_classes } = useStore((state) => ({
     isModalOpen: state.isModalOpen,
     closeModal: state.closeModal,
@@ -61,7 +64,7 @@ function Modal({ classes, setcl }) {
           <input
             value={newclass}
             onChange={(e) => setnewclass(e.target.value)}
-            className="bg-slate-300 px-3 py-3 rounded-lg"
+            className="bg-slate-200 px-3 py-3 rounded-lg text-black"
             placeholder="Add New Class?"
           />
           <button
@@ -72,22 +75,43 @@ function Modal({ classes, setcl }) {
           </button>
         </form>
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Select the class</h2>
+          <h2
+            className={`${
+              isDarkMode ? "text-black" : "text-black"
+            } text-xl font-semibold `}
+          >
+            Select class
+          </h2>
         </div>
         <div className="mt-4 mb-8">
           {classes.length > 0 &&
             classes.map((classs, index) => (
-              <div
-                key={index}
-                className="cursor-pointer hover:bg-slate-400 px-2 hover:rounded-md py-1"
-                style={{ color: classs.color }}
-                onClick={() => {
-                  setcl(classs.class_label);
-                  closeModal(classs.class_label);
-                }}
-              >
-                {classs.class_label}
-              </div>
+              <>
+                <div
+                  className="flex justify-left items-center bg-slate-200 hover:bg-slate-300 px-2 rounded-md py-[8px] m-1 gap-5"
+                  onClick={() => {
+                    setcl(classs.class_label);
+                    closeModal(classs.class_label);
+                  }}
+                >
+                  <div
+                    className="w-10  h-6 border-[0.5px] border-black rounded-full"
+                    style={{ backgroundColor: classs.color }}
+                  ></div>
+
+                  <div
+                    key={index}
+                    className="cursor-pointer "
+                    style={{ color: "black" }}
+                    onClick={() => {
+                      setcl(classs.class_label);
+                      closeModal(classs.class_label);
+                    }}
+                  >
+                    {classs.class_label}
+                  </div>
+                </div>
+              </>
             ))}
           {classes.length == 0 && (
             <div className="mt3 mb-4">No Class Added</div>

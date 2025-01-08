@@ -1,6 +1,9 @@
 import React from "react";
+import { useTheme } from "../../../text_pages/Text/ThemeContext";
 
 function AnnotationsLabels({ currentImage, classes }) {
+  const { isDarkMode } = useTheme();
+
   const annotations = currentImage?.annotations || [];
   const classList = Array.isArray(classes) ? classes : [];
 
@@ -16,7 +19,11 @@ function AnnotationsLabels({ currentImage, classes }) {
 
   return (
     <>
-      <div className="text-gray-800 text-center text-2xl font-semibold mb-6">
+      <div
+        className={`${
+          isDarkMode ? "text-white" : "text-black"
+        } text-center text-2xl font-semibold mb-6`}
+      >
         Annotations
       </div>
       <div className="px-3">

@@ -224,7 +224,7 @@ function Main() {
     <>
       <Navbar />
       <div
-        className={`select-none w-full h-[85vh] flex justify-center items-center overflow-hidden ${
+        className={`select-none w-full h-[95vh] flex justify-center items-center overflow-hidden ${
           isDarkMode ? "bg-black" : "bg-white"
         }`}
       >
@@ -236,13 +236,18 @@ function Main() {
                 isDarkMode ? "bg-slate-800" : "bg-white"
               }`}
             >
-              <AnnotationsLabels currentImage={currentImage} classes={classes} />
+              <AnnotationsLabels
+                currentImage={currentImage}
+                classes={classes}
+              />
             </div>
             <div
-              className={`w-[80vw] h-full flex-col ${isDarkMode ? "bg-slate-900" : "bg-slate-50"}`}
+              className={`w-[80vw] h-full flex-col ${
+                isDarkMode ? "bg-slate-900" : "bg-slate-50"
+              }`}
             >
               <div className="w-full h-full">
-                <div className="w-full h-[10%] flex items-end justify-end gap-3 px-10"></div>
+                <div className="w-full h-[3%] flex items-end justify-end gap-3 px-10"></div>
                 <div className="h-[67.9%] gap-4 flex justify-center items-center mt-5">
                   <Stages
                     imageSrc={imageSrc.find((img) => img.src === current)}
@@ -267,17 +272,21 @@ function Main() {
                       <FaArrowLeft />
                     </button>
                     <input
-                      className={`w-14 px-2 py-1 rounded text-center ${isDarkMode ? "text-black": "text-black"}`}
+                      className={`w-14 px-2 py-1 rounded text-center ${
+                        isDarkMode ? "text-black" : "text-black"
+                      }`}
                       value={currentIndex + 1}
                       onChange={handleInputChange}
                     />
                     <button
                       className={`px-4 py-2 rounded-lg ${
-                        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-300 text-black"
+                        isDarkMode
+                          ? "bg-gray-800 text-white"
+                          : "bg-gray-300 text-black"
                       }`}
                       onClick={handleNext}
                     >
-                      <FaArrowRight  />
+                      <FaArrowRight />
                     </button>
                   </div>
                 </div>

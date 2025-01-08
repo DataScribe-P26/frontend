@@ -51,7 +51,7 @@ function Home() {
           <button
             className={`px-4 py-2 rounded-md flex items-center transition-colors duration-300 ${
               isDarkMode
-                ? "bg-green-700 hover:bg-green-600 text-gray-100"
+                ? "bg-green-500 hover:bg-green-600 text-white"
                 : "bg-green-500 hover:bg-green-600 text-white"
             }`}
             onClick={openProjectModal}
@@ -68,16 +68,28 @@ function Home() {
                 isDarkMode ? "border-green-400" : "border-indigo-600"
               }`}
             ></div>
-            <p className={`mt-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <p
+              className={`mt-4 ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               Loading projects...
             </p>
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-8">
-            <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <p
+              className={`text-xl ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               No projects available
             </p>
-            <p className={`mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            <p
+              className={`mt-2 ${
+                isDarkMode ? "text-gray-500" : "text-gray-500"
+              }`}
+            >
               Click 'Add Project' to create your first project.
             </p>
           </div>
@@ -87,7 +99,9 @@ function Home() {
               <div
                 key={project._id}
                 className={`rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer ${
-                  isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
+                  isDarkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-800"
                 }`}
                 onClick={() => {
                   setprojectname(project.name);
