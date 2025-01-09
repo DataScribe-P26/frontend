@@ -70,8 +70,8 @@ const FileContentDisplay = () => {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
   
-    const textContainer = document.getElementById('text-container');
-    
+    const textContainer = document.getElementById("text-container");
+  
     if (!textContainer) {
       console.error("Text container not found!");
       return;
@@ -80,7 +80,13 @@ const FileContentDisplay = () => {
     if (selectedText) {
       const range = selection.getRangeAt(0);
       const startContainer = range.startContainer;
-      const { offset: start, lineNumber } = calculateOffsetAndLineNumber(textContainer, startContainer, range.startOffset);
+  
+      const { offset: start, lineNumber } = calculateOffsetAndLineNumber(
+        textContainer,
+        startContainer,
+        range.startOffset
+      );
+  
       const end = start + selectedText.length;
   
       setSelectedText({
@@ -95,24 +101,45 @@ const FileContentDisplay = () => {
       setSelectedText("");
     }
   };
-
-const calculateOffsetAndLineNumber = (textContainer, startContainer, startOffset) => {
-  const allText = textContainer.innerText;
-  const selectedTextNode = startContainer.textContent.slice(0, startOffset);
-  const totalOffset = allText.indexOf(selectedTextNode) + startOffset;
-  const lines = allText.split("\n"); 
-  let offset = 0;
-  let lineNumber = 0;
-
-  for (let line of lines) {
-    if (offset + line.length >= totalOffset) break;
-    offset += line.length + 1; 
-    lineNumber++;
-  }
-
-  return { offset: totalOffset, lineNumber: lineNumber + 1 }; 
-};
-
+  
+  const calculateOffsetAndLineNumber = (textContainer, startContainer, startOffset) => {
+    let totalOffset = 0;
+    let lineNumber = 1;
+    let found = false;
+  
+    // Traverse nodes and calculate offsets and line numbers
+    const traverseNodes = (node) => {
+      if (found) return; // Stop traversal once we find the target node
+  
+      if (node === startContainer) {
+        totalOffset += startOffset;
+        found = true;
+        return;
+      }
+  
+      if (node.nodeType === Node.TEXT_NODE) {
+        totalOffset += node.textContent.length;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === "BR") {
+          lineNumber++;
+          totalOffset++; // Account for line break
+        } else {
+          for (const child of node.childNodes) {
+            traverseNodes(child);
+            if (found) return; // Stop further traversal
+          }
+          if (getComputedStyle(node).display === "block") {
+            lineNumber++; // Increment for block-level elements
+          }
+        }
+      }
+    };
+  
+    traverseNodes(textContainer);
+  
+    return { offset: totalOffset, lineNumber };
+  };
+  
 useEffect(() => {
   const fetchAnnotationsAndLabels = async () => {
     try {
@@ -181,7 +208,7 @@ useEffect(() => {
 
 
 
-  const handleLabelChange = (event) => {
+  const handleLabelChange = async(event) => {
     const labelName = event.target.value;
     const label = labels.find((label) => label.name === labelName);
 
@@ -196,6 +223,7 @@ useEffect(() => {
 
       addAnnotation(newAnnotation);
       setSelectedText("");
+      await handleSubmit();
     }
   };
 
@@ -379,7 +407,56 @@ useEffect(() => {
       console.error("Error:", error);
     }
   };  
+  const handleExitProject = async () => {
+    const dataToSend = {
+      text: Array.isArray(content) ? content.join("\n") : content,
+      entities: annotations.map((annotation) => ({
+        entity: annotation.text,
+        label: annotation.label.name,
+        color: annotation.label.color,
+        bColor: annotation.label.bgColor,
+        textColor: annotation.label.textColor,
+        start: annotation.start,
+        end: annotation.end,
+      })),
+    };
   
+    // Display confirmation popup
+    if (window.confirm("You are exiting the project. Your progress will be auto-saved.")) {
+      try {
+        // Save progress to the backend
+        const response = await fetch(`http://127.0.0.1:8000/annotate/${projectName}/ner`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        });
+  
+        if (response.ok) {
+          console.log("Progress saved successfully.");
+        } else {
+          console.error("Failed to save progress.");
+        }
+      } catch (error) {
+        console.error("Error saving progress:", error);
+      }
+  
+      // Clear content and related states
+      setContent("");
+      setLabels([]);
+      setAnnotations([]);
+  
+      // Navigate to the project selection screen
+      navigate("/text");
+    }
+  };
+  
+  
+  // Add a button or trigger this function when navigating back to the project selection
+  const handleNavigateBack = () => {
+    handleExitProject();
+  };
   return (
     <div className="flex flex-col h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
       <Navbar /> {/* Add Navbar */}
@@ -409,9 +486,9 @@ useEffect(() => {
                       value=""
                     >
                       <option value="">Select a label</option>
-                      {labels.map((label) => (
-                        <option key={label.name} value={label.name}>
-                          {label.name}
+                      {[...new Set(labels.map((label) => label.name))].map((uniqueLabel) => (
+                        <option key={uniqueLabel} value={uniqueLabel}>
+                          {uniqueLabel}
                         </option>
                       ))}
                     </select>
@@ -430,10 +507,8 @@ useEffect(() => {
               </div>
 
               {renderNavigation()}
-              {renderAnnotations()}
-
               {/* Submit Button */}
-              <div className="flex justify-center">
+              <div className="flex justify-center  space-x-4">
               <button
                 onClick={handleSubmit}
                 className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg"
@@ -448,12 +523,21 @@ useEffect(() => {
               currentLabel={currentLabel}
               editMode={editMode}
             />
+            <button
+                onClick={handleNavigateBack}
+                className="mt-6 bg-red-700 text-white px-6 py-3 rounded-lg w-45 text-center"
+              >
+                Exit Project
+              </button>
               </div>
+              {renderAnnotations()}
+
+              
               <div className="mb-8 flex justify-center"> {/* This div adds margin above the Footer and centers it */}
-  <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
-    <Footer />
-  </div>
-</div>
+              <div className="max-w-md w-full"> {/* Adjust the max-width as needed */}
+                <Footer />
+              </div>
+            </div>
             </div>
           </div>
         </div>

@@ -25,27 +25,31 @@ const LabelManager = () => {
       if (fetchedLabels || labels.length > 0) return;
       try {
         const response = await axios.get(`http://127.0.0.1:8000/projects/${projectName}/ner/full-text`);
+      // Deduplicate labels by keeping the first occurrence of each label name
+      const labelMap = new Map();
+      response.data[0].entities.forEach((entity) => {
+        if (!labelMap.has(entity.label)) {
+          labelMap.set(entity.label, {
+            name: entity.label,
+            color: entity.color,
+            bgColor: entity.bColor,
+            textColor: entity.textColor,
+          });
+        }
+      });
 
-        const uniqueLabels = Array.from(new Set(response.data[0].entities.map(entity => entity.label)));
+      // Convert the Map back to an array
+      const uniqueLabels = Array.from(labelMap.values());
 
-        const newLabels = uniqueLabels.map((name) => {
-          const labelEntity = response.data[0].entities.find(entity => entity.label === name);
-          return {
-            name,
-            color: labelEntity.color,
-            bgColor: labelEntity.bColor,
-            textColor: labelEntity.textColor,
-          };
-        });
-        setLabels(newLabels);
-        setFetchedLabels(true);
-      } catch (error) {
-        console.error("Error fetching annotations:", error);
-      }
-    };
+      setLabels(uniqueLabels);
+      setFetchedLabels(true);
+    } catch (error) {
+      console.error("Error fetching annotations:", error);
+    }
+  };
 
-    fetchLabels();
-  }, [projectName, setLabels, labels.length, fetchedLabels]);
+  fetchLabels();
+}, [projectName, setLabels, labels.length, fetchedLabels]);
 
   const handleCreateLabel = (newLabel) => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
