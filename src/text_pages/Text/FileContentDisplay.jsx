@@ -230,34 +230,84 @@ useEffect(() => {
   const colorizeText = (text) => {
     let result = "";
     let lastIndex = 0;
-  
-    // Sort annotations by start position to avoid overlapping issues
+    
+    // Sort annotations by start position
     const sortedAnnotations = annotations
       .filter((annotation) => fileType === "text" || annotation.index === currentIndex)
       .sort((a, b) => a.start - b.start);
-  
-    sortedAnnotations.forEach((annotation) => {
-      // Append the text before the annotation
-      result += text.slice(lastIndex, annotation.start)
+    
+    sortedAnnotations.forEach((annotation, index) => {
+      // Add non-highlighted text before the current annotation
+      if (annotation.start > lastIndex) {
+        result += text.slice(lastIndex, annotation.start)
+          .replace(/\n/g, "<br>")
+          .replace(/\s/g, "&nbsp;");
+      }
+      
+      // Skip if this annotation has already been processed
+      if (annotation.start < lastIndex) {
+        return;
+      }
+      
+      // Handle overlapping annotations
+      let overlapEnd = annotation.end;
+      const overlappingAnnotations = [annotation];
+      
+      // Look ahead for overlapping annotations
+      for (let j = index + 1; j < sortedAnnotations.length; j++) {
+        const nextAnnotation = sortedAnnotations[j];
+        if (nextAnnotation.start < overlapEnd) {
+          overlapEnd = Math.max(overlapEnd, nextAnnotation.end);
+          overlappingAnnotations.push(nextAnnotation);
+        } else {
+          break;
+        }
+      }
+      
+      // Process each segment within the overlapping range
+      let currentPosition = annotation.start;
+      while (currentPosition < overlapEnd) {
+        // Find the next split point
+        const splitPoint = Math.min(
+          ...overlappingAnnotations.map((a) => (a.start > currentPosition ? a.start : Infinity)),
+          ...overlappingAnnotations.map((a) => (a.end > currentPosition ? a.end : Infinity)),
+          overlapEnd
+        );
+        
+        const segmentText = text.slice(currentPosition, splitPoint);
+        
+        // Find active annotations for the current segment
+        const activeAnnotations = overlappingAnnotations.filter(
+          (a) => a.start <= currentPosition && a.end >= splitPoint
+        );
+        
+        if (activeAnnotations.length > 0) {
+          // Apply the last annotation's style to the segment
+          const { bgColor, textColor } = activeAnnotations[activeAnnotations.length - 1].label;
+          const underline = activeAnnotations.length > 1;
+          result += `<span style="background-color: ${bgColor}; color: ${textColor}; ${
+            underline ? "text-decoration: underline;" : ""
+          } display: inline;">${segmentText
+            .replace(/\n/g, "<br>")
+            .replace(/\s/g, "&nbsp;")}</span>`;
+        }
+        
+        currentPosition = splitPoint;
+      }
+      
+      // Update lastIndex to the end of the current overlap group
+      lastIndex = overlapEnd;
+    });
+    
+    // Add remaining text after the last annotation
+    if (lastIndex < text.length) {
+      result += text.slice(lastIndex)
         .replace(/\n/g, "<br>")
         .replace(/\s/g, "&nbsp;");
-  
-      // Add the highlighted annotation text
-      result += `<span style="background-color: ${annotation.label.bgColor}; color: ${annotation.label.textColor}; display: inline;">${text.slice(annotation.start, annotation.end)
-        .replace(/\n/g, "<br>")
-        .replace(/\s/g, "&nbsp;")}</span>`;
-  
-      // Update the lastIndex to the end of the current annotation
-      lastIndex = annotation.end;
-    });
-  
-    // Append any remaining text after the last annotation
-    result += text.slice(lastIndex)
-      .replace(/\n/g, "<br>")
-      .replace(/\s/g, "&nbsp;");
-  
+    }
+    
     return result;
-  };  
+  };
   
   
   

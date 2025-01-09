@@ -8,8 +8,8 @@ import {
   FaMoon,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useTheme } from "./ThemeContext"; // Import the Theme Context
-import HelpModalImg from "./HelpModalImg"; // Import Help Modal
+import { useTheme } from "../text_pages/Text/ThemeContext"; // Import the Theme Context
+import HelpModalImg from "../text_pages/Text/HelpModalImg"; // Import Help Modal
 
 const ImageNavbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false); // Modal state

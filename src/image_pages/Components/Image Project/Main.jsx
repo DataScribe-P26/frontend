@@ -9,7 +9,7 @@ import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ImageNavbar from "../../../text_pages/Text/ImageNavbar.jsx";
+import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 
 function Main() {

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { HiPlus, HiFolder } from "react-icons/hi";
-import ImageNavbar from "../../text_pages/Text/ImageNavbar.jsx";
+import ImageNavbar from "../ImageNavbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 
 function Home() {
