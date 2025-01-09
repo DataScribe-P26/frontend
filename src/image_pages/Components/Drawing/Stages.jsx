@@ -460,21 +460,61 @@ function Stages({ images, action, current, cl, setcl }) {
     return [centroidX / numPoints, centroidY / numPoints];
   };
 
-  const handleDelete = (class_id) => {
-    set_allAnnotations((prevAnnotations) =>
-      prevAnnotations?.map((entry) =>
-        entry.image_id === current
-          ? {
-              ...entry,
-              annotations: entry.annotations?.filter(
-                (annotation) => annotation.class_id !== class_id
-              ),
-            }
-          : entry
-      )
+  const handleDelete = async (class_id) => {
+    let currentImage = annotations?.find((image) => image.image_id === current);
+    console.log("Current image:", currentImage);
+    console.log("Class ID:", class_id);
+    console.log("Current image ID:", currentImage.id);
+    const annotationToDelete = currentImage.annotations.find(
+      (annotation) => annotation.class_id === class_id
     );
+  
+    if (!annotationToDelete) {
+      console.warn("Annotation not found in the current image.");
+      return;
+    }
+    console.log("Annotation type:", annotationToDelete.type);
+    if (!currentImage) {
+      console.error("No current image found for deletion.");
+      return;
+    }
+  
+    try {
+      // API call to delete the bounding box from the backend
+      const response = await fetch(
+        `http://127.0.0.1:8000/images/${currentImage.id}/annotations/${class_id}/${annotationToDelete.type}`,
+        { method: "DELETE" }
+      );
+  
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn("Annotation not found in the backend, deleting locally.");
+        } else {
+          const errorData = await response.json();
+          console.error("Error deleting annotation:", errorData);
+          throw new Error(errorData.detail || "Failed to delete annotation");
+        }
+      } else {
+        console.log("Annotation deleted successfully from the backend");
+      }
+  
+      // Update the state after successful deletion or if it was new
+      set_allAnnotations((prevAnnotations) =>
+        prevAnnotations?.map((entry) =>
+          entry.image_id === current
+            ? {
+                ...entry,
+                annotations: entry.annotations?.filter(
+                  (annotation) => annotation.class_id !== class_id
+                ),
+              }
+            : entry
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting annotation:", error.message);
+    }
   };
-
   const handleEdit = (class_id) => {
     openModal();
     setPendingAnnotation({
