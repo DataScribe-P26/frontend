@@ -13,7 +13,7 @@ export default function Register() {
   async function handleRegister(event) {
     event.preventDefault();
     try {
-      const result = await axios.post("http://localhost:8000/auth/register", {
+      const result = await axios.post("http://127.0.0.1:8000/auth/register", {
         email: email.trim(),
         password: password.trim(),
         full_name: fullName.trim(),

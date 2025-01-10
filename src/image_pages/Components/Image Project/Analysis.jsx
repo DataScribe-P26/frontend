@@ -254,7 +254,7 @@ function Analysis({ set_analysis_page }) {
     <>
       <ImageNavbar />
       <div
-        className={`w-full h-screen  px-12 pt-4 pb-36 ${
+        className={`w-full h-screen overflow-y-auto  px-12 pt-4 pb-36 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >

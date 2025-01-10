@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import useStore from "../../Zustand/Alldata";
 import { useParams, Link } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
-import Spinner from "./Image Project/loading_screen";
 import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
@@ -20,6 +19,7 @@ function Imagehome() {
     created_on,
   } = useStore();
   const { projectName } = useParams();
+  console.log(projectName);
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
   const [analysis_page, set_analysis_page] = useState(true);
