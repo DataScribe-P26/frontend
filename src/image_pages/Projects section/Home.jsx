@@ -9,7 +9,7 @@ import ImageNavbar from "../ImageNavbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 
 function Home() {
-  const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn } =
+  const { isProjectModalOpen, openProjectModal, setprojectname, setCreatedOn,set_allAnnotations } =
     useStore();
   const { isDarkMode } = useTheme(); // Access dark mode state
   const [projects, setProjects] = useState([]);
@@ -106,6 +106,7 @@ function Home() {
                 onClick={() => {
                   setprojectname(project.name);
                   setCreatedOn(project.created_on);
+                  set_allAnnotations([]);
                   navigate(`/image/${project.name}`);
                 }}
               >
