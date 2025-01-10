@@ -13,8 +13,25 @@ const CombinedFileContent = () => {
   const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const fileInput = event.target; // Get the file input element
+    const selectedFile = fileInput.files[0];
+    const allowedFileTypes = ["text/plain", "application/json"]; // Allowed MIME types for .txt and .json files
+  
+    if (!selectedFile) {
+      alert("No file selected.");
+      return;
+    }
+  
+    if (!allowedFileTypes.includes(selectedFile.type)) {
+      alert("Uploaded file format not supported. Please upload text (.txt) or JSON (.json) files only.");
+      fileInput.value = ""; // Clear the file input value
+      return;
+    }
+  
+    setFile(selectedFile); // Set the valid file
   };
+  
+  
 
   const handleFileUpload = () => {
     if (!file) {

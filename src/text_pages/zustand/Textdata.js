@@ -47,14 +47,15 @@ const textStore = create((set) => ({
 
   //labels
   labels: [],
-  counter: 0,
+  availableColors: [...uniqueColorCombinations], // Initially, all colors are available
 
   addLabel: (name) =>
     set((state) => {
-      const colorSet =
-        uniqueColorCombinations[
-          state.labels.length % uniqueColorCombinations.length
-        ];
+      if (state.availableColors.length === 0) {
+        throw new Error("No more colors available.");
+      }
+
+      const [colorSet, ...remainingColors] = state.availableColors;
 
       return {
         labels: [
@@ -66,26 +67,37 @@ const textStore = create((set) => ({
             textColor: colorSet[2],
           },
         ],
-        counter: state.labels.length + 1,
+        availableColors: remainingColors,
       };
     }),
-  setLabels: (newLabelsArray) =>
+
+  deleteLabel: (name) =>
     set((state) => {
+      const labelToDelete = state.labels.find((label) => label.name === name);
+      if (!labelToDelete) return state;
+
       return {
-        labels: [...newLabelsArray],
-        counter: newLabelsArray.length + 1,
+        labels: state.labels.filter((label) => label.name !== name),
+        availableColors: [
+          ...state.availableColors,
+          [labelToDelete.color, labelToDelete.bgColor, labelToDelete.textColor],
+        ],
       };
     }),
-  deleteLabel: (labelName) =>
-    set((state) => {
-      const updatedLabels = state.labels.filter(
-        (label) => label.name !== labelName
-      ); // Remove the label by name
-      return {
-        labels: updatedLabels, // Update the labels to the filtered array
-        counter: updatedLabels.length, // Update the counter to reflect the new number of labels
-      };
-    }),
+
+  setLabels: (labels) =>
+    set((state) => ({
+      labels,
+      availableColors: uniqueColorCombinations.filter(
+        (colorSet) =>
+          !labels.some(
+            (label) =>
+              label.color === colorSet[0] &&
+              label.bgColor === colorSet[1] &&
+              label.textColor === colorSet[2]
+          )
+      ),
+    })),
 
   //file
   fileType: "text",
