@@ -275,13 +275,22 @@ function Main() {
                     >
                       <FaArrowLeft />
                     </button>
-                    <input
-                      className={`w-14 px-2 py-1 rounded text-center ${
-                        isDarkMode ? "text-black" : "text-black"
-                      }`}
-                      value={currentIndex + 1}
-                      onChange={handleInputChange}
-                    />
+                    <div className="flex items-center ">
+  <input
+    className={`w-8 px-2 py-1 rounded-l-md text-right ${
+      isDarkMode ? "text-white bg-gray-800" : "text-black bg-gray-300"
+    }`}
+    value={currentIndex + 1}
+    onChange={handleInputChange}
+  />
+  <div
+    className={`px-2 py-1 rounded-r-md text-center ${
+      isDarkMode ? "text-white bg-gray-800" : "text-black bg-gray-300"
+    }`}
+  >/  {all_annotations.length}
+  </div>
+</div>
+
                     <button
                       className={`px-4 py-2 rounded-lg ${
                         isDarkMode
