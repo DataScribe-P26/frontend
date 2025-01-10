@@ -1,0 +1,23 @@
+{
+  "annotations": [
+    {
+      "class_name": "Cat",
+      "type": "rectangle",
+      "x": 15,
+      "y": 25,
+      "height": 80,
+      "width": 120,
+      "Color": ""
+    },
+    {
+      "class_name": "Dog",
+      "type": "polygon",
+      "Color": "",
+      "points": [
+        [1, 1],
+        [2, 2],
+        [3, 3]
+      ]
+    }
+  ]
+}

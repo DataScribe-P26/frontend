@@ -1,0 +1,67 @@
+* {
+  outline: none;
+  margin: 0;
+}
+
+.custom-color-input {
+  -webkit-appearance: none;
+  border: none;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.custom-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.custom-color-input::-webkit-color-swatch {
+  border: none;
+}
+
+.custom-color-input::-moz-color-swatch {
+  border: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide the spinner in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.image_scrollbar {
+  --sb-track-color: #280f2f;
+  --sb-thumb-color: #ce3dff;
+  --sb-size-horizontal: 5px;
+  --sb-size-vertical: 4px;
+}
+
+.image_scrollbar::-webkit-scrollbar {
+  width: var(--sb-size-vertical); /* Vertical scrollbar */
+  height: var(--sb-size-horizontal); /* Horizontal scrollbar */
+}
+
+.image_scrollbar::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 3px;
+}
+
+.image_scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 3px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .image_scrollbar {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  }
+}
