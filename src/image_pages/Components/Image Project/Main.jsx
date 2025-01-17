@@ -297,10 +297,22 @@ function Main() {
                         {imageSrc.map((item, index) => (
                           <div
                             key={item.id}
+                            ref={
+                              index === currentIndex
+                                ? (el) => {
+                                    if (el && showImages) {
+                                      el.scrollIntoView({
+                                        behavior: "auto",
+                                        block: "center",
+                                      });
+                                    }
+                                  }
+                                : null
+                            }
                             className={`group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg ${
                               isDarkMode
                                 ? "bg-gray-700 hover:bg-gray-600"
-                                : " bg-gray-100 hover:bg-gray-200"
+                                : "bg-gray-100 hover:bg-gray-200"
                             } transition-colors duration-200`}
                             onClick={() => {
                               setCurrentIndex(index);
