@@ -271,27 +271,49 @@ function Main() {
                     showImages ? "translate-x-0" : "translate-x-full"
                   }`}
                 >
-                  <aside className="w-[300px] h-[calc(100vh-75px)] bg-white dark:bg-gray-800 shadow-xl">
+                  <aside
+                    className={`w-[300px] h-[calc(100vh-75px)] ${
+                      isDarkMode ? "bg-gray-800" : "bg-white"
+                    } shadow-xl`}
+                  >
                     <button
                       onClick={() => setShowImages(false)}
-                      className="absolute top-4 right-2 p-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200 z-40"
+                      className={`absolute top-4 right-2 p-1.5 rounded-lg ${
+                        isDarkMode
+                          ? "bg-gray-700 hover:bg-gray-600"
+                          : "bg-gray-200 hover:bg-gray-300"
+                      } transition-colors duration-200 z-40`}
                       aria-label="Close sidebar"
                     >
-                      <X className="w-5 h-5 text-white" />
+                      <X
+                        className={`w-5 h-5 ${
+                          isDarkMode ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      />
                     </button>
 
                     <div className="w-full h-full overflow-y-auto image_scrollbar">
-                      <div className="p-4 pt-12 space-y-3">
+                      <div className="p-4 pt-16 space-y-3">
                         {imageSrc.map((item, index) => (
                           <div
                             key={item.id}
-                            className="group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                            className={`group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg ${
+                              isDarkMode
+                                ? "bg-gray-700 hover:bg-gray-600"
+                                : " bg-gray-100 hover:bg-gray-200"
+                            } transition-colors duration-200`}
                             onClick={() => {
                               setCurrentIndex(index);
                               setcurrent(imageSrc[index].src);
                             }}
                           >
-                            <span className="absolute top-4 left-4 min-w-[24px] h-6 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium z-10">
+                            <span
+                              className={`absolute top-4 left-4 min-w-[24px] h-6 flex items-center justify-center rounded-full ${
+                                isDarkMode
+                                  ? "bg-gray-700 text-gray-300"
+                                  : "bg-gray-100 text-gray-600"
+                              } text-sm font-medium z-10`}
+                            >
                               {index + 1}
                             </span>
 
@@ -314,7 +336,6 @@ function Main() {
                     </div>
                   </aside>
                 </div>
-
                 <div className="w-full h-[8vh] flex items-center justify-end ">
                   <button
                     className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${

@@ -254,7 +254,7 @@ function Analysis({ set_analysis_page }) {
     <>
       <ImageNavbar />
       <div
-        className={`w-full h-screen overflow-y-auto  px-12 pt-4 pb-36 ${
+        className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-4 pb-36 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
@@ -289,7 +289,7 @@ function Analysis({ set_analysis_page }) {
               </div>
             </div>
 
-            {sorted_class.length > 0 && (
+            {sorted_class.length > 0 ? (
               <div className="w-full">
                 <Bar data={chartData} options={chartOptions} />
                 <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
@@ -316,6 +316,18 @@ function Analysis({ set_analysis_page }) {
                   ))}
                 </div>
               </div>
+            ) : (
+              <>
+                <div
+                  className={`flex items-start justify-center h-full pt-7 ${
+                    isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                  } p-6 rounded-lg shadow-md space-y-4`}
+                >
+                  <div className="text-lg font-semibold">
+                    No Annotations Done Yet.
+                  </div>
+                </div>
+              </>
             )}
           </div>
 
