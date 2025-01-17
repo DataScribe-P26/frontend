@@ -377,12 +377,14 @@ function Analysis({ set_analysis_page }) {
                       loading={loading}
                       setloading={setloading}
                     />
-                    <button
-                      className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
-                      onClick={() => set_analysis_page(false)}
-                    >
-                      Continue
-                    </button>
+                    {imageSrc.length > 0 && (
+                      <button
+                        className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                        onClick={() => set_analysis_page(false)}
+                      >
+                        Continue
+                      </button>
+                    )}
                   </div>
                 </>
               )}

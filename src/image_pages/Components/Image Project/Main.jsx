@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Imageupload from "../image upload and display/Imageupload";
+import { ChevronLeft, ChevronRight, PanelLeftClose } from "lucide-react";
 import Stages from "../Drawing/Stages";
 import Options from "../Drawing/Options";
 import useStore from "../../../Zustand/Alldata";
@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import AnnotationsLabels from "../Drawing/AnnotationsLabels";
 import Modal from "../Drawing/Modal";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
+import { X } from "lucide-react";
 
 function Main() {
   const {
@@ -31,6 +31,7 @@ function Main() {
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
   const [annotations, setAnnotations] = useState(all_annotations);
+  const [showImages, setShowImages] = useState(false);
 
   const navigate = useNavigate();
 
@@ -247,8 +248,76 @@ function Main() {
               }`}
             >
               <div className="w-full h-full">
-                <div className="w-full h-[3%] flex items-end justify-end gap-3 px-10"></div>
-                <div className="h-[67.9%] gap-4 flex justify-center items-center mt-5">
+                <div
+                  className={`fixed top-[75px] right-0 z-50 transition-transform duration-300 ease-in-out ${
+                    showImages ? "translate-x-0" : "translate-x-full"
+                  }`}
+                >
+                  <aside className="w-[300px] h-[calc(100vh-75px)] bg-white dark:bg-gray-800 shadow-xl">
+                    <button
+                      onClick={() => setShowImages(false)}
+                      className="absolute top-4 right-2 p-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200 z-40"
+                      aria-label="Close sidebar"
+                    >
+                      <X className="w-5 h-5 text-white" />
+                    </button>
+
+                    <div className="w-full h-full overflow-y-auto image_scrollbar">
+                      <div className="p-4 pt-12 space-y-3">
+                        {imageSrc.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                            onClick={() => {
+                              setCurrentIndex(index);
+                              setcurrent(imageSrc[index].src);
+                            }}
+                          >
+                            <span className="absolute top-4 left-4 min-w-[24px] h-6 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium z-10">
+                              {index + 1}
+                            </span>
+
+                            <div
+                              className="w-full h-48"
+                              onClick={() => {
+                                setCurrentIndex(index);
+                                setcurrent(imageSrc[index].src);
+                              }}
+                            >
+                              <img
+                                src={item.src}
+                                alt={`Image ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </aside>
+                </div>
+
+                <div className="w-full h-[8vh] flex items-center justify-end ">
+                  <button
+                    className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${
+                      isDarkMode
+                        ? "bg-gray-700 text-purple-700 hover:bg-gray-700 shadow-sm shadow-gray-600"
+                        : "bg-blue-100 text-purple-800 hover:bg-blue-200 shadow-md shadow-purple-300"
+                    }`}
+                    onClick={() => {
+                      setShowImages(true);
+                    }}
+                  >
+                    <PanelLeftClose className="w-6 h-6 " />
+                  </button>
+                </div>
+
+                <div
+                  className="h-[67.9%] gap-4 flex justify-center items-center "
+                  onClick={() => {
+                    setShowImages(false);
+                  }}
+                >
                   <Stages
                     imageSrc={imageSrc.find((img) => img.src === current)}
                     action={action}
@@ -256,6 +325,7 @@ function Main() {
                     current={current}
                     cl={cl}
                     setcl={setcl}
+                    submit={submit}
                   />
                   <div>
                     <Options
@@ -265,41 +335,60 @@ function Main() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-center items-center p-8">
-                  <div className="flex gap-3">
+                <div
+                  className="flex justify-center items-center p-6"
+                  onClick={() => {
+                    setShowImages(false);
+                  }}
+                >
+                  <div className="flex items-center gap-4">
                     <button
-                      className={`px-3 py-5 rounded-lg ${
-                        isDarkMode ? "bg-gray-800" : "bg-gray-300"
+                      className={`p-3 rounded-lg transition-all duration-200 hover:scale-102 ${
+                        isDarkMode
+                          ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                       }`}
                       onClick={handlePrev}
+                      aria-label="Previous image"
                     >
-                      <FaArrowLeft />
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <div className="flex items-center ">
-  <input
-    className={`w-8 px-2 py-1 rounded-l-md text-right ${
-      isDarkMode ? "text-white bg-gray-800" : "text-black bg-gray-300"
-    }`}
-    value={currentIndex + 1}
-    onChange={handleInputChange}
-  />
-  <div
-    className={`px-2 py-1 rounded-r-md text-center ${
-      isDarkMode ? "text-white bg-gray-800" : "text-black bg-gray-300"
-    }`}
-  >/  {all_annotations.length}
-  </div>
-</div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="text"
+                        className={`w-12 h-10 px-2 text-center font-medium rounded-l-lg focus:outline-none ${
+                          isDarkMode
+                            ? "bg-gray-800 text-white border-r border-gray-700"
+                            : "bg-gray-100 text-gray-900 border-r border-gray-200"
+                        }`}
+                        value={currentIndex + 1}
+                        onChange={handleInputChange}
+                        min={1}
+                        max={imageSrc.length}
+                        aria-label="Current image number"
+                      />
+                      <div
+                        className={`h-10 px-3 flex items-center font-medium rounded-r-lg ${
+                          isDarkMode
+                            ? "bg-gray-800 text-gray-400"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {imageSrc.length}
+                      </div>
+                    </div>
 
                     <button
-                      className={`px-4 py-2 rounded-lg ${
+                      className={`p-3 rounded-lg transition-all duration-200 hover:scale-102  ${
                         isDarkMode
-                          ? "bg-gray-800 text-white"
-                          : "bg-gray-300 text-black"
+                          ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                       }`}
                       onClick={handleNext}
+                      aria-label="Next image"
                     >
-                      <FaArrowRight />
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </div>
                 </div>

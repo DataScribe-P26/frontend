@@ -39,15 +39,13 @@ input[type="number"] {
 }
 
 .image_scrollbar {
-  --sb-track-color: #280f2f;
-  --sb-thumb-color: #ce3dff;
-  --sb-size-horizontal: 5px;
-  --sb-size-vertical: 4px;
+  --sb-track-color: #232e33;
+  --sb-thumb-color: #9a9a9a;
+  --sb-size: 5px;
 }
 
 .image_scrollbar::-webkit-scrollbar {
-  width: var(--sb-size-vertical); /* Vertical scrollbar */
-  height: var(--sb-size-horizontal); /* Horizontal scrollbar */
+  width: var(--sb-size);
 }
 
 .image_scrollbar::-webkit-scrollbar-track {
@@ -61,7 +59,23 @@ input[type="number"] {
 }
 
 @supports not selector(::-webkit-scrollbar) {
-  .image_scrollbar {
+  body {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  }
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 3px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 3px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }

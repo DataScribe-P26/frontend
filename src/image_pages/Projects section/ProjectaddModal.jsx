@@ -12,7 +12,8 @@ const ProjectAddModal = ({ names }) => {
     addProject,
     setprojectname,
     setCreatedOn,
-    set_allAnnotations
+    set_allAnnotations,
+    reset,
   } = useStore();
 
   const [name, setName] = useState("");
@@ -47,10 +48,11 @@ const ProjectAddModal = ({ names }) => {
             toast.success("Project Added");
             setprojectname(name);
             setCreatedOn(isoDate);
+            reset();
             set_allAnnotations([]);
             setTimeout(() => {
               navigate(`/image/${name}`);
-            }, 100);
+            }, 10);
             handleClose();
           })
           .catch((error) => {

@@ -9,7 +9,7 @@ import { RxReset } from "react-icons/rx";
 import { Transformer } from "react-konva";
 import { all } from "axios";
 
-function Stages({ images, action, current, cl, setcl }) {
+function Stages({ images, action, current, cl, setcl, submit }) {
   // console.log("stages current", current);
   const stageRef = useRef();
   const [zoomEnabled, setZoomEnabled] = useState(true);
@@ -468,6 +468,7 @@ function Stages({ images, action, current, cl, setcl }) {
     const annotationToDelete = currentImage.annotations.find(
       (annotation) => annotation.class_id === class_id
     );
+    submit();
 
     if (!annotationToDelete) {
       console.warn("Annotation not found in the current image.");
@@ -481,6 +482,18 @@ function Stages({ images, action, current, cl, setcl }) {
 
     try {
       // API call to delete the bounding box from the backend
+      set_allAnnotations((prevAnnotations) =>
+        prevAnnotations?.map((entry) =>
+          entry.image_id === current
+            ? {
+                ...entry,
+                annotations: entry.annotations?.filter(
+                  (annotation) => annotation.class_id !== class_id
+                ),
+              }
+            : entry
+        )
+      );
       const response = await fetch(
         `http://127.0.0.1:8000/images/${currentImage.id}/annotations/${class_id}/${annotationToDelete.type}`,
         { method: "DELETE" }
@@ -499,20 +512,6 @@ function Stages({ images, action, current, cl, setcl }) {
       } else {
         console.log("Annotation deleted successfully from the backend");
       }
-
-      // Update the state after successful deletion or if it was new
-      set_allAnnotations((prevAnnotations) =>
-        prevAnnotations?.map((entry) =>
-          entry.image_id === current
-            ? {
-                ...entry,
-                annotations: entry.annotations?.filter(
-                  (annotation) => annotation.class_id !== class_id
-                ),
-              }
-            : entry
-        )
-      );
     } catch (error) {
       console.error("Error deleting annotation:", error.message);
     }
@@ -599,7 +598,6 @@ function Stages({ images, action, current, cl, setcl }) {
                           padding: "1rem",
                           borderRadius: "0.5rem",
                           boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-                          border: "1px solid #e2e8f0",
                         }}
                       >
                         <Konvaimage image={current_image} />
