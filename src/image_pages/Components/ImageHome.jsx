@@ -85,6 +85,8 @@ function Imagehome() {
             id: image.image_id,
             width_multiplier: image.width_multiplier,
             height_multiplier: image.height_multiplier,
+            width: image.width,
+            height: image.height,
           }));
 
           setAnnots(formattedImages);
@@ -114,7 +116,11 @@ function Imagehome() {
 
   return (
     <div
-      className={`select-none w-full h-screen flex justify-center items-center ${isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gradient-to-t from-gray-100 to-white text-gray-800"} overflow-hidden`}
+      className={`select-none w-full h-screen flex justify-center items-center ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-t from-gray-100 to-white text-gray-800"
+      } overflow-hidden`}
     >
       <div className="w-full h-full">
         {loading ? (
@@ -128,11 +134,19 @@ function Imagehome() {
             </div>
           </div>
         ) : analysis_page ? (
-          <div className={`w-full h-full ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+          <div
+            className={`w-full h-full ${
+              isDarkMode ? "bg-gray-800" : "bg-gray-50"
+            }`}
+          >
             <Analysis set_analysis_page={set_analysis_page} />
           </div>
         ) : (
-          <div className={`w-full h-full ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+          <div
+            className={`w-full h-full ${
+              isDarkMode ? "bg-gray-800" : "bg-gray-50"
+            }`}
+          >
             <Main />
           </div>
         )}

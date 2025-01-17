@@ -59,10 +59,16 @@ const useStore = create((set) => ({
 
     set(() => {
       const newAnnotations = src.map((i) => {
+        const scale = i.width_multiplier;
+        const scaledWidth = i.width * scale;
+        const scaledHeight = i.height * scale;
+
+        const offsetX = (800 - scaledWidth) / 2;
+        const offsetY = (450 - scaledHeight) / 2;
         const new_rectangles = i.rectangle_annotations.map((rect) => ({
           ...rect,
-          x: rect.x * i.width_multiplier,
-          y: rect.y * i.height_multiplier,
+          x: rect.x * i.width_multiplier + offsetX,
+          y: rect.y * i.height_multiplier + offsetY,
           width: rect.width * i.width_multiplier,
           height: rect.height * i.height_multiplier,
         }));
@@ -70,16 +76,16 @@ const useStore = create((set) => ({
         const new_polygons = i.polygon_annotations.map((polygon) => ({
           ...polygon,
           points: polygon.points.map((point) => ({
-            x: point.x * i.width_multiplier,
-            y: point.y * i.height_multiplier,
+            x: point.x * scale + offsetX,
+            y: point.y * scale + offsetY,
           })),
         }));
 
         const new_segmentation = i.segmentation_annotations.map((polygon) => ({
           ...polygon,
           points: polygon.points.map((point) => ({
-            x: point.x * i.width_multiplier,
-            y: point.y * i.height_multiplier,
+            x: point.x * scale + offsetX,
+            y: point.y * scale + offsetY,
           })),
         }));
 
@@ -93,6 +99,8 @@ const useStore = create((set) => ({
           id: i.id,
           width_multiplier: i.width_multiplier,
           height_multiplier: i.height_multiplier,
+          width: i.width,
+          height: i.height,
         };
       });
 

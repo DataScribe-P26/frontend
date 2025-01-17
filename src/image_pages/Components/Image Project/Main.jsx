@@ -85,6 +85,23 @@ function Main() {
     const base64String = src.split(",")[1];
     const fileName = "abcd";
 
+    // Get dimensions from currentImage instead of src
+    const imageWidth = currentImage.width || 0;
+    const imageHeight = currentImage.height || 0;
+    const scale = currentImage.width_multiplier;
+    console.log(currentImage);
+    // Calculate scaled dimensions
+    const scaledWidth = imageWidth * scale;
+    const scaledHeight = imageHeight * scale;
+
+    // Calculate offsets for centering
+    const offsetX = (800 - scaledWidth) / 2;
+    const offsetY = (450 - scaledHeight) / 2;
+
+    console.log("Image dimensions:", imageWidth, imageHeight);
+    console.log("Scale:", scale);
+    console.log("Offsets:", offsetX, offsetY);
+
     const rectangle_annotations = (currentImage?.annotations || [])
       .filter(
         (a) =>
@@ -92,10 +109,10 @@ function Main() {
       )
       .map((rect) => ({
         ...rect,
-        x: rect.x / (currentImage.width_multiplier || 1),
-        y: rect.y / (currentImage.height_multiplier || 1),
-        width: rect.width / (currentImage.width_multiplier || 1),
-        height: rect.height / (currentImage.height_multiplier || 1),
+        x: (rect.x - offsetX) / scale,
+        y: (rect.y - offsetY) / scale,
+        width: rect.width / scale,
+        height: rect.height / scale,
       }));
 
     const polygon_annotations = (currentImage?.annotations || [])
@@ -106,8 +123,8 @@ function Main() {
       .map((polygon) => ({
         ...polygon,
         points: polygon.points.map((point) => ({
-          x: point.x / (currentImage.width_multiplier || 1),
-          y: point.y / (currentImage.height_multiplier || 1),
+          x: (point.x - offsetX) / scale,
+          y: (point.y - offsetY) / scale,
         })),
       }));
 
@@ -121,12 +138,13 @@ function Main() {
       .map((polygon) => ({
         ...polygon,
         points: polygon.points.map((point) => ({
-          x: point.x / (currentImage.width_multiplier || 1),
-          y: point.y / (currentImage.height_multiplier || 1),
+          x: (point.x - offsetX) / scale,
+          y: (point.y - offsetY) / scale,
         })),
       }));
 
-    console.log(rectangle_annotations);
+    // Console log for debugging
+    console.log("Rectangle annotations:", rectangle_annotations);
     const imageDetails = {
       width: currentImage.width || 0,
       height: currentImage.height || 0,

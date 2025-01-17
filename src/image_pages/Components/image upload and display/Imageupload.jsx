@@ -56,6 +56,9 @@ function ImageUpload({ projectName, loading, setloading }) {
         img.src = event.target.result;
         img.onload = () => {
           const exists = imageSrc.some((imgg) => imgg.src === img.src);
+          const scaleX = 800 / img.width;
+          const scaleY = 450 / img.height;
+          const scale = Math.min(scaleX, scaleY);
 
           if (!exists) {
             images.push({
@@ -66,8 +69,8 @@ function ImageUpload({ projectName, loading, setloading }) {
               segmentation_annotations: [],
               width: img.width,
               height: img.height,
-              width_multiplier: 800 / img.width,
-              height_multiplier: 450 / img.height,
+              width_multiplier: scale,
+              height_multiplier: scale,
             });
           }
 
