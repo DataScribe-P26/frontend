@@ -11,6 +11,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { X } from "lucide-react";
+import ExportModal from "../../../export_pages/export_modal.jsx";
 
 function Main() {
   const {
@@ -32,6 +33,7 @@ function Main() {
   const [cl, setcl] = useState("");
   const [annotations, setAnnotations] = useState(all_annotations);
   const [showImages, setShowImages] = useState(false);
+  const [exportModal, setExportModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -248,6 +250,7 @@ function Main() {
         }`}
       >
         {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
+        {exportModal && <ExportModal setExportModal={setExportModal} />}
         {imageSrc.length > 0 ? (
           <div className="flex w-full h-full">
             <div
@@ -258,6 +261,7 @@ function Main() {
               <AnnotationsLabels
                 currentImage={currentImage}
                 classes={classes}
+                setExportModal={setExportModal}
               />
             </div>
             <div

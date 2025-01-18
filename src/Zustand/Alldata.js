@@ -243,16 +243,11 @@ const useStore = create((set) => ({
   reset: () =>
     set(() => ({
       imageSrc: [],
-      Color: "#000000",
-      action: null,
       current: null,
       all_annotations: [],
       class_label: null,
-      counter: 0,
       currentIndex: 0,
       classes: [],
-      project_name: "",
-      created_on: null,
     })),
 }));
 

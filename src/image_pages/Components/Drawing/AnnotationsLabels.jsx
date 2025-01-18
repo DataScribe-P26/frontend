@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "../../../text_pages/Text/ThemeContext";
 
-function AnnotationsLabels({ currentImage, classes }) {
+function AnnotationsLabels({ currentImage, classes, setExportModal }) {
   const { isDarkMode } = useTheme();
 
   const annotations = currentImage?.annotations || [];
@@ -26,7 +26,7 @@ function AnnotationsLabels({ currentImage, classes }) {
       >
         Annotations
       </div>
-      <div className="px-3">
+      <div className="px-3 h-[62vh] overflow-y-auto body">
         {counts.length > 0 ? (
           <div className="space-y-2">
             {counts.map((item) => (
@@ -54,6 +54,12 @@ function AnnotationsLabels({ currentImage, classes }) {
             No annotations available
           </div>
         )}
+      </div>
+      <div
+        className="h-[6.5vh] bg-blue-500 mb-4 rounded-lg flex justify-center items-center cursor-pointer text-white font-semibold"
+        onClick={() => setExportModal(true)}
+      >
+        Export
       </div>
     </>
   );
