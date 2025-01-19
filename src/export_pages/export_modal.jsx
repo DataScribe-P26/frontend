@@ -1,9 +1,11 @@
 import React from "react";
 import useStore from "../Zustand/Alldata";
 import { exportYOLODataset } from "./YoloExporter";
+import axios from "axios";
 
-const ExportModal = ({ setExportModal }) => {
-  const { export_annotations: all_annotations } = useStore();
+const ExportModal = ({ setExportModal, projectName }) => {
+  console.log("projectName", projectName);
+  const { setExportAnnotations } = useStore();
   const [splits, setSplits] = React.useState([70, 90]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -63,7 +65,13 @@ const ExportModal = ({ setExportModal }) => {
   const handleExport = async () => {
     setIsLoading(true);
     setError("");
-
+    const response = await axios.get(
+      `http://127.0.0.1:8000/projects/${projectName}/images/`
+    );
+    console.log("response", response);
+    const all_annotations = response.data.filter(
+      (annotation) => annotation.rectangle_annotations.length > 0
+    );
     try {
       if (!selectedFormat) {
         throw new Error("Please select an export format");
@@ -83,10 +91,8 @@ const ExportModal = ({ setExportModal }) => {
           await exportYOLODataset(all_annotations, currentSplits);
           break;
         case "coco":
-          // await exportCOCODataset(all_annotations, currentSplits);
           throw new Error("COCO export not yet implemented");
         case "pascal_voc":
-          // await exportPascalVOCDataset(all_annotations, currentSplits);
           throw new Error("Pascal VOC export not yet implemented");
         case "createml":
           // await exportCreateMLDataset(all_annotations, currentSplits);
@@ -138,11 +144,6 @@ const ExportModal = ({ setExportModal }) => {
           </div>
         )}
 
-        <div className="px-5 py-2">
-          <div className="text-sm text-gray-600">
-            Total Images: {all_annotations?.length || 0}
-          </div>
-        </div>
         <div className="px-5 py-1">
           <div className="text-xl text-black font-medium">
             Dataset Configuration
@@ -240,9 +241,9 @@ const ExportModal = ({ setExportModal }) => {
         <div className="p-4 flex justify-end space-x-4">
           <button
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-            onClick={() => !isLoading && setExportModal(false)}
+            onClick={() => setExportModal(false)}
           >
-            Cancel
+            Close
           </button>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600"

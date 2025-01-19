@@ -248,6 +248,7 @@ const useStore = create((set) => ({
       class_label: null,
       currentIndex: 0,
       classes: [],
+      export_annotations: [],
     })),
   export_annotations: [],
   setExportAnnotations: (export_annotations) => {

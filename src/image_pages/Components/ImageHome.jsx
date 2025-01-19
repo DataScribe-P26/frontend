@@ -17,7 +17,6 @@ function Imagehome() {
     setCurrentIndex,
     setCreatedOn,
     created_on,
-    setExportAnnotations,
   } = useStore();
   const { projectName } = useParams();
   console.log(projectName);
@@ -89,7 +88,6 @@ function Imagehome() {
             width: image.width,
             height: image.height,
           }));
-          setExportAnnotations(response.data);
           setAnnots(formattedImages);
           setImageSrc(formattedImages);
         } else {
@@ -148,7 +146,7 @@ function Imagehome() {
               isDarkMode ? "bg-gray-800" : "bg-gray-50"
             }`}
           >
-            <Main />
+            <Main projectName={projectName} />
           </div>
         )}
       </div>

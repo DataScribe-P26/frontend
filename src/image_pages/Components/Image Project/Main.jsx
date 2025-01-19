@@ -250,7 +250,12 @@ function Main() {
         }`}
       >
         {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
-        {exportModal && <ExportModal setExportModal={setExportModal} />}
+        {exportModal && (
+          <ExportModal
+            setExportModal={setExportModal}
+            projectName={project_name}
+          />
+        )}
         {imageSrc.length > 0 ? (
           <div className="flex w-full h-full">
             <div
