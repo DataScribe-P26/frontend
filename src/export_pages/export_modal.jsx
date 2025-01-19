@@ -1,10 +1,21 @@
 import React from "react";
+import useStore from "../Zustand/Alldata";
+import { exportYOLODataset } from "./YoloExporter";
 
 const ExportModal = ({ setExportModal }) => {
-  const [splits, setSplits] = React.useState([70, 90]); // Divider positions
+  const { export_annotations: all_annotations } = useStore();
+  const [splits, setSplits] = React.useState([70, 90]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
+  const [selectedFormat, setSelectedFormat] = React.useState("");
   const sliderRef = React.useRef(null);
   const isDragging = React.useRef(null);
-  const [datasetType, setDatasetType] = React.useState("");
+
+  const exportFormats = [
+    { value: "yolo", label: "YOLO Format" },
+    { value: "coco", label: "COCO JSON" },
+    { value: "pascal_voc", label: "Pascal VOC" },
+  ];
 
   const currentSplits = React.useMemo(
     () => ({
@@ -49,6 +60,50 @@ const ExportModal = ({ setExportModal }) => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  const handleExport = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (!selectedFormat) {
+        throw new Error("Please select an export format");
+      }
+
+      if (
+        !all_annotations ||
+        !Array.isArray(all_annotations) ||
+        all_annotations.length === 0
+      ) {
+        throw new Error("No images available to export");
+      }
+
+      // Handle different export formats
+      switch (selectedFormat) {
+        case "yolo":
+          await exportYOLODataset(all_annotations, currentSplits);
+          break;
+        case "coco":
+          // await exportCOCODataset(all_annotations, currentSplits);
+          throw new Error("COCO export not yet implemented");
+        case "pascal_voc":
+          // await exportPascalVOCDataset(all_annotations, currentSplits);
+          throw new Error("Pascal VOC export not yet implemented");
+        case "createml":
+          // await exportCreateMLDataset(all_annotations, currentSplits);
+          throw new Error("CreateML export not yet implemented");
+        default:
+          throw new Error("Unsupported export format");
+      }
+
+      setExportModal(false);
+    } catch (error) {
+      console.error("Export failed:", error);
+      setError(error.message || "Failed to export dataset. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -69,15 +124,29 @@ const ExportModal = ({ setExportModal }) => {
   return (
     <div
       className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm flex justify-center items-center text-black"
-      onClick={() => setExportModal(false)}
+      onClick={() => !isLoading && setExportModal(false)}
     >
       <div
         className="w-[440px] bg-white shadow-lg rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-2xl font-semibold px-5 py-4">Export Options</div>
-        <div className="px-5">
-          <h2 className="text-lg font-medium">Dataset Split Configuration</h2>
+        <div className="text-2xl font-semibold px-5 py-4">Export Dataset</div>
+
+        {error && (
+          <div className="mx-5 mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="px-5 py-2">
+          <div className="text-sm text-gray-600">
+            Total Images: {all_annotations?.length || 0}
+          </div>
+        </div>
+        <div className="px-5 py-1">
+          <div className="text-xl text-black font-medium">
+            Dataset Configuration
+          </div>
         </div>
 
         <div className="px-6 pt-4 space-y-6">
@@ -150,24 +219,37 @@ const ExportModal = ({ setExportModal }) => {
           </div>
         </div>
 
-        <div>
-          <div className="px-5 mt-3">
-            <h2 className="text-lg font-medium mb-2">Dataset Type</h2>
-            <select className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="">Select Dataset Type</option>
-              <option value="yolo">Yolo</option>
-            </select>
-          </div>
+        <div className="px-5 py-4 space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Export Format
+          </label>
+          <select
+            className="w-full p-2 border border-gray-300 rounded-md bg-white"
+            value={selectedFormat}
+            onChange={(e) => setSelectedFormat(e.target.value)}
+          >
+            <option value="">Select a format</option>
+            {exportFormats.map((format) => (
+              <option key={format.value} value={format.value}>
+                {format.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="p-4  flex justify-end space-x-4">
+        <div className="p-4 flex justify-end space-x-4">
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
-            onClick={() => {
-              setExportModal(false);
-            }}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+            onClick={() => !isLoading && setExportModal(false)}
           >
-            Export
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600"
+            onClick={handleExport}
+            disabled={isLoading || !selectedFormat}
+          >
+            {isLoading ? "Processing..." : "Export Dataset"}
           </button>
         </div>
       </div>

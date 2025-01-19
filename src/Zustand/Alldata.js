@@ -249,6 +249,18 @@ const useStore = create((set) => ({
       currentIndex: 0,
       classes: [],
     })),
+  export_annotations: [],
+  setExportAnnotations: (export_annotations) => {
+    const filteredAnnotations = export_annotations.filter(
+      (annotation) => annotation.rectangle_annotations.length > 0
+    );
+
+    console.log("filteredAnnotations export", filteredAnnotations); // Log filtered annotations for debugging.
+
+    set({
+      export_annotations: filteredAnnotations,
+    });
+  },
 }));
 
 export default useStore;

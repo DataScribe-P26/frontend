@@ -17,6 +17,7 @@ function Imagehome() {
     setCurrentIndex,
     setCreatedOn,
     created_on,
+    setExportAnnotations,
   } = useStore();
   const { projectName } = useParams();
   console.log(projectName);
@@ -88,7 +89,7 @@ function Imagehome() {
             width: image.width,
             height: image.height,
           }));
-
+          setExportAnnotations(response.data);
           setAnnots(formattedImages);
           setImageSrc(formattedImages);
         } else {
