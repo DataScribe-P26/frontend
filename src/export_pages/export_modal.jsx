@@ -1,11 +1,12 @@
 import React from "react";
 import useStore from "../Zustand/Alldata";
 import { exportYOLODataset } from "./YoloExporter";
+import { exportYOLOv7Dataset } from "./Yolov7Exporter";
+import { exportYOLOv6Dataset } from "./exportYOLOv6Dataset";
+import { exportYOLOv5Dataset } from "./exportYOLOv5Dataset";
 import axios from "axios";
 
 const ExportModal = ({ setExportModal, projectName }) => {
-  console.log("projectName", projectName);
-  const { setExportAnnotations } = useStore();
   const [splits, setSplits] = React.useState([70, 90]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -14,9 +15,10 @@ const ExportModal = ({ setExportModal, projectName }) => {
   const isDragging = React.useRef(null);
 
   const exportFormats = [
-    { value: "yolo", label: "YOLO Format" },
-    { value: "coco", label: "COCO JSON" },
-    { value: "pascal_voc", label: "Pascal VOC" },
+    { value: "yolov8", label: "YOLO v8 Format" },
+    { value: "yolov7", label: "YOLO v7 Format" },
+    { value: "yolov6", label: "YOLO v6 Format" },
+    { value: "yolov5", label: "YOLO v5 Format" },
   ];
 
   const currentSplits = React.useMemo(
@@ -65,14 +67,15 @@ const ExportModal = ({ setExportModal, projectName }) => {
   const handleExport = async () => {
     setIsLoading(true);
     setError("");
-    const response = await axios.get(
-      `http://127.0.0.1:8000/projects/${projectName}/images/`
-    );
-    console.log("response", response);
-    const all_annotations = response.data.filter(
-      (annotation) => annotation.rectangle_annotations.length > 0
-    );
     try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/projects/${projectName}/images/`
+      );
+
+      const all_annotations = response.data?.filter(
+        (annotation) => annotation.rectangle_annotations.length > 0
+      );
+
       if (!selectedFormat) {
         throw new Error("Please select an export format");
       }
@@ -85,20 +88,34 @@ const ExportModal = ({ setExportModal, projectName }) => {
         throw new Error("No images available to export");
       }
 
-      // Handle different export formats
+      // Handle different YOLO versions
       switch (selectedFormat) {
-        case "yolo":
-          await exportYOLODataset(all_annotations, currentSplits);
+        case "yolov8":
+          await exportYOLODataset(all_annotations, currentSplits, projectName);
           break;
-        case "coco":
-          throw new Error("COCO export not yet implemented");
-        case "pascal_voc":
-          throw new Error("Pascal VOC export not yet implemented");
-        case "createml":
-          // await exportCreateMLDataset(all_annotations, currentSplits);
-          throw new Error("CreateML export not yet implemented");
+        case "yolov7":
+          await exportYOLOv7Dataset(
+            all_annotations,
+            currentSplits,
+            projectName
+          );
+          break;
+        case "yolov6":
+          await exportYOLOv6Dataset(
+            all_annotations,
+            currentSplits,
+            projectName
+          );
+          break;
+        case "yolov5":
+          await exportYOLOv5Dataset(
+            all_annotations,
+            currentSplits,
+            projectName
+          );
+          break;
         default:
-          throw new Error("Unsupported export format");
+          throw new Error("Unsupported YOLO version");
       }
 
       setExportModal(false);
@@ -222,14 +239,14 @@ const ExportModal = ({ setExportModal, projectName }) => {
 
         <div className="px-5 py-4 space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Export Format
+            YOLO Version
           </label>
           <select
             className="w-full p-2 border border-gray-300 rounded-md bg-white"
             value={selectedFormat}
             onChange={(e) => setSelectedFormat(e.target.value)}
           >
-            <option value="">Select a format</option>
+            <option value="">Select a version</option>
             {exportFormats.map((format) => (
               <option key={format.value} value={format.value}>
                 {format.label}

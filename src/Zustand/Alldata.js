@@ -262,6 +262,34 @@ const useStore = create((set) => ({
       export_annotations: filteredAnnotations,
     });
   },
+  autoAnnotation: false,
+
+  toggleAutoAnnotation: (projectName) => {
+    set((state) => {
+      const key = `${projectName}_autoAnnotation`;
+      const newState = !state.autoAnnotation;
+      localStorage.setItem(key, JSON.stringify(newState));
+      return { autoAnnotation: newState };
+    });
+  },
+
+  loadAutoAnnotation: (projectName) => {
+    const key = `${projectName}_autoAnnotation`;
+    const savedAutoAnnotation = JSON.parse(localStorage.getItem(key));
+    set({ autoAnnotation: savedAutoAnnotation ?? false });
+  },
+
+  threshold: 25,
+  setThreshold: (projectName, value) => {
+    const key = `${projectName}_threshold`;
+    localStorage.setItem(key, JSON.stringify(value));
+    set({ threshold: value });
+  },
+  loadThreshold: (projectName) => {
+    const key = `${projectName}_threshold`;
+    const savedThreshold = JSON.parse(localStorage.getItem(key));
+    set({ threshold: savedThreshold ?? 25 });
+  },
 }));
 
 export default useStore;

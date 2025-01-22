@@ -1,12 +1,10 @@
 import JSZip from "jszip";
 
-export const exportYOLODataset = async (annotations, splits, projectName) => {
-  // Validate input
+export const exportYOLOv5Dataset = async (annotations, splits, projectName) => {
   if (!Array.isArray(annotations) || annotations.length === 0) {
     throw new Error("No annotations provided or invalid format");
   }
 
-  // Extract unique classes from rectangle annotations
   const classSet = new Set();
   annotations?.forEach((item) => {
     if (
@@ -22,33 +20,28 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
   });
 
   const classes = Array.from(classSet).sort();
-
-  // Create class to index mapping
   const classToIndex = {};
   classes?.forEach((className, index) => {
     classToIndex[className] = index;
   });
 
   const zip = new JSZip();
-  const dataset = zip.folder(`${projectName}_Yolov8`); // Dynamically set folder name
+  const dataset = zip.folder("dataset");
 
-  // Create split folders with updated structure
-  const splitFolders = {
-    train: {
-      images: dataset.folder("train").folder("images"),
-      labels: dataset.folder("train").folder("labels"),
+  // YOLOv5 folder structure
+  const datasetFolders = {
+    images: {
+      train: dataset.folder("images/train"),
+      val: dataset.folder("images/val"),
+      test: dataset.folder("images/test"),
     },
-    valid: {
-      images: dataset.folder("valid").folder("images"),
-      labels: dataset.folder("valid").folder("labels"),
-    },
-    test: {
-      images: dataset.folder("test").folder("images"),
-      labels: dataset.folder("test").folder("labels"),
+    labels: {
+      train: dataset.folder("labels/train"),
+      val: dataset.folder("labels/val"),
+      test: dataset.folder("labels/test"),
     },
   };
 
-  // Filter valid annotations
   const validAnnotations = annotations?.filter((item) => {
     return (
       item &&
@@ -68,7 +61,6 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
     throw new Error("No valid annotations found with required properties");
   }
 
-  // Normalize coordinates function
   const normalizeCoordinates = (x, y, width, height, imgWidth, imgHeight) => {
     const center_x = (x + width / 2) / imgWidth;
     const center_y = (y + height / 2) / imgHeight;
@@ -83,7 +75,6 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
     ];
   };
 
-  // Calculate split sizes
   const shuffledData = [...validAnnotations].sort(() => Math.random() - 0.5);
   const totalFiles = shuffledData.length;
   const trainSize = Math.floor(totalFiles * (splits.training / 100));
@@ -92,24 +83,27 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
   const dataSplits = {
     train: shuffledData.slice(0, trainSize),
     test: shuffledData.slice(trainSize, trainSize + testSize),
-    valid: shuffledData.slice(trainSize + testSize),
+    val: shuffledData.slice(trainSize + testSize),
   };
 
-  // Process each split
   for (const [splitName, splitData] of Object.entries(dataSplits)) {
     for (const item of splitData) {
       try {
         const { filename, src, width: imgWidth, height: imgHeight } = item;
+        const imageNumber = String(splitData.indexOf(item) + 1).padStart(
+          6,
+          "0"
+        );
+        const imageExt = filename.split(".").pop();
+        const newImageName = `${splitName}_${imageNumber}.${imageExt}`;
 
-        // Save image
         const base64Data = src.includes("base64,")
           ? src.split("base64,")[1]
           : src;
-        splitFolders[splitName].images.file(filename, base64Data, {
+        datasetFolders.images[splitName].file(newImageName, base64Data, {
           base64: true,
         });
 
-        // Process annotations
         const labelLines = item.rectangle_annotations
           ?.filter(
             (annotation) =>
@@ -140,33 +134,34 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
           ?.filter((line) => line !== null)
           .join("\n");
 
-        const baseName = filename.split(".")[0];
-        splitFolders[splitName].labels.file(`${baseName}.txt`, labelLines);
+        const labelName = `${splitName}_${imageNumber}.txt`;
+        datasetFolders.labels[splitName].file(labelName, labelLines);
       } catch (error) {
         console.error(`Error processing item ${item.filename}:`, error);
       }
     }
   }
 
-  // Create data.yaml file with updated paths
   const yamlContent = `
-path: ./${projectName}_Yolov8
-train: train/images
-val: valid/images
-test: test/images
-nc: ${classes.length}
-names: ${JSON.stringify(classes)}
+# Change Path
+path: ../dataset
+train: images/train
+val: images/val
+test: images/test
+
+# Classes
+nc: ${classes.length}  # number of classes
+names: ${JSON.stringify(classes)}  # class names
 `.trim();
 
   dataset.file("data.yaml", yamlContent);
 
-  // Generate and download zip
   try {
     const content = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(content);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${projectName}_Yolov8_dataset.zip`;
+    link.download = "yolov5_dataset.zip";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

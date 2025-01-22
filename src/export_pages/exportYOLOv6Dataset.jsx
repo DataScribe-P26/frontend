@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 
-export const exportYOLODataset = async (annotations, splits, projectName) => {
+export const exportYOLOv6Dataset = async (annotations, splits, projectName) => {
   // Validate input
   if (!Array.isArray(annotations) || annotations.length === 0) {
     throw new Error("No annotations provided or invalid format");
@@ -30,21 +30,21 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
   });
 
   const zip = new JSZip();
-  const dataset = zip.folder(`${projectName}_Yolov8`); // Dynamically set folder name
 
-  // Create split folders with updated structure
-  const splitFolders = {
-    train: {
-      images: dataset.folder("train").folder("images"),
-      labels: dataset.folder("train").folder("labels"),
+  // Create YOLOv6 Roboflow structure
+  const dataset = zip.folder("YOLOv6");
+
+  // Create dataset subfolders
+  const datasetFolders = {
+    images: {
+      train: dataset.folder("datasets/train/images"),
+      val: dataset.folder("datasets/val/images"),
+      test: dataset.folder("datasets/test/images"),
     },
-    valid: {
-      images: dataset.folder("valid").folder("images"),
-      labels: dataset.folder("valid").folder("labels"),
-    },
-    test: {
-      images: dataset.folder("test").folder("images"),
-      labels: dataset.folder("test").folder("labels"),
+    labels: {
+      train: dataset.folder("datasets/train/labels"),
+      val: dataset.folder("datasets/val/labels"),
+      test: dataset.folder("datasets/test/labels"),
     },
   };
 
@@ -92,7 +92,7 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
   const dataSplits = {
     train: shuffledData.slice(0, trainSize),
     test: shuffledData.slice(trainSize, trainSize + testSize),
-    valid: shuffledData.slice(trainSize + testSize),
+    val: shuffledData.slice(trainSize + testSize), // Note: YOLOv6 uses 'val' instead of 'valid'
   };
 
   // Process each split
@@ -101,11 +101,19 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
       try {
         const { filename, src, width: imgWidth, height: imgHeight } = item;
 
+        // Create YOLOv6 style numbered filename
+        const imageNumber = String(splitData.indexOf(item) + 1).padStart(
+          6,
+          "0"
+        );
+        const imageExt = filename.split(".").pop();
+        const newImageName = `${splitName}_${imageNumber}.${imageExt}`;
+
         // Save image
         const base64Data = src.includes("base64,")
           ? src.split("base64,")[1]
           : src;
-        splitFolders[splitName].images.file(filename, base64Data, {
+        datasetFolders.images[splitName].file(newImageName, base64Data, {
           base64: true,
         });
 
@@ -140,22 +148,25 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
           ?.filter((line) => line !== null)
           .join("\n");
 
-        const baseName = filename.split(".")[0];
-        splitFolders[splitName].labels.file(`${baseName}.txt`, labelLines);
+        // Save label file with matching name
+        const labelName = `${splitName}_${imageNumber}.txt`;
+        datasetFolders.labels[splitName].file(labelName, labelLines);
       } catch (error) {
         console.error(`Error processing item ${item.filename}:`, error);
       }
     }
   }
 
-  // Create data.yaml file with updated paths
+  // Create data.yaml with YOLOv6 structure
   const yamlContent = `
-path: ./${projectName}_Yolov8
+# Change Path
 train: train/images
-val: valid/images
+val: val/images  
 test: test/images
-nc: ${classes.length}
-names: ${JSON.stringify(classes)}
+
+# Classes
+nc: ${classes.length}  # number of classes
+names: ${JSON.stringify(classes)}  # class names
 `.trim();
 
   dataset.file("data.yaml", yamlContent);
@@ -166,7 +177,7 @@ names: ${JSON.stringify(classes)}
     const url = URL.createObjectURL(content);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${projectName}_Yolov8_dataset.zip`;
+    link.download = "yolov6_dataset.zip";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

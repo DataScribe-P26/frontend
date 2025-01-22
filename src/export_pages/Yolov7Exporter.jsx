@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 
-export const exportYOLODataset = async (annotations, splits, projectName) => {
+export const exportYOLOv7Dataset = async (annotations, splits, projectName) => {
   // Validate input
   if (!Array.isArray(annotations) || annotations.length === 0) {
     throw new Error("No annotations provided or invalid format");
@@ -30,21 +30,25 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
   });
 
   const zip = new JSZip();
-  const dataset = zip.folder(`${projectName}_Yolov8`); // Dynamically set folder name
 
-  // Create split folders with updated structure
+  // Create YOLOv7 Roboflow structure
+  // Root folder - projectName_Yolov7
+  const rootFolderName = `${projectName}_Yolov7`;
+  const dataset = zip.folder(rootFolderName);
+
+  // Create split folders with Roboflow structure
   const splitFolders = {
     train: {
-      images: dataset.folder("train").folder("images"),
-      labels: dataset.folder("train").folder("labels"),
+      images: dataset.folder("train"),
+      labels: dataset.folder("train"),
     },
     valid: {
-      images: dataset.folder("valid").folder("images"),
-      labels: dataset.folder("valid").folder("labels"),
+      images: dataset.folder("valid"),
+      labels: dataset.folder("valid"),
     },
     test: {
-      images: dataset.folder("test").folder("images"),
-      labels: dataset.folder("test").folder("labels"),
+      images: dataset.folder("test"),
+      labels: dataset.folder("test"),
     },
   };
 
@@ -101,15 +105,23 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
       try {
         const { filename, src, width: imgWidth, height: imgHeight } = item;
 
+        // Save image with numbered sequence (Roboflow style)
+        const imageNumber = String(splitData.indexOf(item) + 1).padStart(
+          6,
+          "0"
+        );
+        const imageExt = filename.split(".").pop();
+        const newImageName = `${splitName}_${imageNumber}.${imageExt}`;
+
         // Save image
         const base64Data = src.includes("base64,")
           ? src.split("base64,")[1]
           : src;
-        splitFolders[splitName].images.file(filename, base64Data, {
+        splitFolders[splitName].images.file(newImageName, base64Data, {
           base64: true,
         });
 
-        // Process annotations
+        // Process annotations - YOLOv7 format
         const labelLines = item.rectangle_annotations
           ?.filter(
             (annotation) =>
@@ -140,23 +152,24 @@ export const exportYOLODataset = async (annotations, splits, projectName) => {
           ?.filter((line) => line !== null)
           .join("\n");
 
-        const baseName = filename.split(".")[0];
-        splitFolders[splitName].labels.file(`${baseName}.txt`, labelLines);
+        // Save label file with matching name
+        const labelName = `${splitName}_${imageNumber}.txt`;
+        splitFolders[splitName].labels.file(labelName, labelLines);
       } catch (error) {
         console.error(`Error processing item ${item.filename}:`, error);
       }
     }
   }
 
-  // Create data.yaml file with updated paths
+  // Create data.yaml file with YOLOv7 Roboflow structure
   const yamlContent = `
-path: ./${projectName}_Yolov8
-train: train/images
-val: valid/images
-test: test/images
+train: ./train
+val: ./valid
+test: ./test
+
 nc: ${classes.length}
 names: ${JSON.stringify(classes)}
-`.trim();
+`;
 
   dataset.file("data.yaml", yamlContent);
 
@@ -166,7 +179,7 @@ names: ${JSON.stringify(classes)}
     const url = URL.createObjectURL(content);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${projectName}_Yolov8_dataset.zip`;
+    link.download = `${rootFolderName}.zip`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
