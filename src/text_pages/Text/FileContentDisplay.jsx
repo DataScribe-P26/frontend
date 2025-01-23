@@ -32,7 +32,48 @@ const FileContentDisplay = () => {
   const [currentLabel, setCurrentLabel] = useState(null);
 
   const [fetchedLabels, setFetchedLabels] = useState(false);
+  const [autoAnnotationEnabled, setAutoAnnotationEnabled] = useState(false);
+  useEffect(() => {
+    // Activate auto-annotation button if more than one annotation exists
+    setAutoAnnotationEnabled(annotations.length > 1);
+  }, [annotations]);
 
+  const handleAutoAnnotation = async () => {
+    await handleSubmit();
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/projects/${projectName}/ner/auto-annotate`
+      );
+  
+      console.log(response.data.message);
+  
+      // Fetch updated annotations
+      const fetchResponse = await axios.get(
+        `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
+      );
+  
+      if (fetchResponse.data?.[0]) {
+        const updatedAnnotations = fetchResponse.data[0].entities.map((entity) => ({
+          text: entity.entity,
+          label: {
+            name: entity.label,
+            color: entity.color,
+            bgColor: entity.bColor,
+            textColor: entity.textColor,
+          },
+          start: entity.start,
+          end: entity.end,
+          index: -1,
+        }));
+  
+        setAnnotations(updatedAnnotations); // Update annotations locally
+      }
+    } catch (error) {
+      console.error("Error during auto-annotation:", error);
+    }
+  };
+  
+  
   const handleCreateLabel = (newLabel) => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
 
@@ -155,7 +196,7 @@ const FileContentDisplay = () => {
         const response = await axios.get(
           `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
         );
-
+        console.log('hello------',response.data[0]);
         if (response.data?.[0]) {
           setContent(response.data[0].text || null);
 
@@ -220,10 +261,16 @@ const FileContentDisplay = () => {
         end: selectedText.end,
         index: fileType === "text" ? -1 : currentIndex,
       };
-
-      addAnnotation(newAnnotation);
-      setSelectedText("");
-      await handleSubmit();
+      
+      try {
+        addAnnotation(newAnnotation); 
+        setSelectedText("");
+        await handleSubmit();
+        
+        
+      } catch (error) {
+        console.error("Error submitting annotation:", error);
+      }
     }
   };
 
@@ -346,9 +393,9 @@ const FileContentDisplay = () => {
   const renderAnnotations = () => {
     // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
-      // Check if the annotation text already exists in the unique array
+
       if (!unique.some((annotation) => annotation.text === current.text)) {
-        unique.push(current); // If not, add it
+        unique.push(current); 
       }
       return unique;
     }, []);
@@ -544,7 +591,7 @@ const FileContentDisplay = () => {
                 isDarkMode ? "text-white" : "text-black"
               }`}
             >
-              File Content Display
+              WorkSpace
             </h2>
 
             <div className="flex flex-col gap-4">
@@ -596,7 +643,7 @@ const FileContentDisplay = () => {
                   onClick={handleSubmit}
                   className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg"
                 >
-                  Submit Annotations
+                  Save Annotations
                 </button>
                 <CreateLabel
                   isOpen={isModalOpen}
@@ -612,6 +659,12 @@ const FileContentDisplay = () => {
                 >
                   Exit Project
                 </button>
+                <button
+              className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg"
+              onClick={handleAutoAnnotation}
+            >
+              Auto Annotate
+            </button>
               </div>
               {renderAnnotations()}
 
