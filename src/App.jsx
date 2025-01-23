@@ -21,6 +21,7 @@ function App() {
         <Route path="/image" element={<Home />} />
         <Route path="/image/:projectName" element={<Imagehome />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/project/:name" element={<Analysis />} />
 
         {/* text */}

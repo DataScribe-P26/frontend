@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import { HiAnnotation } from "react-icons/hi";
 import {
   FaUserCircle,
@@ -6,18 +6,37 @@ import {
   FaQuestionCircle,
   FaSun,
   FaMoon,
+  FaSignOutAlt, // Add the sign-out icon
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "./ThemeContext"; // Import the Theme Context
 import HelpModal from "./HelpModal"; // Import Help Modal
 
 const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false); // Modal state
+  const [userName, setUserName] = useState(""); // State for storing the user name
+  const [showProfile, setShowProfile] = useState(false); // State for showing the profile dropdown
+  const navigate = useNavigate(); // Hook to navigate to the login page
 
   const openHelpModal = () => setHelpOpen(true);
   const closeHelpModal = () => setHelpOpen(false);
 
   const { isDarkMode, toggleTheme } = useTheme(); // Use global theme state
+
+  // Fetch the user name from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userName = storedUser.split("@")[0]; // Extract the username from the email
+      setUserName(userName);
+    }
+  }, []);
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Remove the user from localStorage
+    navigate("/login"); // Redirect to the login page after logout
+  };
 
   return (
     <nav
@@ -69,11 +88,43 @@ const Navbar = () => {
 
           {/* Help, User, and Settings Icons */}
           <div className="flex items-center space-x-10">
-            <FaQuestionCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" 
-             onClick={openHelpModal} // Open modal on click
-          />
+            <FaQuestionCircle
+              className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110"
+              onClick={openHelpModal} // Open modal on click
+            />
             <FaCog className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
-            <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+
+            {/* Display user's name if logged in */}
+            {userName ? (
+              <div className="relative">
+                <div
+                  className="flex items-center space-x-2 cursor-pointer"
+                  onClick={() => setShowProfile(!showProfile)} // Toggle profile dropdown
+                >
+                  {/* Display first letter of the username */}
+                  <div className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                 
+                </div>
+
+                {/* Profile dropdown */}
+                {showProfile && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white text-black shadow-lg rounded-lg p-4">
+                     <span>{userName}</span> {/* Display user name */}
+                    <div
+                      className="flex items-center space-x-2 cursor-pointer"
+                      onClick={handleLogout} // Handle logout on click
+                    >
+                      <FaSignOutAlt className="text-red-500" />
+                      <span className="text-red-500">Logout</span> {/* Logout option */}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+            )}
           </div>
         </div>
       </div>

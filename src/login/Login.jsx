@@ -3,33 +3,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { HiAnnotation, HiEye, HiEyeOff } from "react-icons/hi";
 
 export default function Login() {
-  // Initialize email and password state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
-  // Handle the login form submission
   async function handleLogin(event) {
     event.preventDefault();
 
-    // Check if email and password are correctly set
     if (!email || !password) {
       toast.error("Please enter both email and password");
       return;
     }
 
     try {
-      // Send a POST request to the FastAPI backend
       const result = await axios.post("http://localhost:8000/auth/login", {
         email: email.trim(),
         password: password.trim(),
       });
 
-      // Check if login is successful
-      console.log(result.data);
       if (result.data.status === "success") {
         localStorage.setItem("user", email);
         toast.success("Welcome!!!", {
@@ -37,97 +32,122 @@ export default function Login() {
           autoClose: 3000,
         });
 
-        // Redirect to home after a delay
         setTimeout(() => {
           navigate("/home");
         }, 3000);
       }
     } catch (error) {
-      // Log the error to inspect what went wrong
       console.error("Login error:", error);
-
-      // Provide user-friendly feedback
       toast.error("Login failed. Please check your credentials.", {
         position: "top-center",
         autoClose: 3000,
       });
     } finally {
-      // Reset form inputs after submission
       setEmail("");
       setPassword("");
     }
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-        <nav className="bg-purple-700 text-white shadow-lg">
-          <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-            <h1 className="text-3xl font-extrabold tracking-wide flex items-center">
-              Datascribe.ai
-            </h1>
-          </div>
-        </nav>
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-indigo-800 to-purple-900">
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
-        <div className="w-full h-[100vh] mob:h-[90vh] flex items-center xs:px-0 xs:items-end xs:pb-[180px] relative ">
-          <div className="w-[380px] z-10 bg-purple-700 mx-auto lg:w-[430px] rounded-md px-8 pt-16 pb-20 xs:pt-9 shadow-[B6C4B6] shadow-sm border-stone-900 text-white">
-            <h1 className="text-white font-bold text-3xl text-center">Sign In</h1>
-            <form className="mt-[40px]" onSubmit={handleLogin}>
-              <input
-                className="w-full h-[8vh] xs:h-[6.5vh] rounded-sm border-b-[3px] border-gray-300 focus:border-green-500 focus:outline-none p-2 text-black"
-                placeholder="Enter Your Email"
-                value={email}  // State is linked to input value
-                onChange={(e) => setEmail(e.target.value)}  // onChange updates state
-                autoComplete="email"
-                required
-              />
-              <div className="relative">
-                <input
-                  type={show ? "text" : "password"}
-                  className="w-full h-[8vh] xs:h-[6.5vh] text-black rounded-sm mt-[25px] border-b-[3px] border-t-0 border-l-0 border-r-0 outline-none focus:ring-0 border-gray-300 focus:border-green-500 p-2"
-                  placeholder="Enter Your Password"
-                  value={password}  // State is linked to input value
-                  onChange={(e) => setPassword(e.target.value)}  // onChange updates state
-                  required
-                />
-                <label
-                  onClick={() => setShow(!show)}
-                  className="text-gray-400 absolute top-[44.5px] right-[17px] cursor-pointer select-none"
+      {/* Glassmorphism Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-900 opacity-40 backdrop-blur-sm"></div>
+
+      {/* Navigation Bar */}
+      <nav className="relative z-10 py-6 px-8 text-white">
+        <h1 className="text-4xl font-extrabold flex items-center gap-3">
+          <HiAnnotation className="text-5xl text-purple-500 transform transition-transform duration-300 hover:scale-110" />
+          Datascribe.ai
+        </h1>
+      </nav>
+
+      {/* Login Content */}
+      <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md">
+        <div className="bg-transparent bg-opacity-40 backdrop-blur-md shadow-xl rounded-[10%] overflow-hidden border border-white border-opacity-20 h-[500px]  mx-auto">
+
+            <div className="bg-gradient-to-r mb-4 from-purple-800 to-indigo-900 px-6 py-5 text-center">
+              <h1 className="text-3xl font-extrabold text-white tracking-wide">
+                Welcome Back
+              </h1>
+            </div>
+
+            <div className="p-8">
+              <form onSubmit={handleLogin} className="space-y-6 ">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Enter Your Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    className="w-full mb-3 px-4 py-3 bg-transparent border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  />
+                </div>
+
+                <div className="relative">
+                  <input
+                    type={show ? "text" : "password"}
+                    placeholder="Enter Your Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 mb-3 bg-transparent border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShow(!show)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition"
+                  >
+                    {show ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+                  </button>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-xl font-semibold tracking-wide shadow-lg hover:opacity-90 transition"
                 >
-                  {show ? "Hide" : "Show"}
-                </label>
-              </div>
-              <button
-                className="w-full h-[7vh] bg-purple-900 rounded-sm mb-4 text-xl font-medium mt-[25px]"
-                type="submit"
-              >
-                Login
-              </button>
-              <div className="flex justify-between mt-2">
-                <div className="flex gap-2 mt-2">
-                  <Link to="/register" className="flex gap-2 items-center">
-                    <p className="font-light">{"Don't Have an Account?"}</p>
-                    <p className="font-medium text-gray-300 cursor-pointer duration-150 text-lg hover:text-white">
-                      Register
-                    </p>
+                  Login
+                </button>
+
+                <div className="text-center text-white mt-4">
+                  <Link
+                    to="/register"
+                    className="underline  text-purple-300 hover:text-purple-500 transition"
+                  >
+                    Don't Have an Account? Register
                   </Link>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-          <ToastContainer
-            position="top-center"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
         </div>
       </div>
-    </>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </div>
   );
 }
