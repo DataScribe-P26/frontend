@@ -347,84 +347,95 @@ function Analysis({ set_analysis_page }) {
 
           {/* Image Statistics Section */}
           <div className="flex-1">
-            <div className="relative group">
-              <div className="flex items-center text-2xl font-semibold mb-4">
-                Image Statistics
-                <HiOutlineQuestionMarkCircle className="ml-2" />
-              </div>
+          <div className="flex-1">
+  <div className="relative group">
+    <div className="flex mt-36 items-center text-2xl font-semibold mb-6">
+      Image Statistics
+      <HiOutlineQuestionMarkCircle className="ml-2" />
+    </div>
 
-              {/* Tooltip */}
-              <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
-                <p>• Displays the total number of images.</p>
-                <p>• Tracks annotated vs unannotated images.</p>
-              </div>
-            </div>
-            <div
-              className={`bg-${
-                isDarkMode ? "gray-700" : "gray-100"
-              } p-6 rounded-lg shadow-md space-y-4`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="relative group">
-                  <div className="flex items-center text-lg font-medium">
-                    Images Uploaded
-                  </div>
-                </div>
-                <div className="text-xl font-bold text-green-500">
-                  {totalImages}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">
-                  Images Annotated
-                </div>
-                <div className="text-xl font-bold text-blue-500">
-                  {imagesAnnotated}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">
-                  Images Without Annotation
-                </div>
-                <div className="text-xl font-bold text-red-500">
-                  {imagesWithoutAnnotation}
-                </div>
-              </div>
-            </div>{" "}
-            <div className="space-y-2">
-              <div className="flex items-center gap-4 p-4">
-                <div className="font-medium text-lg">Auto Annotation</div>
-                <button
-                  onClick={() => toggleAutoAnnotation(projectName)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                    autoAnnotation ? "bg-blue-600" : "bg-gray-200"
-                  }`}
-                  role="switch"
-                  aria-checked={autoAnnotation}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      autoAnnotation ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
+    {/* Tooltip */}
+    <div className="absolute z-10 group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+      <p>• Displays the total number of images.</p>
+      <p>• Tracks annotated vs unannotated images.</p>
+    </div>
+  </div>
 
-              {autoAnnotation && (
-                <div className="px-4">
-                  <label className="block text-sm font-medium ">
-                    Threshold
-                  </label>
-                  <input
-                    id="threshold"
-                    type="number"
-                    value={threshold}
-                    onChange={(e) => setThreshold(projectName, e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-none sm:text-sm text-black"
-                  />
-                </div>
-              )}
-            </div>
+  <div className="flex gap-6">
+    {/* Image Statistics */}
+    <div className={`bg-${isDarkMode ? "gray-700" : "gray-100"} w-1/2 p-6 rounded-lg shadow-md space-y-4`}>
+      <div className="flex items-center justify-between">
+        <div className="relative group">
+          <div className="flex items-center text-lg font-medium">
+            Images Uploaded
+          </div>
+        </div>
+        <div className="text-xl font-bold text-green-500">
+          {totalImages}
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center text-lg font-medium">
+          Images Annotated
+        </div>
+        <div className="text-xl font-bold text-blue-500">
+          {imagesAnnotated}
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center text-lg font-medium">
+          Images Without Annotation
+        </div>
+        <div className="text-xl font-bold text-red-500">
+          {imagesWithoutAnnotation}
+        </div>
+      </div>
+    </div>
+
+    {/* Auto Annotation and Threshold */}
+<div className="flex flex-col mt-2 space-y-6 w-1/2 p-6 bg-gray-100 rounded-lg shadow-md border border-gray-200">
+  <div className="flex items-center gap-2 mb-2">
+    <div className="font-medium text-xl text-gray-800">Auto Annotation</div>
+    <button
+      onClick={() => toggleAutoAnnotation(projectName)}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${autoAnnotation ? "bg-green-600" : "bg-gray-400"}`}
+      role="switch"
+      aria-checked={autoAnnotation}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${autoAnnotation ? "translate-x-6" : "translate-x-1"}`}
+      />
+    </button>
+  </div>
+
+  {/* Text when toggle is off */}
+  {!autoAnnotation && (
+    <div className="text-sm text-purple-600 mb-2 ">
+      <p>Want to kickstart auto annotation? Set the threshold, and let the magic happen!</p>
+    </div>
+  )}
+
+  {autoAnnotation && (
+    <div className="px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 shadow-sm">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Set Threshold Value
+      </label>
+      <input
+        id="threshold"
+        type="number"
+        value={threshold}
+        onChange={(e) => setThreshold(projectName, e.target.value)}
+        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-black sm:text-sm"
+        placeholder="Adjust the threshold for auto detection"
+      />
+      
+    </div>
+  )}
+</div>
+
+  </div>
+</div>
+
             <div className=" flex flex-col items-center">
               {loading ? (
                 <Spinner />

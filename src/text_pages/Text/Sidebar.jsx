@@ -12,12 +12,13 @@ import { LuDownload } from "react-icons/lu";
 import { Link, useParams } from "react-router-dom"; // Import necessary hooks
 import textStore from "../zustand/Textdata"; // Import Zustand store
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import useTheme hook
-
+import ExportModal from "./ExportModal.jsx";
 const Sidebar = () => {
   const [isDatasetOpen, setDatasetOpen] = useState(true); // Initially open
   const { projectName } = useParams(); // Get project name from URL
   const { isUploaded, content } = textStore(); // Get isUploaded and content from Zustand store
   const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Determine if the import option should be shown
   const shouldShowImport = !isUploaded && !content;
@@ -106,6 +107,7 @@ const Sidebar = () => {
                   className={`flex items-center w-full text-left p-2 rounded-lg hover:bg-purple-200 transition ${
                     isDarkMode ? "hover:bg-purple-700" : ""
                   }`}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   <LuDownload
                     className={`mr-2 ${
@@ -115,6 +117,12 @@ const Sidebar = () => {
                   Export
                 </button>
               </li>
+              {/* Export Modal */}
+              <ExportModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                projectName={projectName}
+              />
             </ul>
           )}
         </li>
