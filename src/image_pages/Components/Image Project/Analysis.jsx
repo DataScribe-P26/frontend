@@ -269,184 +269,188 @@ function Analysis({ set_analysis_page }) {
     <>
       <ImageNavbar />
       <div
-        className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
+        className={`w-full h-screen scaleUp overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
-        <div className="mt-8 flex justify-between gap-12">
-          {/* Class Statistics Section */}
-          <div className="flex-1">
-            <div className="flex flex-row justify-left gap-10 items-center ">
-              <div className="w-[100px] h-[100px] rounded-full">
-                <img
-                  src={all_annotations[0]?.image_id}
-                  className="w-full h-full rounded-full"
-                />
-              </div>
-              <div>
-                <div className="text-3xl font-bold">{project_name}</div>
-                <div>Created on {formattedDate}</div>
-              </div>
-            </div>
-            <div className="relative group pt-10">
-              <div className="relative flex items-center text-2xl font-semibold mb-4 group">
-                Class Statistics
-                <HiOutlineQuestionMarkCircle className="ml-2" />
-                {/* Tooltip Popup */}
-                <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
-                  <p>• The graph shows each class and its count.</p>
-                  <p>
-                    • Dotted green line represents a median line which indicates
-                    the average class balance.
-                  </p>
+        <div className="animate-scaleUp">
+          <div className="mt-8 flex justify-between gap-12">
+            {/* Class Statistics Section */}
+            <div className="flex-1">
+              <div className="flex flex-row justify-left gap-10 items-center ">
+                <div className="w-[100px] h-[100px] rounded-full">
+                  <img
+                    src={all_annotations[0]?.image_id}
+                    className="w-full h-full rounded-full"
+                  />
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">{project_name}</div>
+                  <div>Created on {formattedDate}</div>
                 </div>
               </div>
-            </div>
-
-            {sorted_class.length > 0 ? (
-              <div className="w-full">
-                <Bar data={chartData} options={chartOptions} />
-                <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
-                  <h4 className="flex items-center font-semibold mb-2 group relative">
-                    Class Insights
-                    <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
-                    <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-70px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
-                      <p>•Balanced: Near the median.</p>
-                      <p>•Underbalanced: Below the median.</p>
-                      <p>•Overbalanced: Above the median.</p>
-                      <p>•Imbalanced: Far from median.</p>
-                    </div>
-                  </h4>
-
-                  {categorizedClasses.map((item) => (
-                    <p key={item.class_name} className="text-sm mb-1">
-                      <span
-                        className="inline-block w-4 h-4 rounded-full mr-2"
-                        style={{ backgroundColor: item.Color }}
-                      ></span>
-                      <strong>{item.class_name}:</strong> {item.count}{" "}
-                      annotations - {item.balanceType}
+              <div className="relative group pt-10">
+                <div className="relative flex items-center text-2xl font-semibold mb-4 group">
+                  Class Statistics
+                  <HiOutlineQuestionMarkCircle className="ml-2" />
+                  {/* Tooltip Popup */}
+                  <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+                    <p>• The graph shows each class and its count.</p>
+                    <p>
+                      • Dotted green line represents a median line which
+                      indicates the average class balance.
                     </p>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                <div
-                  className={`flex items-start justify-center h-full pt-7 ${
-                    isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                  } p-6 rounded-lg shadow-md space-y-4`}
-                >
-                  <div className="text-lg font-semibold">
-                    No Annotations Done Yet.
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-
-          {/* Image Statistics Section */}
-          <div className="flex-1">
-            <div className="relative group">
-              <div className="flex items-center text-2xl font-semibold mb-4">
-                Image Statistics
-                <HiOutlineQuestionMarkCircle className="ml-2" />
               </div>
 
-              {/* Tooltip */}
-              <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
-                <p>• Displays the total number of images.</p>
-                <p>• Tracks annotated vs unannotated images.</p>
-              </div>
-            </div>
-            <div
-              className={`bg-${
-                isDarkMode ? "gray-700" : "gray-100"
-              } p-6 rounded-lg shadow-md space-y-4`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="relative group">
-                  <div className="flex items-center text-lg font-medium">
-                    Images Uploaded
+              {sorted_class.length > 0 ? (
+                <div className="w-full">
+                  <Bar data={chartData} options={chartOptions} />
+                  <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
+                    <h4 className="flex items-center font-semibold mb-2 group relative">
+                      Class Insights
+                      <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />
+                      <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-70px] left-[30%] transform -translate-x-[30%] max-w-[1600px] w-auto flex flex-row">
+                        <p>•Balanced: Near the median.</p>
+                        <p>•Underbalanced: Below the median.</p>
+                        <p>•Overbalanced: Above the median.</p>
+                        <p>•Imbalanced: Far from median.</p>
+                      </div>
+                    </h4>
+
+                    {categorizedClasses.map((item) => (
+                      <p key={item.class_name} className="text-sm mb-1">
+                        <span
+                          className="inline-block w-4 h-4 rounded-full mr-2"
+                          style={{ backgroundColor: item.Color }}
+                        ></span>
+                        <strong>{item.class_name}:</strong> {item.count}{" "}
+                        annotations - {item.balanceType}
+                      </p>
+                    ))}
                   </div>
                 </div>
-                <div className="text-xl font-bold text-green-500">
-                  {totalImages}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">
-                  Images Annotated
-                </div>
-                <div className="text-xl font-bold text-blue-500">
-                  {imagesAnnotated}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-lg font-medium">
-                  Images Without Annotation
-                </div>
-                <div className="text-xl font-bold text-red-500">
-                  {imagesWithoutAnnotation}
-                </div>
-              </div>
-            </div>{" "}
-            <div className="space-y-2">
-              <div className="flex items-center gap-4 p-4">
-                <div className="font-medium text-lg">Auto Annotation</div>
-                <button
-                  onClick={() => toggleAutoAnnotation(projectName)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                    autoAnnotation ? "bg-blue-600" : "bg-gray-200"
-                  }`}
-                  role="switch"
-                  aria-checked={autoAnnotation}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      autoAnnotation ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {autoAnnotation && (
-                <div className="px-4">
-                  <label className="block text-sm font-medium ">
-                    Threshold
-                  </label>
-                  <input
-                    id="threshold"
-                    type="number"
-                    value={threshold}
-                    onChange={(e) => setThreshold(projectName, e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-none sm:text-sm text-black"
-                  />
-                </div>
-              )}
-            </div>
-            <div className=" flex flex-col items-center">
-              {loading ? (
-                <Spinner />
               ) : (
                 <>
-                  <div className="flex justify-between items-center gap-10">
-                    <ImageUpload
-                      projectName={projectName}
-                      loading={loading}
-                      setloading={setloading}
-                    />
-                    {imageSrc.length > 0 && (
-                      <button
-                        className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
-                        onClick={() => set_analysis_page(false)}
-                      >
-                        Continue
-                      </button>
-                    )}
+                  <div
+                    className={`flex items-start justify-center h-full pt-7 ${
+                      isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                    } p-6 rounded-lg shadow-md space-y-4`}
+                  >
+                    <div className="text-lg font-semibold">
+                      No Annotations Done Yet.
+                    </div>
                   </div>
                 </>
               )}
+            </div>
+
+            {/* Image Statistics Section */}
+            <div className="flex-1">
+              <div className="relative group">
+                <div className="flex items-center text-2xl font-semibold mb-4">
+                  Image Statistics
+                  <HiOutlineQuestionMarkCircle className="ml-2" />
+                </div>
+
+                {/* Tooltip */}
+                <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out top-[-45px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+                  <p>• Displays the total number of images.</p>
+                  <p>• Tracks annotated vs unannotated images.</p>
+                </div>
+              </div>
+              <div
+                className={`bg-${
+                  isDarkMode ? "gray-700" : "gray-100"
+                } p-6 rounded-lg shadow-md space-y-4`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="relative group">
+                    <div className="flex items-center text-lg font-medium">
+                      Images Uploaded
+                    </div>
+                  </div>
+                  <div className="text-xl font-bold text-green-500">
+                    {totalImages}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-lg font-medium">
+                    Images Annotated
+                  </div>
+                  <div className="text-xl font-bold text-blue-500">
+                    {imagesAnnotated}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-lg font-medium">
+                    Images Without Annotation
+                  </div>
+                  <div className="text-xl font-bold text-red-500">
+                    {imagesWithoutAnnotation}
+                  </div>
+                </div>
+              </div>{" "}
+              <div className="space-y-2">
+                <div className="flex items-center gap-4 p-4">
+                  <div className="font-medium text-lg">Auto Annotation</div>
+                  <button
+                    onClick={() => toggleAutoAnnotation(projectName)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                      autoAnnotation ? "bg-blue-600" : "bg-gray-200"
+                    }`}
+                    role="switch"
+                    aria-checked={autoAnnotation}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        autoAnnotation ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {autoAnnotation && (
+                  <div className="px-4">
+                    <label className="block text-sm font-medium ">
+                      Threshold
+                    </label>
+                    <input
+                      id="threshold"
+                      type="number"
+                      value={threshold}
+                      onChange={(e) =>
+                        setThreshold(projectName, e.target.value)
+                      }
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-none sm:text-sm text-black"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className=" flex flex-col items-center">
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <>
+                    <div className="flex justify-between items-center gap-10">
+                      <ImageUpload
+                        projectName={projectName}
+                        loading={loading}
+                        setloading={setloading}
+                      />
+                      {imageSrc.length > 0 && (
+                        <button
+                          className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                          onClick={() => set_analysis_page(false)}
+                        >
+                          Continue
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

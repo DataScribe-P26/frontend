@@ -279,7 +279,7 @@ function Main({ set_analysis_page }) {
                 isDarkMode ? "bg-slate-900" : "bg-slate-50"
               }`}
             >
-              <div className="w-full h-full">
+              <div className="w-full h-full animate-scaleUp">
                 <div
                   className={`fixed top-[75px] right-0 z-50 transition-transform duration-300 ease-in-out ${
                     showImages ? "translate-x-0" : "translate-x-full"
