@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, PanelLeftClose } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  ArrowLeft,
+} from "lucide-react";
 import Stages from "../Drawing/Stages";
 import Options from "../Drawing/Options";
 import useStore from "../../../Zustand/Alldata";
@@ -13,7 +18,7 @@ import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { X } from "lucide-react";
 import ExportModal from "../../../export_pages/export_modal.jsx";
 
-function Main() {
+function Main({ set_analysis_page }) {
   const {
     imageSrc,
     setImageSrc,
@@ -357,12 +362,27 @@ function Main() {
                     </div>
                   </aside>
                 </div>
-                <div className="w-full h-[8vh] flex items-center justify-end ">
+                <div className="w-full h-[8vh] flex items-center justify-between pl-5 ">
+                  <button
+                    onClick={() => set_analysis_page(true)}
+                    className={`
+     px-4 py-2 rounded-lg transition-all duration-300 
+     flex items-center gap-2
+     ${
+       isDarkMode
+         ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+         : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+     }
+   `}
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                    <span className="font-medium">Back</span>
+                  </button>
                   <button
                     className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${
                       isDarkMode
-                        ? "bg-gray-700 text-purple-700 hover:bg-gray-700 shadow-sm shadow-gray-600"
-                        : "bg-blue-100 text-purple-800 hover:bg-blue-200 shadow-md shadow-purple-300"
+                        ? "bg-gray-700 text-gray-200 hover:bg-gray-600 shadow-sm shadow-gray-600"
+                        : "bg-blue-100 text-blue-800 hover:bg-blue-200 shadow-md shadow-purple-300"
                     }`}
                     onClick={() => {
                       setShowImages(true);
