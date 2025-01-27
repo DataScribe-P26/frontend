@@ -8,6 +8,8 @@ import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
 import { Transformer } from "react-konva";
 import { all } from "axios";
+import axios from "axios";
+import {useParams } from "react-router-dom";
 
 function Stages({ images, action, current, cl, setcl, submit }) {
   // console.log("stages current", current);
@@ -28,6 +30,86 @@ function Stages({ images, action, current, cl, setcl, submit }) {
 
   const [annotations, setAnnotations] = useState(all_annotations);
   const [pendingAnnotation, setPendingAnnotation] = useState(null);
+
+  const { projectName } = useParams();
+  const triggerTrainingAndInference = async () => {
+    if (isProcessing) return;
+
+    try {
+      setIsProcessing(true);
+      console.log(projectName);
+      const response = await axios.post(`http://127.0.0.1:8000/api/train-and-infer/${projectName}/`);
+
+      if (response.data.predictions) {
+        const newAnnotations = response.data.predictions;
+
+        set_allAnnotations((prev) => {
+          const updatedAnnotations = [...prev];
+
+          newAnnotations.forEach((newAnn) => {
+            const existingIndex = updatedAnnotations.findIndex(
+              (ann) => ann.image_id === newAnn.image_id
+            );
+
+            if (existingIndex !== -1) {
+              updatedAnnotations[existingIndex].annotations = [
+                ...updatedAnnotations[existingIndex].annotations,
+                ...newAnn.annotations,
+              ];
+            } else {
+              updatedAnnotations.push(newAnn);
+            }
+          });
+
+          return updatedAnnotations;
+        });
+
+        setProcessedBatches((prev) => prev + 1);
+        toast.success(`Processed ${newAnnotations.length} images with YOLO`);
+      }
+    } catch (error) {
+      console.error('Error during training and inference:', error);
+      //toast.error('Failed to process images: ' + error.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  const [annotatedCount, setAnnotatedCount] = useState(0);
+  const [totalImages, setTotalImages] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    const classes_used = [];
+    let imagesAnnotated = 0;
+
+    // Check for valid annotations
+    annotations?.forEach((annotation) => {
+      const { annotations: annotationList } = annotation;
+
+      if (annotationList?.length > 0) {
+        imagesAnnotated++;
+      }
+
+      // Optional: Track unique classes used
+      annotationList?.forEach((ann) => {
+        if (!classes_used.includes(ann.className)) {
+          classes_used.push(ann.className);
+        }
+      });
+    });
+
+    setAnnotatedCount(imagesAnnotated);
+    setTotalImages(all_annotations?.length || 0);
+    console.log(imagesAnnotated);
+    // Trigger training and inference logic when a batch of 50 is annotated
+    if (
+      imagesAnnotated > 0 &&
+      imagesAnnotated % 30 === 0 &&
+      !isProcessing
+    ) {
+      triggerTrainingAndInference();
+    }
+  }, [all_annotations, isProcessing]);
 
   useEffect(() => {
     setAnnotations(all_annotations);
@@ -578,6 +660,18 @@ function Stages({ images, action, current, cl, setcl, submit }) {
                     </div>
                   </div>
                 )}
+                 <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">
+                    Annotated: {annotatedCount}
+                  </span>
+                  {isProcessing ? (
+                    <span className="text-sm text-blue-600">
+                      Processing batch with YOLO...
+                    </span>
+                  ) : (
+                    <span className="text-sm text-green-600">Idle</span>
+                  )}
+                </div>
               </div>
               <div className="overflow-hidden border-2">
                 <TransformComponent>
