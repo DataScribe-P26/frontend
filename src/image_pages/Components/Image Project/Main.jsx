@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, PanelLeftClose } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  ArrowLeft,
+} from "lucide-react";
 import Stages from "../Drawing/Stages";
 import Options from "../Drawing/Options";
 import useStore from "../../../Zustand/Alldata";
@@ -13,7 +18,7 @@ import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { X } from "lucide-react";
 import ExportModal from "../../../export_pages/export_modal.jsx";
 
-function Main() {
+function Main({ set_analysis_page }) {
   const {
     imageSrc,
     setImageSrc,
@@ -34,6 +39,8 @@ function Main() {
   const [annotations, setAnnotations] = useState(all_annotations);
   const [showImages, setShowImages] = useState(false);
   const [exportModal, setExportModal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [annotatedCount, setAnnotatedCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -82,17 +89,15 @@ function Main() {
 
   let currentImage = annotations?.find((image) => image.image_id === current);
 
-  async function submit() {
+  async function submit(currentImage_c = currentImage) {
     const src = current;
     const base64String = src.split(",")[1];
     const fileName = "abcd";
 
-    // Get dimensions from currentImage instead of src
-    const imageWidth = currentImage.width || 0;
-    const imageHeight = currentImage.height || 0;
-    const scale = currentImage.width_multiplier;
-    console.log(currentImage);
-    // Calculate scaled dimensions
+    // Get dimensions from currentImage_c instead of currentImage
+    const imageWidth = currentImage_c.width || 0;
+    const imageHeight = currentImage_c.height || 0;
+    const scale = currentImage_c.width_multiplier; // Calculate scaled dimensions
     const scaledWidth = imageWidth * scale;
     const scaledHeight = imageHeight * scale;
 
@@ -100,11 +105,7 @@ function Main() {
     const offsetX = (800 - scaledWidth) / 2;
     const offsetY = (450 - scaledHeight) / 2;
 
-    console.log("Image dimensions:", imageWidth, imageHeight);
-    console.log("Scale:", scale);
-    console.log("Offsets:", offsetX, offsetY);
-
-    const rectangle_annotations = (currentImage?.annotations || [])
+    const rectangle_annotations = (currentImage_c?.annotations || [])
       .filter(
         (a) =>
           a.type === "rectangle" && a.class_name !== "" && a.Color !== "black"
@@ -117,7 +118,7 @@ function Main() {
         height: rect.height / scale,
       }));
 
-    const polygon_annotations = (currentImage?.annotations || [])
+    const polygon_annotations = (currentImage_c?.annotations || [])
       .filter(
         (a) =>
           a.type === "polygon" && a.class_name !== "" && a.Color !== "black"
@@ -130,7 +131,7 @@ function Main() {
         })),
       }));
 
-    const segmentation_annotations = (currentImage?.annotations || [])
+    const segmentation_annotations = (currentImage_c?.annotations || [])
       .filter(
         (a) =>
           a.type === "segmentation" &&
@@ -145,13 +146,11 @@ function Main() {
         })),
       }));
 
-    // Console log for debugging
-    console.log("Rectangle annotations:", rectangle_annotations);
     const imageDetails = {
-      width: currentImage.width || 0,
-      height: currentImage.height || 0,
-      width_multiplier: currentImage.width_multiplier || 1,
-      height_multiplier: currentImage.height_multiplier || 1,
+      width: currentImage_c.width || 0,
+      height: currentImage_c.height || 0,
+      width_multiplier: currentImage_c.width_multiplier || 1,
+      height_multiplier: currentImage_c.height_multiplier || 1,
     };
 
     const data = {
@@ -163,6 +162,7 @@ function Main() {
       mime_type: "image/jpeg",
       image: imageDetails,
     };
+    console.log("data", data);
 
     try {
       const response = await axios.post(
@@ -174,7 +174,6 @@ function Main() {
           },
         }
       );
-      console.log(response.data);
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
@@ -188,9 +187,8 @@ function Main() {
 
   const handleNext = () => {
     if (currentIndex < imageSrc.length - 1) {
-      if (currentImage?.annotations?.length > 0) {
-        submit();
-      }
+      submit();
+
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       setcurrent(imageSrc[nextIndex].src);
@@ -199,9 +197,8 @@ function Main() {
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      if (currentImage?.annotations?.length > 0) {
-        submit();
-      }
+      submit();
+
       const prevIndex = currentIndex - 1;
       setCurrentIndex(prevIndex);
       setcurrent(imageSrc[prevIndex].src);
@@ -211,9 +208,8 @@ function Main() {
   const handleInputChange = (e) => {
     let newIndex = parseInt(e.target.value, 10) - 1;
     if (newIndex >= 0 && newIndex < imageSrc.length) {
-      if (currentImage?.annotations?.length > 0) {
-        submit();
-      }
+      submit();
+
       setCurrentIndex(newIndex);
       setcurrent(imageSrc[newIndex].src);
     } else if (newIndex < 0) {
@@ -274,7 +270,7 @@ function Main() {
                 isDarkMode ? "bg-slate-900" : "bg-slate-50"
               }`}
             >
-              <div className="w-full h-full">
+              <div className="w-full h-full ">
                 <div
                   className={`fixed top-[75px] right-0 z-50 transition-transform duration-300 ease-in-out ${
                     showImages ? "translate-x-0" : "translate-x-full"
@@ -357,12 +353,39 @@ function Main() {
                     </div>
                   </aside>
                 </div>
-                <div className="w-full h-[8vh] flex items-center justify-end ">
+                <div className="w-full h-[8vh] flex items-center justify-between pl-5 ">
+                  <button
+                    onClick={() => set_analysis_page(true)}
+                    className={`
+     px-4 py-2 rounded-lg transition-all duration-300 
+     flex items-center gap-2
+     ${
+       isDarkMode
+         ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+         : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+     }
+   `}
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                    <span className="font-medium">Back</span>
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-600">
+                      Annotated: {annotatedCount}
+                    </span>
+                    {isProcessing ? (
+                      <span className="text-sm text-blue-600">
+                        Processing batch with YOLO...
+                      </span>
+                    ) : (
+                      <span className="text-sm text-green-600">Idle</span>
+                    )}
+                  </div>
                   <button
                     className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${
                       isDarkMode
-                        ? "bg-gray-700 text-purple-700 hover:bg-gray-700 shadow-sm shadow-gray-600"
-                        : "bg-blue-100 text-purple-800 hover:bg-blue-200 shadow-md shadow-purple-300"
+                        ? "bg-gray-700 text-gray-200 hover:bg-gray-600 shadow-sm shadow-gray-600"
+                        : "bg-blue-100 text-blue-800 hover:bg-blue-200 shadow-md shadow-purple-300"
                     }`}
                     onClick={() => {
                       setShowImages(true);
@@ -371,9 +394,8 @@ function Main() {
                     <PanelLeftClose className="w-6 h-6 " />
                   </button>
                 </div>
-
                 <div
-                  className="h-[67.9%] gap-4 flex justify-center items-center "
+                  className="h-[67.9%] gap-4 flex justify-center items-center animate-scaleUp "
                   onClick={() => {
                     setShowImages(false);
                   }}
@@ -386,6 +408,10 @@ function Main() {
                     cl={cl}
                     setcl={setcl}
                     submit={submit}
+                    isProcessing={isProcessing}
+                    setIsProcessing={setIsProcessing}
+                    annotatedCount={annotatedCount}
+                    setAnnotatedCount={setAnnotatedCount}
                   />
                   <div>
                     <Options

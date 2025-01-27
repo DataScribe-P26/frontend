@@ -89,3 +89,32 @@ input[type="number"] {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
+
+@keyframes scaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.99) translateY(10px);
+    -webkit-transform: scale(0.99) translateY(10px);
+    -moz-transform: scale(0.99) translateY(10px);
+    -ms-transform: scale(0.99) translateY(10px);
+    -o-transform: scale(0.99) translateY(10px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: scale(1.01) translateY(-2px);
+    -webkit-transform: scale(1.01) translateY(-2px);
+    -moz-transform: scale(1.01) translateY(-2px);
+    -ms-transform: scale(1.01) translateY(-2px);
+    -o-transform: scale(1.01) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 0;
+  -webkit-animation: scaleUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}

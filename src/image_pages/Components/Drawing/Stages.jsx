@@ -9,9 +9,20 @@ import { RxReset } from "react-icons/rx";
 import { Transformer } from "react-konva";
 import { all } from "axios";
 import axios from "axios";
-import {useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-function Stages({ images, action, current, cl, setcl, submit }) {
+function Stages({
+  images,
+  action,
+  current,
+  cl,
+  setcl,
+  submit,
+  isProcessing,
+  setIsProcessing,
+  annotatedCount,
+  setAnnotatedCount,
+}) {
   // console.log("stages current", current);
   const stageRef = useRef();
   const [zoomEnabled, setZoomEnabled] = useState(true);
@@ -26,6 +37,7 @@ function Stages({ images, action, current, cl, setcl, submit }) {
     class_label,
     openModal,
     set_classlabel,
+    setImageSrc,
   } = useStore();
 
   const [annotations, setAnnotations] = useState(all_annotations);
@@ -38,78 +50,54 @@ function Stages({ images, action, current, cl, setcl, submit }) {
     try {
       setIsProcessing(true);
       console.log(projectName);
-      const response = await axios.post(`http://127.0.0.1:8000/api/train-and-infer/${projectName}/`);
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/train-and-infer/${projectName}/`
+      );
 
-      if (response.data.predictions) {
-        const newAnnotations = response.data.predictions;
-
-        set_allAnnotations((prev) => {
-          const updatedAnnotations = [...prev];
-
-          newAnnotations.forEach((newAnn) => {
-            const existingIndex = updatedAnnotations.findIndex(
-              (ann) => ann.image_id === newAnn.image_id
-            );
-
-            if (existingIndex !== -1) {
-              updatedAnnotations[existingIndex].annotations = [
-                ...updatedAnnotations[existingIndex].annotations,
-                ...newAnn.annotations,
-              ];
-            } else {
-              updatedAnnotations.push(newAnn);
-            }
-          });
-
-          return updatedAnnotations;
-        });
-
-        setProcessedBatches((prev) => prev + 1);
-        toast.success(`Processed ${newAnnotations.length} images with YOLO`);
+      if (response.data) {
+        console.log(response.data);
+        const formattedImages = response.data.map((image) => ({
+          src: `data:image/jpeg;base64,${image.src}`,
+          rectangle_annotations: image.rectangle_annotations,
+          polygon_annotations: image.polygon_annotations,
+          segmentation_annotations: image.segmentation_annotations,
+          id: image.image_id,
+          width_multiplier: image.width_multiplier,
+          height_multiplier: image.height_multiplier,
+          width: image.width,
+          height: image.height,
+        }));
+        setImageSrc(formattedImages);
+        toast.success("Auto Annotation Done.");
       }
     } catch (error) {
-      console.error('Error during training and inference:', error);
-      //toast.error('Failed to process images: ' + error.message);
+      console.error("Error during training and inference:", error);
     } finally {
       setIsProcessing(false);
     }
   };
-  const [annotatedCount, setAnnotatedCount] = useState(0);
-  const [totalImages, setTotalImages] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    const classes_used = [];
     let imagesAnnotated = 0;
 
-    // Check for valid annotations
     annotations?.forEach((annotation) => {
       const { annotations: annotationList } = annotation;
 
       if (annotationList?.length > 0) {
-        imagesAnnotated++;
-      }
-
-      // Optional: Track unique classes used
-      annotationList?.forEach((ann) => {
-        if (!classes_used.includes(ann.className)) {
-          classes_used.push(ann.className);
+        for (const aa of annotationList) {
+          if (aa.type == "rectangle" && aa.class_name != "") {
+            imagesAnnotated++;
+            break;
+          }
         }
-      });
+      }
     });
 
     setAnnotatedCount(imagesAnnotated);
-    setTotalImages(all_annotations?.length || 0);
-    console.log(imagesAnnotated);
-    // Trigger training and inference logic when a batch of 50 is annotated
-    if (
-      imagesAnnotated > 0 &&
-      imagesAnnotated % 30 === 0 &&
-      !isProcessing
-    ) {
+    if (imagesAnnotated > 0 && imagesAnnotated % 26 === 0 && !isProcessing) {
       triggerTrainingAndInference();
     }
-  }, [all_annotations, isProcessing]);
+  }, [all_annotations, annotations, isProcessing]);
 
   useEffect(() => {
     setAnnotations(all_annotations);
@@ -544,19 +532,15 @@ function Stages({ images, action, current, cl, setcl, submit }) {
 
   const handleDelete = async (class_id) => {
     let currentImage = annotations?.find((image) => image.image_id === current);
-    console.log("Current image:", currentImage);
-    console.log("Class ID:", class_id);
-    console.log("Current image ID:", currentImage.id);
+
     const annotationToDelete = currentImage.annotations.find(
       (annotation) => annotation.class_id === class_id
     );
-    submit();
 
     if (!annotationToDelete) {
       console.warn("Annotation not found in the current image.");
       return;
     }
-    console.log("Annotation type:", annotationToDelete.type);
     if (!currentImage) {
       console.error("No current image found for deletion.");
       return;
@@ -576,6 +560,15 @@ function Stages({ images, action, current, cl, setcl, submit }) {
             : entry
         )
       );
+      let currentImage = annotations?.find(
+        (image) => image.image_id === current
+      );
+
+      const new_anno = currentImage.annotations.filter(
+        (annotation) => annotation.class_id != class_id
+      );
+      currentImage.annotations = new_anno;
+      submit(currentImage);
       const response = await fetch(
         `http://127.0.0.1:8000/images/${currentImage.id}/annotations/${class_id}/${annotationToDelete.type}`,
         { method: "DELETE" }
@@ -660,18 +653,6 @@ function Stages({ images, action, current, cl, setcl, submit }) {
                     </div>
                   </div>
                 )}
-                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-600">
-                    Annotated: {annotatedCount}
-                  </span>
-                  {isProcessing ? (
-                    <span className="text-sm text-blue-600">
-                      Processing batch with YOLO...
-                    </span>
-                  ) : (
-                    <span className="text-sm text-green-600">Idle</span>
-                  )}
-                </div>
               </div>
               <div className="overflow-hidden border-2">
                 <TransformComponent>
@@ -709,7 +690,7 @@ function Stages({ images, action, current, cl, setcl, submit }) {
                               onClick={() => handleRectSelect(annotation)}
                             >
                               <Rect
-                                id={annotation.class_id.toString()}
+                                id={annotation?.class_id?.toString()}
                                 x={annotation.x}
                                 y={annotation.y}
                                 strokeWidth={2}

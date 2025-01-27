@@ -19,7 +19,6 @@ function Imagehome() {
     created_on,
   } = useStore();
   const { projectName } = useParams();
-  console.log(projectName);
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
   const [analysis_page, set_analysis_page] = useState(true);
@@ -67,15 +66,20 @@ function Imagehome() {
   }
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchImages = async () => {
+      setLoading(true);
+
       try {
         setImageSrc([]);
-        setLoading(true);
         clear_classes();
+
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/${projectName}/images/`
+          `http://127.0.0.1:8000/projects/${projectName}/images/`,
+          { signal: controller.signal }
         );
-        console.log(response.data);
+
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({
             src: `data:image/jpeg;base64,${image.src}`,
@@ -88,29 +92,38 @@ function Imagehome() {
             width: image.width,
             height: image.height,
           }));
-          setAnnots(formattedImages);
           setImageSrc(formattedImages);
         } else {
           setImageSrc([]);
         }
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching images:", error);
-        toast.error("Project Not Found", {
-          style: {
-            background: "#fff",
-            color: "#1f2937",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
-          },
-        });
-        setLoading(false);
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Error fetching images:", error);
+          toast.error("Project Not Found", {
+            style: {
+              background: "#fff",
+              color: "#1f2937",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+            },
+          });
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     if (projectName) {
       fetchImages();
     }
+
+    return () => {
+      controller.abort();
+    };
   }, [projectName, clear_classes, setImageSrc]);
 
   return (
@@ -146,7 +159,10 @@ function Imagehome() {
               isDarkMode ? "bg-gray-800" : "bg-gray-50"
             }`}
           >
-            <Main projectName={projectName} />
+            <Main
+              projectName={projectName}
+              set_analysis_page={set_analysis_page}
+            />
           </div>
         )}
       </div>

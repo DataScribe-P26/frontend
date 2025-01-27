@@ -264,12 +264,11 @@ function Analysis({ set_analysis_page }) {
       },
     ],
   };
-  console.log(all_annotations);
   return (
     <>
       <ImageNavbar />
       <div
-        className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
+        className={`w-full  h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
@@ -285,7 +284,7 @@ function Analysis({ set_analysis_page }) {
               </div>
               <div>
                 <div className="text-3xl font-bold">{project_name}</div>
-                <div>Created on {formattedDate}</div>
+                <div className="">Created on {formattedDate}</div>
               </div>
             </div>
             <div className="relative group pt-10">
@@ -293,7 +292,7 @@ function Analysis({ set_analysis_page }) {
                 Class Statistics
                 <HiOutlineQuestionMarkCircle className="ml-2" />
                 {/* Tooltip Popup */}
-                <div className="absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
+                <div className=" absolute z-10  group-hover:block px-8 py-2 text-xs font-normal text-gray-900 bg-gray-200 border border-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 top-[-60px] left-[30%] transform -translate-x-[5%] max-w-[1600px] w-auto flex flex-row">
                   <p>• The graph shows each class and its count.</p>
                   <p>
                     • Dotted green line represents a median line which indicates
@@ -304,7 +303,7 @@ function Analysis({ set_analysis_page }) {
             </div>
 
             {sorted_class.length > 0 ? (
-              <div className="w-full">
+              <div className="w-full animate-scaleUp">
                 <Bar data={chartData} options={chartOptions} />
                 <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
                   <h4 className="flex items-center font-semibold mb-2 group relative">
@@ -333,7 +332,7 @@ function Analysis({ set_analysis_page }) {
             ) : (
               <>
                 <div
-                  className={`flex items-start justify-center h-full pt-7 ${
+                  className={`flex items-start justify-center h-full pt-7 animate-scaleUp ${
                     isDarkMode ? "bg-gray-700" : "bg-gray-100"
                   } p-6 rounded-lg shadow-md space-y-4`}
                 >
@@ -362,7 +361,7 @@ function Analysis({ set_analysis_page }) {
             <div
               className={`bg-${
                 isDarkMode ? "gray-700" : "gray-100"
-              } p-6 rounded-lg shadow-md space-y-4`}
+              } p-6 rounded-lg animate-scaleUp shadow-md space-y-4`}
             >
               <div className="flex items-center justify-between">
                 <div className="relative group">
@@ -430,7 +429,7 @@ function Analysis({ set_analysis_page }) {
                 <Spinner />
               ) : (
                 <>
-                  <div className="flex justify-between items-center gap-10">
+                  <div className="flex justify-between items-center gap-10 animate-scaleUp">
                     <ImageUpload
                       projectName={projectName}
                       loading={loading}
