@@ -61,6 +61,10 @@ function Analysis({ set_analysis_page }) {
   }, [project_name]);
 
   useEffect(() => {
+    console.log(threshold);
+  }, [threshold]);
+
+  useEffect(() => {
     loadAutoAnnotation(projectName);
     loadThreshold(projectName);
   }, [projectName, loadAutoAnnotation, loadThreshold]);

@@ -38,6 +38,7 @@ function Stages({
     openModal,
     set_classlabel,
     setImageSrc,
+    threshold,
   } = useStore();
 
   const [annotations, setAnnotations] = useState(all_annotations);
@@ -45,9 +46,11 @@ function Stages({
 
   const { projectName } = useParams();
   const triggerTrainingAndInference = async () => {
+    console.log("Model Training");
     if (isProcessing) return;
 
     try {
+      submit();
       setIsProcessing(true);
       console.log(projectName);
       const response = await axios.post(
@@ -94,7 +97,13 @@ function Stages({
     });
 
     setAnnotatedCount(imagesAnnotated);
-    if (imagesAnnotated > 0 && imagesAnnotated % 26 === 0 && !isProcessing) {
+    console.log(threshold, imagesAnnotated % threshold, imagesAnnotated);
+    if (
+      imagesAnnotated > 0 &&
+      imagesAnnotated % threshold === 0 &&
+      !isProcessing
+    ) {
+      submit();
       triggerTrainingAndInference();
     }
   }, [all_annotations, annotations, isProcessing]);
