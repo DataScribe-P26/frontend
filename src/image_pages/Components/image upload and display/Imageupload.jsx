@@ -20,14 +20,6 @@ function ImageUpload({ projectName, loading, setloading }) {
     ];
     const validImageFiles = fileArray.filter((file) => {
       if (!validImageTypes.includes(file.type)) {
-        toast.error(`Invalid file type: ${file.name}`, {
-          style: {
-            background: "#fff",
-            color: "#1f2937",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
-          },
-        });
         return false;
       }
       return true;

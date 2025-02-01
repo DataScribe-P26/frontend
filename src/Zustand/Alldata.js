@@ -155,9 +155,16 @@ const useStore = create((set) => ({
       );
     }
   },
-
-  set_allAnnotations: (newAnnotations) =>
-    set({ all_annotations: newAnnotations }),
+  set_allAnnotations: (updater) => {
+    set((state) => {
+      const newAnnotations =
+        typeof updater === "function"
+          ? updater(state.all_annotations)
+          : updater;
+      console.log("new setting ", newAnnotations);
+      return { all_annotations: newAnnotations };
+    });
+  },
 
   set_classlabel: (class_label) => set({ class_label }),
 
