@@ -161,7 +161,6 @@ const useStore = create((set) => ({
         typeof updater === "function"
           ? updater(state.all_annotations)
           : updater;
-      console.log("new setting ", newAnnotations);
       return { all_annotations: newAnnotations };
     });
   },
