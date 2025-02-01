@@ -90,7 +90,6 @@ function Main({ set_analysis_page }) {
   let currentImage = annotations?.find((image) => image.image_id === current);
 
   async function submit(currentImage_c = currentImage) {
-    console.log(all_annotations);
     const src = current;
     const base64String = src.split(",")[1];
     const fileName = "abcd";
@@ -163,7 +162,6 @@ function Main({ set_analysis_page }) {
       mime_type: "image/jpeg",
       image: imageDetails,
     };
-    console.log("data", data);
 
     try {
       const response = await axios.post(

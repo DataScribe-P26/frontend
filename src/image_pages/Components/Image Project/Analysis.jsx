@@ -50,7 +50,6 @@ function Analysis({ set_analysis_page }) {
     setprojectname,
   } = useStore();
   const { isDarkMode } = useTheme();
-  console.log("Annotations in Analysis component:", all_annotations);
 
   const [annotations, setAnnotations] = useState(all_annotations);
 
@@ -63,10 +62,6 @@ function Analysis({ set_analysis_page }) {
   useEffect(() => {
     loadAutoAnnotation(project_name);
   }, [project_name]);
-
-  useEffect(() => {
-    console.log(threshold);
-  }, [threshold]);
 
   useEffect(() => {
     loadAutoAnnotation(projectName);

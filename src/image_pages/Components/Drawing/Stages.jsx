@@ -52,13 +52,11 @@ function Stages({
     try {
       submit();
       setIsProcessing(true);
-      console.log(projectName);
       const response = await axios.post(
         `http://127.0.0.1:8000/api/train-and-infer/${projectName}/`
       );
 
       if (response.data) {
-        console.log(response.data);
         const formattedImages = response.data.map((image) => ({
           src: `data:image/jpeg;base64,${image.src}`,
           rectangle_annotations: image.rectangle_annotations,
@@ -97,7 +95,6 @@ function Stages({
     });
 
     setAnnotatedCount(imagesAnnotated);
-    console.log(threshold, imagesAnnotated % threshold, imagesAnnotated);
     if (
       imagesAnnotated > 0 &&
       imagesAnnotated % threshold === 0 &&
@@ -230,9 +227,6 @@ function Stages({
 
   const handleRectSelect = (annotation) => {
     setSelectedId(annotation.class_id.toString());
-    console.log("Selected ID:", selectedId);
-    console.log("Action:", action);
-    console.log("Annotation id:", annotation.class_id);
   };
 
   const handleDragEnd = (e, annotation) => {
@@ -260,7 +254,6 @@ function Stages({
   };
 
   const handleTransformEnd = (e, annotation) => {
-    console.log("abcd", annotation);
     const node = e.target;
     const newX = node.x();
     const newY = node.y();
@@ -287,7 +280,6 @@ function Stages({
           : entry
       )
     );
-    console.log(abcd);
     //  node.scaleX(1);
     //  node.scaleY(1);
     // Delay the scale reset slightly to ensure state update is applied.
