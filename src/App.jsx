@@ -1,5 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider, ProtectedRoute } from './login/AuthContext.jsx';
+
+// Import your components
 import Home from "./image_pages/Projects section/Home.jsx";
 import Imagehome from "./image_pages/Components/ImageHome.jsx";
 import Mainhome from "./Main home/Mainhome.jsx";
@@ -14,44 +17,112 @@ import Analysis from "./image_pages/Components/Image Project/Analysis.jsx";
 
 function App() {
   return (
-    <div className="">
-      <Routes>
-        <Route path="/" element={<Register />} />
-        <Route path="/home" element={<Mainhome />} />
-        <Route path="/image" element={<Home />} />
-        <Route path="/image/:projectName" element={<Imagehome />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/project/:name" element={<Analysis />} />
+    <AuthProvider>
+      <div className="">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Register />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
 
-        {/* text */}
+          {/* Protected Routes */}
+          <Route 
+            path="/home" 
+            element={
+              <ProtectedRoute>
+                <Mainhome />
+              </ProtectedRoute>
+            } 
+          />
 
-        <Route path="/text" element={<ProjectList />} />
-        <Route path="/text/:projectName" element={<HomePage />} />
-        <Route path="/home/:projectName" element={<HomePage />} />
+          {/* Protected Image Routes */}
+          <Route 
+            path="/image" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/image/:projectName" 
+            element={
+              <ProtectedRoute>
+                <Imagehome />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/project/:name" 
+            element={
+              <ProtectedRoute>
+                <Analysis />
+              </ProtectedRoute>
+            } 
+          />
 
-        <Route
-          path="/text/:projectName/content"
-          element={<CombinedFileContent />}
-        />
-        <Route path="/combined-file-content/:projectName" element={<CombinedFileContent />} />
+          {/* Protected Text Routes */}
+          <Route 
+            path="/text" 
+            element={
+              <ProtectedRoute>
+                <ProjectList />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/text/:projectName" 
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/home/:projectName" 
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/text/:projectName/content" 
+            element={
+              <ProtectedRoute>
+                <CombinedFileContent />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/combined-file-content/:projectName" 
+            element={
+              <ProtectedRoute>
+                <CombinedFileContent />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/text/:projectName/labelManager" 
+            element={
+              <ProtectedRoute>
+                <LabelManager />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/text/:projectName/filecontentdisplay" 
+            element={
+              <ProtectedRoute>
+                <FileContentDisplay />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
 
-        <Route
-          path="/text/:projectName/labelManager"
-          element={<LabelManager />}
-        />
-        <Route
-          path="/text/:projectName/filecontentdisplay"
-          element={<FileContentDisplay />}
-        />
-
-
-
-       
-      </Routes>
-
-      <Toaster />
-    </div>
+        <Toaster />
+      </div>
+    </AuthProvider>
   );
 }
 

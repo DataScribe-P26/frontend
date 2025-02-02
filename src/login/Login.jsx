@@ -2,15 +2,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from './AuthContext';
+import api from './api';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -21,31 +23,38 @@ export default function Login() {
     }
 
     try {
-      const result = await axios.post("http://localhost:8000/auth/login", {
+      const result = await api.post("/auth/login", {
         email: email.trim(),
         password: password.trim(),
       });
 
+      console.log('Login response:', result.data);
+
       if (result.data.status === "success") {
-        localStorage.setItem("user", email);
-        toast.success("Welcome!!!", {
+        // For now, create a temporary token using the email
+        // Remove this once backend is updated to provide actual token
+        const tempToken = btoa(result.data.user.email);
+        
+        // Call login with the token and user data
+        login(tempToken, result.data.user);
+        
+        toast.success("Login successful! Welcome to Datascribe.ai", {
           position: "top-center",
-          autoClose: 3000,
+          autoClose: 2000,
         });
 
-        setTimeout(() => {
-          navigate("/home");
-        }, 3000);
+        // Navigate to home page
+        navigate("/home", { replace: true });
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-    } finally {
-      setEmail("");
-      setPassword("");
+      toast.error(
+        error.response?.data?.detail || "Login failed. Please check your credentials.", 
+        {
+          position: "top-center",
+          autoClose: 3000,
+        }
+      );
     }
   }
 
