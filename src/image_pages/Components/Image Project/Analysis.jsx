@@ -40,15 +40,17 @@ function Analysis({ set_analysis_page }) {
     add_classes,
     classes,
     project_name,
-    setprojectname,
     created_on,
     autoAnnotation,
     loadAutoAnnotation,
     threshold,
     setThreshold,
     loadThreshold,
+    set_allAnnotations,
+    setprojectname,
   } = useStore();
   const { isDarkMode } = useTheme();
+
   const [annotations, setAnnotations] = useState(all_annotations);
 
   const classesAddedRef = useRef(false);
@@ -56,6 +58,7 @@ function Analysis({ set_analysis_page }) {
   if (project_name === "") {
     setprojectname(projectName);
   }
+
   useEffect(() => {
     loadAutoAnnotation(project_name);
   }, [project_name]);
@@ -86,7 +89,7 @@ function Analysis({ set_analysis_page }) {
 
   useEffect(() => {
     setAnnotations(all_annotations);
-  }, [all_annotations]);
+  }, [all_annotations, set_allAnnotations]);
 
   const classes_used = [];
   const totalImages = annotations?.length || 0;

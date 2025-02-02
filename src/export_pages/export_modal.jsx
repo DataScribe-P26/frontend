@@ -4,6 +4,9 @@ import { exportYOLODataset } from "./YoloExporter";
 import { exportYOLOv7Dataset } from "./Yolov7Exporter";
 import { exportYOLOv6Dataset } from "./exportYOLOv6Dataset";
 import { exportYOLOv5Dataset } from "./exportYOLOv5Dataset";
+import { exportPascalVOCDataset } from "./PascalVocExporter";
+import { exportDarknetDataset } from "./exportDarknetDataset";
+
 import axios from "axios";
 
 const ExportModal = ({ setExportModal, projectName }) => {
@@ -15,6 +18,8 @@ const ExportModal = ({ setExportModal, projectName }) => {
   const isDragging = React.useRef(null);
 
   const exportFormats = [
+    { value: "pascalvoc", label: "Pascal VOC Format" },
+    { value: "darknet", label: "YOLO Darknet Format" },
     { value: "yolov8", label: "YOLO v8 Format" },
     { value: "yolov7", label: "YOLO v7 Format" },
     { value: "yolov6", label: "YOLO v6 Format" },
@@ -90,6 +95,20 @@ const ExportModal = ({ setExportModal, projectName }) => {
 
       // Handle different YOLO versions
       switch (selectedFormat) {
+        case "darknet":
+          await exportDarknetDataset(
+            all_annotations,
+            currentSplits,
+            projectName
+          );
+          break;
+        case "pascalvoc":
+          await exportPascalVOCDataset(
+            all_annotations,
+            currentSplits,
+            projectName
+          );
+          break;
         case "yolov8":
           await exportYOLODataset(all_annotations, currentSplits, projectName);
           break;

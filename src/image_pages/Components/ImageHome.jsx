@@ -98,7 +98,7 @@ function Imagehome() {
         }
       } catch (error) {
         if (axios.isCancel(error)) {
-          console.log("Request canceled:", error.message);
+          console.log("Request canceled:");
         } else {
           console.error("Error fetching images:", error);
           toast.error("Project Not Found", {
