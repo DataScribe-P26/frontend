@@ -17,7 +17,6 @@ const Navbar = () => {
   const [userName, setUserName] = useState(""); // State for storing the user name
   const [showProfile, setShowProfile] = useState(false); // State for showing the profile dropdown
   const navigate = useNavigate(); // Hook to navigate to the login page
-
   const openHelpModal = () => setHelpOpen(true);
   const closeHelpModal = () => setHelpOpen(false);
 
