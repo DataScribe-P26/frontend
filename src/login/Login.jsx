@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HiAnnotation } from "react-icons/hi";
@@ -11,8 +11,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { login, token } = useAuth();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (token) {
+      navigate('/home', { replace: true });
+    }
+  }, [token, navigate]);
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -28,23 +36,16 @@ export default function Login() {
         password: password.trim(),
       });
 
-      console.log('Login response:', result.data);
-
       if (result.data.status === "success") {
-        // For now, create a temporary token using the email
-        // Remove this once backend is updated to provide actual token
         const tempToken = btoa(result.data.user.email);
-        
-        // Call login with the token and user data
-        login(tempToken, result.data.user);
         
         toast.success("Login successful! Welcome to Datascribe.ai", {
           position: "top-center",
           autoClose: 2000,
         });
 
-        // Navigate to home page
-        navigate("/home", { replace: true });
+        // Call login which will handle navigation
+        login(tempToken, result.data.user);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -57,7 +58,6 @@ export default function Login() {
       );
     }
   }
-
 
   return (
     <div className="flex h-screen">

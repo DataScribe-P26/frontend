@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { HiAnnotation } from "react-icons/hi";
 import {
   FaUserCircle,
@@ -6,36 +6,42 @@ import {
   FaQuestionCircle,
   FaSun,
   FaMoon,
-  FaSignOutAlt, // Add the sign-out icon
+  FaSignOutAlt,
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "./ThemeContext"; // Import the Theme Context
-import HelpModal from "./HelpModal"; // Import Help Modal
+import { Link } from "react-router-dom";
+import { useTheme } from "./ThemeContext";
+import HelpModal from "./HelpModal";
+import { useAuth } from '../../login/AuthContext';
 
 const Navbar = () => {
-  const [isHelpOpen, setHelpOpen] = useState(false); // Modal state
-  const [userName, setUserName] = useState(""); // State for storing the user name
-  const [showProfile, setShowProfile] = useState(false); // State for showing the profile dropdown
-  const navigate = useNavigate(); // Hook to navigate to the login page
+  const [isHelpOpen, setHelpOpen] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+
+  const getDisplayName = () => {
+    if (!user) return '';
+    if (user.name) return user.name;
+    if (user.email) return user.email.split('@')[0];
+    return 'User';
+  };
+
+  const displayName = getDisplayName();
+
+  // Handle clicking outside profile dropdown
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showProfile && !event.target.closest('.profile-container')) {
+        setShowProfile(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfile]);
+
   const openHelpModal = () => setHelpOpen(true);
   const closeHelpModal = () => setHelpOpen(false);
-
-  const { isDarkMode, toggleTheme } = useTheme(); // Use global theme state
-
-  // Fetch the user name from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const userName = storedUser.split("@")[0]; // Extract the username from the email
-      setUserName(userName);
-    }
-  }, []);
-
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("user"); // Remove the user from localStorage
-    navigate("/login"); // Redirect to the login page after logout
-  };
 
   return (
     <nav
@@ -49,12 +55,10 @@ const Navbar = () => {
         {/* Left side: Datascribe.ai */}
         <Link to="/home" className="flex items-center">
           <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">
-            Datascribe.ai
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-wide">Datascribe.ai</h1>
         </Link>
 
-        {/* Right side: Icons including Help, User, Settings, and Dark Mode Toggle */}
+        {/* Right side: Icons */}
         <div className="flex items-center space-x-10">
           {/* Dark Mode Toggle */}
           <div className="flex items-center space-x-4">
@@ -85,45 +89,48 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Help, User, and Settings Icons */}
+          {/* Help and Settings Icons */}
           <div className="flex items-center space-x-10">
             <FaQuestionCircle
               className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110"
-              onClick={openHelpModal} // Open modal on click
+              onClick={openHelpModal}
             />
             <FaCog className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
 
-            {/* Display user's name if logged in */}
-            {userName ? (
-              <div className="relative">
-                <div
-                  className="flex items-center space-x-2 cursor-pointer"
-                  onClick={() => setShowProfile(!showProfile)} // Toggle profile dropdown
-                >
-                  {/* Display first letter of the username */}
-                  <div className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center">
-                    {userName.charAt(0).toUpperCase()}
+            {/* User Profile Section */}
+            <div className="relative profile-container">
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm font-medium hidden md:block">
+                    {displayName}
+                  </span>
+                  <div
+                    className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
+                    onClick={() => setShowProfile(!showProfile)}
+                  >
+                    {displayName.charAt(0).toUpperCase()}
                   </div>
-                 
-                </div>
 
-                {/* Profile dropdown */}
-                {showProfile && (
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-white text-black shadow-lg rounded-lg p-4">
-                     <span>{userName}</span> {/* Display user name */}
-                    <div
-                      className="flex items-center space-x-2 cursor-pointer"
-                      onClick={handleLogout} // Handle logout on click
-                    >
-                      <FaSignOutAlt className="text-red-500" />
-                      <span className="text-red-500">Logout</span> {/* Logout option */}
+                  {showProfile && (
+                    <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl py-2 w-48 z-50">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">{displayName}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                      <button
+                        onClick={logout}
+                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 flex items-center space-x-2"
+                      >
+                        <FaSignOutAlt />
+                        <span>Logout</span>
+                      </button>
                     </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
-            )}
+                  )}
+                </div>
+              ) : (
+                <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+              )}
+            </div>
           </div>
         </div>
       </div>

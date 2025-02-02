@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { HiAnnotation } from "react-icons/hi";
 import {
   FaUserCircle,
@@ -8,32 +8,37 @@ import {
   FaMoon,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTheme } from "../text_pages/Text/ThemeContext";
 import HelpModalImg from "../text_pages/Text/HelpModalImg";
+import { useAuth } from '../login/AuthContext';
 
 const ImageNavbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);
-  const [userName, setUserName] = useState("");
   const [showProfile, setShowProfile] = useState(false);
-  const navigate = useNavigate();
-
   const { isDarkMode, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
 
-  // Fetch the username from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const name = storedUser.split("@")[0]; // Extract username from email
-      setUserName(name);
-    }
-  }, []);
-
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
+  const getDisplayName = () => {
+    if (!user) return '';
+    if (user.name) return user.name;
+    if (user.email) return user.email.split('@')[0];
+    return 'User';
   };
+
+  const displayName = getDisplayName();
+
+  // Handle clicking outside profile dropdown
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showProfile && !event.target.closest('.profile-container')) {
+        setShowProfile(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfile]);
 
   const openHelpModalImg = () => setHelpOpen(true);
   const closeHelpModalImg = () => setHelpOpen(false);
@@ -50,9 +55,7 @@ const ImageNavbar = () => {
         {/* Left side: Datascribe.ai */}
         <Link to="/home" className="flex items-center">
           <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">
-            Datascribe.ai
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-wide">Datascribe.ai</h1>
         </Link>
 
         {/* Right side: Icons */}
@@ -92,33 +95,40 @@ const ImageNavbar = () => {
             onClick={openHelpModalImg}
           />
 
-          {/* User Profile Dropdown */}
-          {userName ? (
-            <div className="relative">
-              <div
-                className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center cursor-pointer"
-                onClick={() => setShowProfile(!showProfile)}
-              >
-                {userName.charAt(0).toUpperCase()}
-              </div>
-              {showProfile && (
-                <div className="absolute top-[120%] right-0 mt-2 bg-white text-black shadow-lg rounded-lg p-4">
-                  <div className="mb-2 w-[200px] font-semibold text-gray-700">
-                    Hello, {userName}!
-                  </div>
-                  <div
-                    className="flex items-center space-x-2 text-red-500 cursor-pointer hover:text-red-600"
-                    onClick={handleLogout}
-                  >
-                    <FaSignOutAlt />
-                    <span>Logout</span>
-                  </div>
+          {/* User Profile Section */}
+          <div className="relative profile-container">
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm font-medium hidden md:block">
+                  {displayName}
+                </span>
+                <div
+                  className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
+                  onClick={() => setShowProfile(!showProfile)}
+                >
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
-              )}
-            </div>
-          ) : (
-            <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
-          )}
+
+                {showProfile && (
+                  <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl py-2 w-48 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">{displayName}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                    <button
+                      onClick={logout}
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 flex items-center space-x-2"
+                    >
+                      <FaSignOutAlt />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+            )}
+          </div>
         </div>
       </div>
       <HelpModalImg isOpen={isHelpOpen} onClose={closeHelpModalImg} />
