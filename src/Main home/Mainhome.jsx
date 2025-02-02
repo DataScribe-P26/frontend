@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";  // Add this import
 import { HiAnnotation, HiPhotograph, HiDocumentText } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MainhomeNavbar from "./MainhomeNavbar.jsx";
 
 const Mainhome = () => {
+  const navigate = useNavigate();
+
+
+  
   return (
     <div className="">
       <div className="w-full h-screen font-sans bg-[#011429] text-gray-100 relative  lg:overflow-hidden">
@@ -37,7 +42,7 @@ const Mainhome = () => {
                 to="/image"
                 className="transform hover:scale-105 transition-transform duration-300"
               >
-                <div className="bg-opacity-90 p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 text-gray-200">
+                <div className="bg-opacity-95 p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 text-gray-200">
                   <div className="flex items-center mb-4">
                     <HiPhotograph className="text-4xl mr-4 text-white" />
                     <h3 className="text-2xl font-semibold">
@@ -53,7 +58,7 @@ const Mainhome = () => {
                 to="/text"
                 className="transform hover:scale-105 transition-transform duration-300 cursor-pointer"
               >
-                <div className=" p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 bg-opacity-90 text-gray-200">
+                <div className=" p-6 rounded-xl shadow hover:shadow-sm transition-shadow duration-200 ease-in-out bg-gray-800 bg-opacity-95 text-gray-200">
                   <div className="flex items-center mb-4">
                     <HiDocumentText className="text-4xl mr-4 text-white" />
                     <h3 className="text-2xl font-semibold">Text Annotations</h3>

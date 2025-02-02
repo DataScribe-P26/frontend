@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { HiAnnotation, HiEye, HiEyeOff } from "react-icons/hi";
+import { HiAnnotation } from "react-icons/hi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setShow] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogin(event) {
@@ -48,106 +49,147 @@ export default function Login() {
     }
   }
 
+
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-indigo-800 to-purple-900">
-      {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div className="flex h-screen">
+      {/* Left Side - Brand Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-800 to-purple-900 relative">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
+        >
+          <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
+        </video>
 
-      {/* Glassmorphism Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-900 opacity-40 backdrop-blur-sm"></div>
+        {/* Enhanced Content Overlay */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+          {/* Decorative Background Elements */}
+          <div className="absolute inset-0 flex justify-center">
+            <div className="w-1/2 h-full bg-gradient-to-b from-purple-500/10 to-transparent blur-xl"></div>
+          </div>
 
-      {/* Navigation Bar */}
-      <nav className="relative z-10 py-6 px-8 text-white">
-        <h1 className="text-4xl font-extrabold flex items-center gap-3">
-          <HiAnnotation className="text-5xl text-purple-500 transform transition-transform duration-300 hover:scale-110" />
-          Datascribe.ai
-        </h1>
-      </nav>
-
-      {/* Login Content */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md">
-        <div className="bg-transparent bg-opacity-40 backdrop-blur-md shadow-xl rounded-[10%] overflow-hidden border border-white border-opacity-20 h-[500px]  mx-auto">
-
-            <div className="bg-gradient-to-r mb-4 from-purple-800 to-indigo-900 px-6 py-5 text-center">
-              <h1 className="text-3xl font-extrabold text-white tracking-wide">
-                Welcome Back
+          {/* Logo and Title Section */}
+          <div className="relative flex flex-col items-center mb-22">
+            <div className="flex items-center gap-6 mb-4">
+              <div className="relative">
+                <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-md"></div>
+                <HiAnnotation className="text-8xl text-white animate-pulse relative" />
+              </div>
+              <h1 className="text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-indigo-400">
+                Datascribe.ai
               </h1>
             </div>
 
-            <div className="p-8">
-              <form onSubmit={handleLogin} className="space-y-6 ">
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Enter Your Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="email"
-                    required
-                    className="w-full mb-3 px-4 py-3 bg-transparent border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-                  />
-                </div>
-
-                <div className="relative">
-                  <input
-                    type={show ? "text" : "password"}
-                    placeholder="Enter Your Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 mb-3 bg-transparent border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition pr-12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShow(!show)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition"
-                  >
-                    {show ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                  </button>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-xl font-semibold tracking-wide shadow-lg hover:opacity-90 transition"
-                >
-                  Login
-                </button>
-
-                <div className="text-center text-white mt-4">
-                  <Link
-                    to="/register"
-                    className="underline  text-purple-300 hover:text-purple-500 transition"
-                  >
-                    Don't Have an Account? Register
-                  </Link>
-                </div>
-              </form>
+            {/* Tagline with gradient underline */}
+            <div className="relative">
+              <p className="text-xl text-purple-100 text-center max-w-2xl leading-relaxed">
+                Empowering your data with advanced, AI-driven auto annotations for images, text, and more providing unified, data-agnostic solutions.
+              </p>
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-1/3 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
             </div>
           </div>
+
+          {/* Enhanced Features Section */}
+          <div className="relative mt-10 space-y-2 text-l w-full max-w-2xl items-center justify-center flex flex-col">
+            {/* Feature Items */}
+            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+                </div>
+                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                  Unified and Intuitive Interface for Diverse Annotation Tasks
+                </p>
+              </div>
+            </div>
+
+            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+                </div>
+                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                  AI-Powered Auto Annotations for Faster Data Labeling
+                </p>
+              </div>
+            </div>
+
+            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+                </div>
+                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                  Integrated Augmentations to Enhance Diversity
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Decorative Bottom Element */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/40 to-transparent"></div>
         </div>
       </div>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900">Login to Your Account</h2>
+            <p className="mt-2 text-gray-600">Access the Power of Automated Data Annotation with AI</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-800 to-purple-900 text-white rounded-xl font-semibold hover:opacity-90 transition duration-200"
+            >
+              Login
+            </button>
+
+            <div className="text-center text-gray-600">
+              <Link to="/register" className="text-purple-600 hover:text-purple-800 font-medium">
+                Don't have an account? Register
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <ToastContainer position="top-center" autoClose={3000} theme="light" />
     </div>
   );
 }
