@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import NeonCursor from "./neon";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -127,7 +128,8 @@ export default function Register() {
   return (
     <div className="flex h-screen">
       {/* Left Side - Brand Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-800 to-purple-900 relative">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-purple-800 to-indigo-900 relative">
+      <NeonCursor/>
         {/* Video Background */}
         <video
           autoPlay
@@ -276,7 +278,7 @@ export default function Register() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
+              className="w-full py-3 px-4 bg-gradient-to-r from-purple-700 to-purple-800 text-white rounded-xl font-semibold hover:opacity-90 transition duration-200"
             >
               Register
             </button>

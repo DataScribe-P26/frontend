@@ -30,7 +30,7 @@ const Mainhome = () => {
 
           {/* Main Content */}
           <main className="container mx-auto px-4 py-12 h-full flex flex-col justify-start items-center pt-16">
-            <h2 className="text-3xl font-bold text-center mb-8">
+            <h2 className="text-3xl font-bold text-center mb-8 ">
               Welcome to the Ultimate Annotation Platform
             </h2>
             <p className="text-xl text-center mb-12 max-w-3xl">

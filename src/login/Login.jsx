@@ -6,6 +6,7 @@ import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from './AuthContext';
 import api from './api';
+import NeonCursor from "./neon";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -62,7 +63,9 @@ export default function Login() {
   return (
     <div className="flex h-screen">
       {/* Left Side - Brand Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-800 to-purple-900 relative">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-purple-800 to-indigo-900 relative">
+      <NeonCursor/>
+      
         {/* Video Background */}
         <video
           autoPlay
@@ -71,11 +74,14 @@ export default function Login() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-20"
         >
+          
           <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
         </video>
+        
 
         {/* Enhanced Content Overlay */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+        
           {/* Decorative Background Elements */}
           <div className="absolute inset-0 flex justify-center">
             <div className="w-1/2 h-full bg-gradient-to-b from-purple-500/10 to-transparent blur-xl"></div>
@@ -144,7 +150,9 @@ export default function Login() {
 
           {/* Decorative Bottom Element */}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/40 to-transparent"></div>
+          
         </div>
+        
       </div>
 
       {/* Right Side - Login Form */}
@@ -184,7 +192,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-800 to-purple-900 text-white rounded-xl font-semibold hover:opacity-90 transition duration-200"
+              className="w-full py-3 px-4 bg-gradient-to-r from-purple-700 to-purple-800 text-white rounded-xl font-semibold hover:opacity-90 transition duration-200"
             >
               Login
             </button>

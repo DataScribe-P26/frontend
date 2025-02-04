@@ -43,8 +43,11 @@ const MainhomeNavbar = () => {
       <div className="flex items-center justify-between">
         {/* Left side: Datascribe.ai */}
         <Link to="/home" className="flex items-center">
-          <HiAnnotation className="mr-3 text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">Datascribe.ai</h1>
+          <HiAnnotation className="mr-3 text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110  "/>
+          <h1 className="text-3xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+  Datascribe.ai
+</h1>
+
         </Link>
 
         {/* Right side: Icons including Help, User, and Settings */}
@@ -88,7 +91,7 @@ const MainhomeNavbar = () => {
                 
                 {/* Profile Avatar */}
                 <div
-                  className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
+                  className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
                   onClick={() => setShowProfile(!showProfile)}
                 >
                   {displayName.charAt(0).toUpperCase()}

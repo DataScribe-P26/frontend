@@ -149,9 +149,10 @@ function Analysis({ set_analysis_page }) {
     return { ...item, status };
   });
 
+  
   // Calculate the average count of balanced classes
   const balancedClasses = classStatus.filter(
-    (item) => item.status === "Balanced"
+    (item) => item.status === "Balanced" ||"Imbalanced"||"Overvalanced"||"Underbalanced"
   );
   const balancedAverage =
     balancedClasses.reduce((acc, curr) => acc + curr.count, 0) /
@@ -266,8 +267,10 @@ function Analysis({ set_analysis_page }) {
         backgroundColor: categorizedClasses.map((item) => item.Color),
       },
     ],
+   
   };
-  console.log(all_annotations);
+ 
+  
   return (
     <>
       <ImageNavbar />
