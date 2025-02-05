@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
+import { useAuth } from "../../login/AuthContext";
 
 const ProjectAddModal = ({ names }) => {
   const {
@@ -18,8 +19,13 @@ const ProjectAddModal = ({ names }) => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
 
   if (!isProjectModalOpen) return null;
 
@@ -28,6 +34,35 @@ const ProjectAddModal = ({ names }) => {
     const month = date.toLocaleString("default", { month: "long" });
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/users/search?query=${query}`
+      );
+      setSearchResults(response.data.matches);
+    } catch (error) {
+      console.error("Error fetching search results", error);
+    }
+  };
+
+  const handleSelectMember = (email) => {
+    if (!selectedMembers.includes(email)) {
+      setSelectedMembers([...selectedMembers, email]);
+    }
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleRemoveMember = (email) => {
+    setSelectedMembers(selectedMembers.filter((member) => member !== email));
   };
 
   const handleSubmit = () => {
@@ -41,10 +76,15 @@ const ProjectAddModal = ({ names }) => {
         const isoDate = formatDateToCustomString(currentDate);
 
         addProject(name, description);
+
         axios
-          .post("http://127.0.0.1:8000/projects/", { name, description })
-          .then((result) => {
-            console.log(result.data);
+          .post("http://127.0.0.1:8000/projects/", {
+            name,
+            description,
+            team_leads: user?.email,
+            team_members: selectedMembers,
+          })
+          .then(() => {
             toast.success("Project Added");
             setprojectname(name);
             setCreatedOn(isoDate);
@@ -56,7 +96,7 @@ const ProjectAddModal = ({ names }) => {
             handleClose();
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
             toast.error("Error adding project");
           });
       } else {
@@ -71,7 +111,11 @@ const ProjectAddModal = ({ names }) => {
     closeProjectModal();
     setName("");
     setDescription("");
+    setSearchQuery("");
+    setSearchResults([]);
+    setSelectedMembers([]);
   };
+  
 
   const modalStyles = {
     overlay: {
@@ -172,6 +216,35 @@ const ProjectAddModal = ({ names }) => {
     },
   };
 
+  const dropdownStyles = {
+    list: {
+      position: "absolute",
+      zIndex: 10,
+      backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+      border: `1px solid ${isDarkMode ? "#4b5563" : "#d1d5db"}`,
+      borderRadius: "0.375rem",
+      top: "80%",
+      width: "90%",
+      maxHeight: "150px",
+      overflowY: "auto",
+      margin: 0,
+      padding: "0.5rem 0",
+      boxShadow: isDarkMode
+        ? "0 4px 6px rgba(0, 0, 0, 0.3)"
+        : "0 4px 6px rgba(0, 0, 0, 0.1)",
+    },
+    listItem: {
+      padding: "0.75rem",
+      cursor: "pointer",
+      color: isDarkMode ? "#ffffff" : "#000000",
+      transition: "all 0.2s",
+      ":hover": {
+        backgroundColor: isDarkMode ? "#4b5563" : "#F3E5F5",
+      },
+    },
+  };
+  
+
   return (
     <div style={modalStyles.overlay}>
       <div style={modalStyles.modal}>
@@ -203,6 +276,81 @@ const ProjectAddModal = ({ names }) => {
               style={modalStyles.textarea}
             />
           </div>
+
+          <div style={modalStyles.formGroup}>
+            <label style={modalStyles.label}>Search and Add Members</label>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search by email"
+              style={modalStyles.input}
+            />
+            {searchResults.length > 0 && (
+              <ul style={dropdownStyles.list}>
+                {searchResults.map((result) => (
+                  <li
+                    key={result.email}
+                    onClick={() => handleSelectMember(result.email)}
+                    style={dropdownStyles.listItem}
+                  >
+                    {result.email}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              columnGap: "4px", // Tight gap between emails horizontally
+              rowGap: "4px",    // Minimal vertical spacing if wrapping occurs
+            }}
+          >
+            {selectedMembers.map((member) => (
+              <div
+                key={member}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: isDarkMode ? "#374151" : "#e3f2fd", // Light and Dark theme background
+                  padding: "4px 8px",
+                  borderRadius: "12px",
+                  boxShadow: isDarkMode
+                    ? "0px 1px 2px rgba(0, 0, 0, 0.3)"  // Dark mode shadow
+                    : "0px 1px 2px rgba(0, 0, 0, 0.15)", // Light mode shadow
+                }}
+              >
+                <span
+                  style={{
+                    color: isDarkMode ? "#ffffff" : "#1a237e", // Light and Dark theme text color
+                    fontWeight: "500",
+                    marginRight: "6px",
+                  }}
+                >
+                  {member}
+                </span>
+                <button
+                  onClick={() => handleRemoveMember(member)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: isDarkMode ? "#f44336" : "#d32f2f", // Dark and light theme for button color
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+
 
           <button onClick={handleSubmit} style={modalStyles.submitButton}>
             Create Project

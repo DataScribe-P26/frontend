@@ -7,6 +7,7 @@ import axios from "axios";
 import { HiPlus, HiFolder } from "react-icons/hi";
 import ImageNavbar from "../ImageNavbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
+import { useAuth } from "../../login/AuthContext";
 
 function Home() {
   const {
@@ -21,6 +22,9 @@ function Home() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [names, setNames] = useState([]);
+  const { user } = useAuth();
+
+
 
   const navigate = useNavigate();
 
@@ -28,7 +32,8 @@ function Home() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://127.0.0.1:8000/projects");
+        console.log(user.email);
+        const response = await axios.get(`http://127.0.0.1:8000/my-projects/?email=${user.email}`);
         setProjects(response.data);
         setNames(response.data.map((project) => project.name));
         setLoading(false);

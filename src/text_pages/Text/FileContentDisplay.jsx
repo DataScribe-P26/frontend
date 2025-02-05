@@ -42,32 +42,13 @@ const FileContentDisplay = () => {
     await handleSubmit();
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/projects/${projectName}/ner/auto-annotate`
+        `http://127.0.0.1:8000/process_text/${projectName}`
       );
   
-      console.log(response.data.message);
+      console.log("Pipeline Response:", response.data);
+    return response.data;
   
-      // Fetch updated annotations
-      const fetchResponse = await axios.get(
-        `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
-      );
-  
-      if (fetchResponse.data?.[0]) {
-        const updatedAnnotations = fetchResponse.data[0].entities.map((entity) => ({
-          text: entity.entity,
-          label: {
-            name: entity.label,
-            color: entity.color,
-            bgColor: entity.bColor,
-            textColor: entity.textColor,
-          },
-          start: entity.start,
-          end: entity.end,
-          index: -1,
-        }));
-  
-        setAnnotations(updatedAnnotations); // Update annotations locally
-      }
+
     } catch (error) {
       console.error("Error during auto-annotation:", error);
     }
@@ -497,7 +478,7 @@ const FileContentDisplay = () => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/annotate/${projectName}/ner`,
+       `http://127.0.0.1:8000/annotate/${projectName}/ner` ,
         {
           method: "POST",
           headers: {
