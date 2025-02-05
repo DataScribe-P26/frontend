@@ -39,6 +39,9 @@ function Stages({
     set_classlabel,
     setImageSrc,
     threshold,
+    currentIndex,
+    setLast,
+    last,
   } = useStore();
 
   const [annotations, setAnnotations] = useState(all_annotations);
@@ -57,7 +60,7 @@ function Stages({
       );
 
       if (response.data) {
-        const formattedImages = response.data.map((image) => ({
+        const formattedImages = response.data.response.map((image) => ({
           src: `data:image/jpeg;base64,${image.src}`,
           rectangle_annotations: image.rectangle_annotations,
           polygon_annotations: image.polygon_annotations,
@@ -68,6 +71,15 @@ function Stages({
           width: image.width,
           height: image.height,
         }));
+        console.log(last);
+        if (last == -1) {
+          setLast(threshold + 5);
+          console.log("newlast11", threshold + 5);
+        } else {
+          setLast(last + 5);
+          console.log("newlast", last + 5);
+        }
+
         setImageSrc(formattedImages);
         toast.success("Auto Annotation Done.");
       }
@@ -77,6 +89,11 @@ function Stages({
       setIsProcessing(false);
     }
   };
+  useEffect(() => {
+    if (last != -1 && currentIndex + 3 >= last) {
+      console.log("next batch should start");
+    }
+  }, [currentIndex]);
 
   useEffect(() => {
     let imagesAnnotated = 0;
@@ -100,8 +117,12 @@ function Stages({
       imagesAnnotated % threshold === 0 &&
       !isProcessing
     ) {
-      submit();
-      triggerTrainingAndInference();
+      const processAnnotations = async () => {
+        await submit();
+        triggerTrainingAndInference();
+      };
+
+      processAnnotations();
     }
   }, [all_annotations, annotations, isProcessing]);
 

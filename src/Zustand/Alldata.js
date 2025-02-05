@@ -255,6 +255,7 @@ const useStore = create((set) => ({
       currentIndex: 0,
       classes: [],
       export_annotations: [],
+      last: -1,
     })),
   export_annotations: [],
   setExportAnnotations: (export_annotations) => {
@@ -296,6 +297,8 @@ const useStore = create((set) => ({
     const savedThreshold = JSON.parse(localStorage.getItem(key));
     set({ threshold: savedThreshold ?? 25 });
   },
+  last: -1,
+  setLast: (a) => set({ last: a }),
 }));
 
 export default useStore;
