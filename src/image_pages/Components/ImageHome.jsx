@@ -70,13 +70,13 @@ function Imagehome() {
 
     const fetchImages = async () => {
       setLoading(true);
-
+      let user_type="single";
       try {
         setImageSrc([]);
         clear_classes();
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/${projectName}/images/`,
+          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/images/`,
           { signal: controller.signal }
         );
 

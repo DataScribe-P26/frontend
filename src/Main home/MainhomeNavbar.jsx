@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { HiAnnotation } from "react-icons/hi";
-import { FaCog, FaQuestionCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaCog, FaQuestionCircle, FaSignOutAlt,FaSun,FaMoon, } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../login/AuthContext';
+import { useTheme } from "../text_pages/Text/ThemeContext";
 
 const MainhomeNavbar = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+   const { isDarkMode, toggleTheme } = useTheme();
 
   // Get display name from user data
   const getDisplayName = () => {
@@ -52,6 +54,33 @@ const MainhomeNavbar = () => {
 
         {/* Right side: Icons including Help, User, and Settings */}
         <div className="flex items-center space-x-10 relative">
+            <div className="flex items-center space-x-4">
+                      <FaSun
+                        className={`text-xl ${
+                          isDarkMode ? "text-gray-400" : "text-yellow-300"
+                        }`}
+                      />
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer focus:outline-none focus:ring-0 active:ring-0"
+                          checked={isDarkMode}
+                          onChange={toggleTheme}
+                        />
+                        <div className="w-12 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-0 peer-checked:ring-0 dark:bg-gray-700 transition-colors duration-300 flex items-center">
+                          <div
+                            className={`${
+                              isDarkMode ? "translate-x-6" : "translate-x-1"
+                            } w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300`}
+                          />
+                        </div>
+                      </label>
+                      <FaMoon
+                        className={`text-xl ${
+                          isDarkMode ? "text-purple-300" : "text-gray-400"
+                        }`}
+                      />
+                    </div>
           {/* Help Icon with Tooltip */}
           <div className="relative">
             <FaQuestionCircle
@@ -91,7 +120,7 @@ const MainhomeNavbar = () => {
                 
                 {/* Profile Avatar */}
                 <div
-                  className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
+                  className="w-8 h-8 rounded-full  bg-gradient-to-r from-purple-800 to-indigo-800 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
                   onClick={() => setShowProfile(!showProfile)}
                 >
                   {displayName.charAt(0).toUpperCase()}

@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider, ProtectedRoute } from './login/AuthContext.jsx';
 
 // Import your components
-import Home from "./image_pages/Projects section/Home.jsx";
+
 import Imagehome from "./image_pages/Components/ImageHome.jsx";
 import Mainhome from "./Main home/Mainhome.jsx";
 import Login from "./login/Login.jsx"
@@ -14,6 +14,9 @@ import LabelManager from "./text_pages/Text/LabelManager.jsx";
 import CombinedFileContent from "./text_pages/Text/CombinedFileContent.jsx";
 import FileContentDisplay from "./text_pages/Text/FileContentDisplay.jsx";
 import Analysis from "./image_pages/Components/Image Project/Analysis.jsx";
+import ProjectSection from "./image_pages/Projects section/ProjectSection.jsx";
+import ProjectCreationPage from "./image_pages/Projects section/ProjectCreationPage.jsx";
+import OrganizationCreationPage from "./image_pages/Projects section/OrganizationCreationPage.jsx";
 
 function App() {
   return (
@@ -30,22 +33,22 @@ function App() {
             path="/home" 
             element={
               <ProtectedRoute>
-                <Mainhome />
+                <ProjectSection />
               </ProtectedRoute>
             } 
           />
+          <Route 
+          path="/create-project" 
+          element={<ProjectCreationPage />} />
+
+          <Route 
+          path="/create-organization" 
+          element={<OrganizationCreationPage />} />
 
           {/* Protected Image Routes */}
+          
           <Route 
-            path="/image" 
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/image/:projectName" 
+            path="/user-project/image/:projectName" 
             element={
               <ProtectedRoute>
                 <Imagehome />

@@ -152,7 +152,10 @@ function Analysis({ set_analysis_page }) {
   
   // Calculate the average count of balanced classes
   const balancedClasses = classStatus.filter(
-    (item) => item.status === "Balanced" ||"Imbalanced"||"Overvalanced"||"Underbalanced"
+    (item) =>item.status === "Balanced" ||
+    item.status === "Imbalanced" ||
+    item.status === "Overvalanced" ||
+    item.status === "Underbalanced"
   );
   const balancedAverage =
     balancedClasses.reduce((acc, curr) => acc + curr.count, 0) /

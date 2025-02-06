@@ -21,6 +21,7 @@
     "fabricjs-react": "^1.2.2",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
+    "fuzzy-search": "^3.2.1",
     "jszip": "^3.10.1",
     "konva": "^9.3.14",
     "lucide-react": "^0.470.0",
