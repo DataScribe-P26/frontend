@@ -290,7 +290,7 @@ const useStore = create((set) => ({
   setThreshold: (projectName, value) => {
     const key = `${projectName}_threshold`;
     localStorage.setItem(key, JSON.stringify(value));
-    set({ threshold: value });
+    set({ threshold: Number(value) });
   },
   loadThreshold: (projectName) => {
     const key = `${projectName}_threshold`;
@@ -299,6 +299,17 @@ const useStore = create((set) => ({
   },
   last: -1,
   setLast: (a) => set({ last: a }),
+  trained: false,
+  setTrained: (projectName, value) => {
+    const key = `${projectName}_trained`;
+    localStorage.setItem(key, JSON.stringify(value));
+    set({ trained: Boolean(value) });
+  },
+  loadTrained: (projectName) => {
+    const key = `${projectName}_trained`;
+    const savedTrained = JSON.parse(localStorage.getItem(key));
+    set({ trained: savedTrained ?? false });
+  },
 }));
 
 export default useStore;

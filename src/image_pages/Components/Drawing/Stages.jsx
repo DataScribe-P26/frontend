@@ -42,6 +42,9 @@ function Stages({
     currentIndex,
     setLast,
     last,
+    trained,
+    setTrained,
+    loadTrained,
   } = useStore();
 
   const [annotations, setAnnotations] = useState(all_annotations);
@@ -51,37 +54,57 @@ function Stages({
   const triggerTrainingAndInference = async () => {
     console.log("Model Training");
     if (isProcessing) return;
-
+    if (trained == true) return;
     try {
       submit();
       setIsProcessing(true);
       const response = await axios.post(
         `http://127.0.0.1:8000/api/train-and-infer/${projectName}/`
       );
-
+      console.log(response.data);
       if (response.data) {
-        const formattedImages = response.data.response.map((image) => ({
-          src: `data:image/jpeg;base64,${image.src}`,
-          rectangle_annotations: image.rectangle_annotations,
-          polygon_annotations: image.polygon_annotations,
-          segmentation_annotations: image.segmentation_annotations,
-          id: image.image_id,
-          width_multiplier: image.width_multiplier,
-          height_multiplier: image.height_multiplier,
-          width: image.width,
-          height: image.height,
-        }));
-        console.log(last);
+        console.log("111", last);
+        const updatedAnnotations = all_annotations?.map((item) => {
+          // Skip if item is null/undefined
+          if (!item) return item;
+
+          // Find matching response item, ensuring response.data exists and is an array
+          const responseItem = Array.isArray(response?.data)
+            ? response.data.find((r) => r?.id === item?.id)
+            : null;
+
+          if (!responseItem) return item;
+
+          // Ensure annotations are arrays
+          const existingAnnotations = Array.isArray(item?.annotations)
+            ? item.annotations
+            : [];
+          const responseAnnotations = Array.isArray(responseItem?.annotations)
+            ? responseItem.annotations
+            : [];
+
+          return {
+            ...item,
+            annotations:
+              existingAnnotations.length > 0
+                ? existingAnnotations
+                : responseAnnotations,
+          };
+        });
+
+        set_allAnnotations(updatedAnnotations);
+        console.log(updatedAnnotations);
+        console.log("222", last);
         if (last == -1) {
-          setLast(threshold + 5);
-          console.log("newlast11", threshold + 5);
+          setLast(Number(threshold) + 5);
+          console.log("newlast11", Number(threshold) + 5);
         } else {
           setLast(last + 5);
           console.log("newlast", last + 5);
         }
-
-        setImageSrc(formattedImages);
+        console.log("333", last);
         toast.success("Auto Annotation Done.");
+        setTrained(projectName, true);
       }
     } catch (error) {
       console.error("Error during training and inference:", error);
@@ -90,10 +113,81 @@ function Stages({
     }
   };
   useEffect(() => {
-    if (last != -1 && currentIndex + 3 >= last) {
-      console.log("next batch should start");
+    loadTrained(projectName);
+  }, [projectName]);
+  useEffect(() => {
+    const performInference = async (imageIds) => {
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/infer/${projectName}`,
+          { image_ids: imageIds }
+        );
+
+        if (response.data) {
+          const updatedAnnotations = all_annotations?.map((item) => {
+            if (!item) return item;
+            const responseItem = Array.isArray(response?.data)
+              ? response.data.find((r) => r?.id === item?.id)
+              : null;
+
+            if (!responseItem) return item;
+            const existingAnnotations = Array.isArray(item?.annotations)
+              ? item.annotations
+              : [];
+            const responseAnnotations = Array.isArray(responseItem?.annotations)
+              ? responseItem.annotations
+              : [];
+
+            return {
+              ...item,
+              annotations:
+                existingAnnotations.length > 0
+                  ? existingAnnotations
+                  : responseAnnotations,
+            };
+          });
+
+          set_allAnnotations(updatedAnnotations);
+
+          if (response.data.count > 0) {
+            toast.success("Auto Annotation Complete");
+          }
+        }
+      } catch (error) {
+        console.error("Error during inference:", error);
+        toast.error("Inference failed");
+      }
+    };
+
+    if (
+      annotatedCount >= Number(threshold) &&
+      trained === true &&
+      isProcessing === false
+    ) {
+      const currentImage = all_annotations?.[currentIndex];
+      const hasNoAnnotations = !currentImage?.annotations?.length;
+
+      if (hasNoAnnotations) {
+        const imageIds = [currentImage?.id?.toString()].filter(Boolean);
+        if (imageIds.length > 0) {
+          const toastId = toast.loading("Inferencing...");
+
+          console.log("infer-->", currentIndex + 1);
+
+          performInference(imageIds).finally(() => {
+            toast.dismiss(toastId); // Properly dismiss the loading toast
+          });
+        }
+      }
     }
-  }, [currentIndex]);
+  }, [
+    currentIndex,
+    annotatedCount,
+    threshold,
+    isProcessing,
+    all_annotations,
+    projectName,
+  ]);
 
   useEffect(() => {
     let imagesAnnotated = 0;
@@ -112,13 +206,16 @@ function Stages({
     });
 
     setAnnotatedCount(imagesAnnotated);
+
     if (
       imagesAnnotated > 0 &&
-      imagesAnnotated % threshold === 0 &&
+      annotatedCount >= Number(threshold) &&
+      imagesAnnotated % Number(threshold) === 0 &&
       !isProcessing
     ) {
       const processAnnotations = async () => {
         await submit();
+        if (trained == true) return;
         triggerTrainingAndInference();
       };
 
@@ -286,7 +383,7 @@ function Stages({
           ? {
               ...entry,
               annotations: entry.annotations?.map((a) =>
-                a.class_id === annotation.class_id
+                a.class_id === annotation?.class_id
                   ? {
                       ...a,
                       x: newX,
