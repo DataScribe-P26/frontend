@@ -152,7 +152,13 @@ function Main({ set_analysis_page }) {
       width_multiplier: currentImage_c.width_multiplier || 1,
       height_multiplier: currentImage_c.height_multiplier || 1,
     };
-
+    let text={
+      "text": "",
+      "entities": [
+        {
+        }
+      ]
+    }
     const data = {
       rectangle_annotations,
       polygon_annotations,
@@ -162,17 +168,19 @@ function Main({ set_analysis_page }) {
       mime_type: "image/jpeg",
       image: imageDetails,
     };
-
+    let type="image";
+    let user_type='single';
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/projects/${projectName}/upload/`,
-        data,
+        `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,
+        {data1:data},
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
+      console.log(response);
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);

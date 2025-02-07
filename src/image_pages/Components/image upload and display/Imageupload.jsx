@@ -99,10 +99,19 @@ function ImageUpload({ projectName, loading, setloading }) {
             height_multiplier: image.height_multiplier,
           },
         };
+        let text={
+          "text": "",
+          "entities": [
+            {
+            }
+          ]
+        }
+        let type="image";
+        let user_type='single';
 
         await axios.post(
-          `http://127.0.0.1:8000/projects/${projectName}/upload/`,
-          data,
+          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/upload/`,
+        {data1:data},
           {
             headers: {
               "Content-Type": "application/json",

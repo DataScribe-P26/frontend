@@ -33,9 +33,9 @@ const HomePage = () => {
         // Clear existing data when project changes
         setLabels([]);
         setAnnotations([]);
-
+        let user_type='single';
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
+          `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
         );
 
         if (response.data?.[0]) {

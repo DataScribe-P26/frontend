@@ -55,26 +55,11 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/project/:name" 
-            element={
-              <ProtectedRoute>
-                <Analysis />
-              </ProtectedRoute>
-            } 
-          />
-
+         
           {/* Protected Text Routes */}
+          
           <Route 
-            path="/text" 
-            element={
-              <ProtectedRoute>
-                <ProjectList />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/text/:projectName" 
+            path="/user-project/ner_tagging/:projectName" 
             element={
               <ProtectedRoute>
                 <HomePage />

@@ -7,6 +7,7 @@ import textStore from "../zustand/Textdata";
 import CreateLabel from "./CreateLabel.jsx";
 import { useTheme } from "./ThemeContext.jsx";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -173,9 +174,10 @@ const FileContentDisplay = () => {
         // Clear existing data when project changes
         setLabels([]);
         setAnnotations([]);
-
+        let user_type='single';
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/${projectName}/ner/full-text`
+         
+          `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
         );
         console.log('hello------',response.data[0]);
         if (response.data?.[0]) {
@@ -475,30 +477,31 @@ const FileContentDisplay = () => {
     };
 
     console.log("Submitting data:", JSON.stringify(dataToSend, null, 2));
-
-    try {
-      const response = await fetch(
-       `http://127.0.0.1:8000/annotate/${projectName}/ner` ,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend),
+    const user_type='single';
+    const type='ner_tagging';
+    let image=null;
+    let data={image,dataToSend};
+    console.log(data);
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log(response);
+      } catch (error) {
+        if (error.response) {
+          console.error("Error response data:", error.response.data);
+          toast.error(error.message);
+        } else {
+          console.error("Network Error:", error.message);
+          toast.error("Change Not Saved");
         }
-      );
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Server responded with an error:", errorResponse);
-        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      console.log("Success:", result);
-    } catch (error) {
-      console.error("Error:", error);
-    }
   };
   const handleExitProject = async () => {
     const dataToSend = {

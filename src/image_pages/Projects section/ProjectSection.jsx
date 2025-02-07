@@ -48,7 +48,7 @@ const ProjectSection = () => {
       const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
       setProjects(response.data);
       console.log(response.data);
-      setNames(response.data.map((project) => project.name));
+      setName(response.data.map((project) => project.name));
       setType(response.data.map((project)=>project.type));
       setLoading(false);
     } catch (error) {

@@ -7,6 +7,7 @@ import Analysis from "./Image Project/Analysis";
 import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
+import { useAuth } from "../../login/AuthContext";
 
 function Imagehome() {
   const {
@@ -22,6 +23,7 @@ function Imagehome() {
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
   const [analysis_page, set_analysis_page] = useState(true);
+  const { user } = useAuth();
 
   // Access dark mode state
   const { isDarkMode } = useTheme();
@@ -41,8 +43,7 @@ function Imagehome() {
   }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
-    axios
-      .get("http://127.0.0.1:8000/projects")
+    axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
       .then((response) => {
         const projects = response.data;
         const project = projects.find((p) => p.name === projectName);
@@ -79,6 +80,7 @@ function Imagehome() {
           `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/images/`,
           { signal: controller.signal }
         );
+        console.log(projectName)
 
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({
