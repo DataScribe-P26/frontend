@@ -17,6 +17,8 @@ import Analysis from "./image_pages/Components/Image Project/Analysis.jsx";
 import ProjectSection from "./image_pages/Projects section/ProjectSection.jsx";
 import ProjectCreationPage from "./image_pages/Projects section/ProjectCreationPage.jsx";
 import OrganizationCreationPage from "./image_pages/Projects section/OrganizationCreationPage.jsx";
+import CreateOrgProject from "./image_pages/Projects section/CreateOrgProject.jsx";
+import AddMembers from "./image_pages/Projects section/AddMembers.jsx";
 
 function App() {
   return (
@@ -41,9 +43,17 @@ function App() {
           path="/create-project" 
           element={<ProjectCreationPage />} />
 
+          <Route
+          path="/add-members"
+          element={<AddMembers />} />
+
           <Route 
           path="/create-organization" 
           element={<OrganizationCreationPage />} />
+
+          <Route 
+          path="/CreateOrgProject" 
+          element={<CreateOrgProject />} />
 
           {/* Protected Image Routes */}
           
