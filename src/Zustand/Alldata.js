@@ -296,6 +296,9 @@ const useStore = create((set) => ({
     const savedThreshold = JSON.parse(localStorage.getItem(key));
     set({ threshold: savedThreshold ?? 25 });
   },
+  organizations: [],
+  setOrganizations: (organizations) => set({ organizations }),
+
 }));
 
 export default useStore;

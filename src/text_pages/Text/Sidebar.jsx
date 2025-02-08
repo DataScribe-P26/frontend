@@ -41,8 +41,8 @@ const Sidebar = () => {
       <ul className="space-y-3">
         {/* Home Button */}
         <li>
-          <Link
-            to={`/text/${projectName}`} // Link to HomePage with projectName in URL
+          <Link   
+            to={`/user-project/ner_tagging/${projectName}`} // Link to HomePage with projectName in URL
             className={`flex items-center w-full text-left p-3 rounded-lg hover:bg-purple-600 hover:text-white transition ${
               isDarkMode ? "hover:bg-purple-500" : ""
             }`}

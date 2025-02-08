@@ -68,6 +68,7 @@ const OrganizationCreationPage = () => {
 
     const organizationData = {
       name: organizationName,
+      admin_id: user.email,
       members: selectedMembers.map((member) => ({
         userId: member._id,
         role: member.role,
@@ -75,12 +76,24 @@ const OrganizationCreationPage = () => {
     };
 
     try {
-      await axios.post("http://127.0.0.1:8000/organizations", organizationData);
-      toast.success("Organization created successfully");
-      navigate("/my-projects");
-    } catch (error) {
-      toast.error("Failed to create organization");
-    }
+      const response = await fetch("http://127.0.0.1:8000/organizations/create/", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(organizationData),
+      });
+
+      if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Organization Created:", data);
+      return data;
+  } catch (error) {
+      console.error("Failed to create organization:", error);
+  }
   };
 
   return (

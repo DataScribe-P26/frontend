@@ -66,14 +66,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/home/:projectName" 
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            } 
-          />
+
           <Route 
             path="/text/:projectName/content" 
             element={

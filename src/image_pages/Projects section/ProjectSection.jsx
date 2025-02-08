@@ -26,6 +26,7 @@ const ProjectSection = () => {
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState([]);
+  const { organizations, setOrganizations } = useStore();
 
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
@@ -47,6 +48,7 @@ const ProjectSection = () => {
       console.log('here123');
       const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
       setProjects(response.data);
+      setType('single');
       console.log(response.data);
       setName(response.data.map((project) => project.name));
       setType(response.data.map((project)=>project.type));
@@ -58,9 +60,27 @@ const ProjectSection = () => {
     }
   };
 
+  const fetchOrganizations = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`http://127.0.0.1:8000/organizations/user/${user.email}`);
+      setOrganizations(response.data); 
+      console.log('ORGS---',response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching organizations:", error);
+      toast.error("Failed to fetch organizations");
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     if (activeTab === "personalProjects") {
       fetchProjects();
+    }
+    else if (activeTab === "organizations") {
+      fetchOrganizations();
     }
   }, [activeTab, user.email]);
 
@@ -185,43 +205,46 @@ const ProjectSection = () => {
               Create New Organization
             </button>
           </div>
-
-          {/* Add Organization Modal or Cards */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
-          >
-            {["Org A", "Org B", "Org C"].map((org, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
-                  isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
-                }`}
-                onClick={() => navigate(`/organization/${org}`)}
-              >
-                <div className="relative">
-                  <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
-                    <div className="flex items-center">
-                      <HiFolder
-                        className={`text-3xl mr-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`}
-                      />
-                      <div>
-                        <h3 className="text-2xl font-semibold">{org}</h3>
+          {loading ? (
+            <div className="text-center py-8">
+              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Loading organizations...</p>
+            </div>
+          ) : organizations.length === 0 ? (
+            <div className="text-center py-8">
+              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>No organizations found</p>
+            </div>
+          ) : Array.isArray(organizations) && organizations.length > 0 ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {organizations.map((org) => (
+                <motion.div
+                  key={org._id}
+                  whileHover={{ scale: 1.05 }}
+                  className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
+                    isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
+                  }`}
+                  onClick={() => navigate(`/organization/${org.name}`)}
+                >
+                  <div className="relative">
+                    <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
+                      <div className="flex items-center">
+                        <HiFolder className={`text-3xl mr-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} />
+                        <h3 className="text-2xl font-semibold">{org.name}</h3>
                       </div>
                     </div>
+                    <div className="p-6 space-y-4">
+                      <p className={`text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        {org.description ? org.description : "No description available"}
+                      </p>
+                    </div>
                   </div>
-
-                  <div className="p-6 space-y-4">
-                    <p className={`text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Description for {org}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="text-center py-8">
+              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>No organizations found</p>
+            </div>
+          )}
         </>
       );
     }

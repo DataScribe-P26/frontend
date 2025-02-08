@@ -516,7 +516,8 @@ const FileContentDisplay = () => {
         end: annotation.end,
       })),
     };
-
+    const user_type='single';
+    const type='ner_tagging';
     // Display confirmation popup
     if (
       window.confirm(
@@ -525,18 +526,16 @@ const FileContentDisplay = () => {
     ) {
       try {
         // Save progress to the backend
-        const response = await fetch(
-          `http://127.0.0.1:8000/annotate/${projectName}/ner`,
+        const response = await axios.post(
+          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
           {
-            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(dataToSend),
           }
         );
-
-        if (response.ok) {
+        console.log(response.ok);
+        if (response.status==200) {
           console.log("Progress saved successfully.");
         } else {
           console.error("Failed to save progress.");
@@ -551,7 +550,7 @@ const FileContentDisplay = () => {
       setAnnotations([]);
 
       // Navigate to the project selection screen
-      navigate("/text");
+      navigate("/home");
     }
   };
 
