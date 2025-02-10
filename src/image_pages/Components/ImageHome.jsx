@@ -77,7 +77,7 @@ function Imagehome() {
         clear_classes();
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/`,
+          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/${user.email}`,
           { signal: controller.signal }
         );
         console.log(projectName)

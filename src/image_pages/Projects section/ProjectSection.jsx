@@ -49,6 +49,10 @@ const ProjectSection = () => {
       console.log('here123');
       const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
       setProjects(response.data);
+      if (response.data.length == 0) {
+        setLoading(false);
+        return;
+      }
       setType('single');
       console.log(response.data);
       setName(response.data.map((project) => project.name));
@@ -58,6 +62,7 @@ const ProjectSection = () => {
       console.error("Error fetching projects:", error);
       toast.error("Failed to fetch projects");
       setLoading(false);
+
     }
   };
 
@@ -85,13 +90,7 @@ const ProjectSection = () => {
     }
   }, [activeTab, user.email]);
 
-  const handleNavigate= () => {
 
-    localStorage.setItem("organizationName", organizationName);
-    console.log(organizationName);
-    navigate(`/dashboard`)
-
-  }
 
   const renderTabContent = () => {
     if (activeTab === "personalProjects") {
@@ -226,11 +225,22 @@ const ProjectSection = () => {
               {organizations.map((org) => (
                 <motion.div
                   key={org._id}
+                  
                   whileHover={{ scale: 1.05 }}
                   className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
                     isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                   }`}
-                  onClick={() =>handleNavigate()  }
+                    onClick={() => {
+                      setOrganizationName(org.name);
+                      console.log('hellouu',org.name);
+                      setCreatedOn(org.created_on);
+                      reset();
+                      set_allAnnotations([]);
+                      localStorage.setItem("organizationName", org.name);
+                      console.log(org.name);
+                      navigate(`/dashboard`);
+                      //navigate(`/user-project/${project.type}/${project.name}`);
+                  }}
                 >
                   <div className="relative">
                     <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
@@ -242,6 +252,12 @@ const ProjectSection = () => {
                     <div className="p-6 space-y-4">
                       <p className={`text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                         {org.description ? org.description : "No description available"}
+                      </p>
+                      <p className="text-sm">
+                        Created on:{" "}
+                        <span className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
+                          {new Date(org.created_on).toLocaleDateString()}
+                        </span>
                       </p>
                     </div>
                   </div>

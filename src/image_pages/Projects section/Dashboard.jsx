@@ -19,14 +19,23 @@ const Dashboard = () => {
   const [organizationName, setOrganizationName] = useState("");
   const [projects, setProjects] = useState([]);
   const [organizationMembers, setOrganizationMembers] = useState([]);
-  
+  var storedOrgName='';
   const [newMemberEmail, setNewMemberEmail] = useState("");
+  
   useEffect(() => {
-    const storedOrgName = localStorage.getItem("organizationName");
+    storedOrgName = localStorage.getItem("organizationName");
+    console.log('hellouu',storedOrgName);
     if (storedOrgName) {
       setOrganizationName(storedOrgName);
+      console.log('hellouu123',organizationName);
     }
-  }, []);
+    console.log('hellouu123',organizationName);
+  }, [organizationName]);
+  
+  useEffect(() => {
+console.log(organizationName);
+  },[organizationName])
+
   useEffect(() => {
     if (user) {
       axios
@@ -36,18 +45,14 @@ const Dashboard = () => {
       console.log(organizationName);
       axios
         .get(`http://127.0.0.1:8000/organization-members`, {
-          params: { org_name: organizationName }
+          params: { org_name: storedOrgName }
         })
-        .then((response) => setOrganizationMembers(response.data || []))
+        .then((response) => setOrganizationMembers(response.data.members || []))
         .catch(() => toast.error("Failed to load organization members"));
+        
     }
   }, [user]);
-  useEffect(() => {
-    const storedOrgName = localStorage.getItem("organizationName");
-    if (storedOrgName) {
-      setOrganizationName(storedOrgName);
-    }
-  }, []);
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim() === "") {
