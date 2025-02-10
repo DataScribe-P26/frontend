@@ -27,6 +27,7 @@ const ProjectSection = () => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState([]);
   const { organizations, setOrganizations } = useStore();
+   const [organizationName, setOrganizationName] = useState("");
 
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
@@ -84,6 +85,13 @@ const ProjectSection = () => {
     }
   }, [activeTab, user.email]);
 
+  const handleNavigate= () => {
+
+    localStorage.setItem("organizationName", organizationName);
+    console.log(organizationName);
+    navigate(`/dashboard`)
+
+  }
 
   const renderTabContent = () => {
     if (activeTab === "personalProjects") {
@@ -222,7 +230,7 @@ const ProjectSection = () => {
                   className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
                     isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                   }`}
-                  onClick={() => navigate(`/organization/${org.name}`)}
+                  onClick={() =>handleNavigate()  }
                 >
                   <div className="relative">
                     <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>

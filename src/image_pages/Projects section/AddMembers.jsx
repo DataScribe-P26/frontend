@@ -1,27 +1,113 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
 import FuzzySearch from "fuzzy-search";
 import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import { UserPlus } from "lucide-react";
+import axios from "axios";
 
 const AddMembers = () => {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredMembers, setFilteredMembers] = useState([]);
-  
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [organizationName, setOrganizationName] = useState("");
 
   // Initialize fuzzy search
   const searcher = new FuzzySearch();
+  useEffect(() => {
+    const storedOrgName = localStorage.getItem("organizationName");
+    if (storedOrgName) {
+      setOrganizationName(storedOrgName);
+    }
+  }, []);
 
-  const handleSearch = (query) => {
+  const handleSearch = async (query) => {
     setSearchQuery(query);
-    const result = searcher.search(query);
-    setFilteredMembers(result);
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        `http://127.0.0.1:8000/users/search?query=${query}`
+      );
+      setSearchResults(response.data.matches);
+      console.log(selectedMembers);
+    } catch (error) {
+      console.error("Error fetching search results", error);
+    }
+  };
+  const handleSelectMember = (email) => {
+    if (!selectedMembers.includes(email)) {
+      setSelectedMembers([...selectedMembers, email]);
+    }
+    setSearchQuery("");
+    setSearchResults([]);
   };
 
+  const handleRemoveMember = (email) => {
+    setSelectedMembers(selectedMembers.filter((member) => member !== email));
+  };
+  // IMPLEMENT HERE
+  const handleSubmit = async() => {
+    if (selectedMembers.length === 0) {
+      console.error("No members selected");
+      return;
+    }
+    console.log(organizationName,
+      selectedMembers);
+      let data={
+        org_name: organizationName,
+        user_emails: selectedMembers,
+      }
+      console.log(data);
+
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/organizations/add-members", data
+      );
+  
+      if (response.status === 200) {
+        console.log("Members added successfully:", response.data);
+        navigate("/CreateOrgProject"); // Navigate after successful API call
+      }
+    } catch (error) {
+      console.error("Error adding members:", error);
+    }
+    navigate("/CreateOrgProject");
+  };
+  const dropdownStyles = {
+    list: {
+      position: "absolute",
+      zIndex: 10,
+      backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+      border: `1px solid ${isDarkMode ? "#4b5563" : "#d1d5db"}`,
+      borderRadius: "0.375rem",
+      top: "80%",
+      width: "90%",
+      maxHeight: "150px",
+      overflowY: "auto",
+      margin: 0,
+      padding: "0.5rem 0",
+      boxShadow: isDarkMode
+        ? "0 4px 6px rgba(0, 0, 0, 0.3)"
+        : "0 4px 6px rgba(0, 0, 0, 0.1)",
+    },
+    listItem: {
+      padding: "0.75rem",
+      cursor: "pointer",
+      color: isDarkMode ? "#ffffff" : "#000000",
+      transition: "all 0.2s",
+      ":hover": {
+        backgroundColor: isDarkMode ? "#4b5563" : "#F3E5F5",
+      },
+    },
+  };
   return (
     <div
       className={`h-screen overflow-hidden flex flex-col ${
@@ -52,7 +138,7 @@ const AddMembers = () => {
               isDarkMode ? "bg-gray-800" : "bg-white"
             } backdrop-blur-lg rounded-lg shadow-xl bg-opacity-50`}
           >
-            <div className="p-6 space-y-8">
+            <div className="p-16 space-y-8">
               {/* Search Input */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -76,7 +162,67 @@ const AddMembers = () => {
                     placeholder="Search members..."
                   />
                   <UserPlus className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  {searchResults.length > 0 && (
+                    <ul style={dropdownStyles.list}>
+                      {searchResults.map((result) => (
+                        <li
+                          key={result.email}
+                          onClick={() => handleSelectMember(result.email)}
+                          style={dropdownStyles.listItem}
+                        >
+                          {result.email}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
+                <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              columnGap: "4px", // Tight gap between emails horizontally
+              rowGap: "4px",    // Minimal vertical spacing if wrapping occurs
+            }}
+          >
+            {selectedMembers.map((member) => (
+              <div
+                key={member}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: isDarkMode ? "#374151" : "#e3f2fd", // Light and Dark theme background
+                  padding: "4px 8px",
+                  borderRadius: "12px",
+                  boxShadow: isDarkMode
+                    ? "0px 1px 2px rgba(0, 0, 0, 0.3)"  // Dark mode shadow
+                    : "0px 1px 2px rgba(0, 0, 0, 0.15)", // Light mode shadow
+                }}
+              >
+                <span
+                  style={{
+                    color: isDarkMode ? "#ffffff" : "#1a237e", // Light and Dark theme text color
+                    fontWeight: "500",
+                    marginRight: "6px",
+                  }}
+                >
+                  {member}
+                </span>
+                <button
+                  onClick={() => handleRemoveMember(member)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: isDarkMode ? "#f44336" : "#d32f2f", // Dark and light theme for button color
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
               </motion.div>
 
              
@@ -99,7 +245,7 @@ const AddMembers = () => {
                   Skip
                 </button>
                 <button
-                  onClick={() => navigate("/CreateOrgProject")}
+                  onClick={() => handleSubmit()}
                   className={`px-6 py-3 rounded-md font-semibold transition-all ${
                     isDarkMode
                       ? "bg-green-700 hover:bg-green-800 text-white"

@@ -60,6 +60,8 @@ const OrganizationCreationPage = () => {
     } catch (error) {
       toast.error("Failed to create organization");
     }
+      // Store the organization name in localStorage
+      localStorage.setItem("organizationName", organizationName);
   };
 
   return (
