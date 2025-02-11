@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from './AuthContext';
 import api from './api';
 import NeonCursor from "./neon";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ export default function Login() {
 
       if (result.data.status === "success") {
         const tempToken = btoa(result.data.user.email);
-        
+
         toast.success("Login successful! Welcome to Datascribe.ai", {
           position: "top-center",
           autoClose: 2000,
@@ -51,7 +52,7 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
       toast.error(
-        error.response?.data?.detail || "Login failed. Please check your credentials.", 
+        error.response?.data?.detail || "Login failed. Please check your credentials.",
         {
           position: "top-center",
           autoClose: 3000,
@@ -60,12 +61,47 @@ export default function Login() {
     }
   }
 
+  const clientId = '849832574401-u80ur1j46qvdt7lr9lnatak8h6koj3l4.apps.googleusercontent.com'; // Replace with your actual Client ID
+
+  const onSuccess = async (response) => {
+    try {
+      const result = await api.post("/auth/callback", {
+        token: response.credential, // Send the Google token to the backend
+      });
+
+      if (result.data.status === "success") {
+        const tempToken = btoa(result.data.user.email);
+        toast.success("Login successful! Welcome to Datascribe.ai", {
+          position: "top-center",
+          autoClose: 2000,
+        });
+
+        login(tempToken, result.data.user);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error(
+        error.response?.data?.detail || "Google login failed.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+        }
+      );
+    }
+  };
+
+
+  const onFailure = (error) => {
+    console.log(error);
+    toast.error("Google login failed. Please try again.");
+  };
+
   return (
     <div className="flex h-screen">
       {/* Left Side - Brand Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-purple-800 to-indigo-900 relative">
-      <NeonCursor/>
-      
+        <NeonCursor />
+
         {/* Video Background */}
         <video
           autoPlay
@@ -74,20 +110,11 @@ export default function Login() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-20"
         >
-          
           <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
         </video>
-        
 
         {/* Enhanced Content Overlay */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
-        
-          {/* Decorative Background Elements */}
-          <div className="absolute inset-0 flex justify-center">
-            <div className="w-1/2 h-full bg-gradient-to-b from-purple-500/10 to-transparent blur-xl"></div>
-          </div>
-
-          {/* Logo and Title Section */}
           <div className="relative flex flex-col items-center mb-22">
             <div className="flex items-center gap-6 mb-4">
               <div className="relative">
@@ -98,61 +125,11 @@ export default function Login() {
                 Datascribe.ai
               </h1>
             </div>
-
-            {/* Tagline with gradient underline */}
-            <div className="relative">
-              <p className="text-xl text-purple-100 text-center max-w-2xl leading-relaxed">
-                Empowering your data with advanced, AI-driven auto annotations for images, text, and more providing unified, data-agnostic solutions.
-              </p>
-              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-1/3 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
-            </div>
+            <p className="text-xl text-purple-100 text-center max-w-2xl leading-relaxed">
+              Empowering your data with advanced, AI-driven auto annotations for images, text, and more providing unified, data-agnostic solutions.
+            </p>
           </div>
-
-          {/* Enhanced Features Section */}
-          <div className="relative mt-10 space-y-2 text-l w-full max-w-2xl items-center justify-center flex flex-col">
-            {/* Feature Items */}
-            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
-                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
-                </div>
-                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
-                  Unified and Intuitive Interface for Diverse Annotation Tasks
-                </p>
-              </div>
-            </div>
-
-            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
-                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
-                </div>
-                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
-                  AI-Powered Auto Annotations for Faster Data Labeling
-                </p>
-              </div>
-            </div>
-
-            <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
-                  <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
-                </div>
-                <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
-                  Integrated Augmentations to Enhance Diversity
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Decorative Bottom Element */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/40 to-transparent"></div>
-          
         </div>
-        
       </div>
 
       {/* Right Side - Login Form */}
@@ -203,6 +180,15 @@ export default function Login() {
               </Link>
             </div>
           </form>
+
+          {/* Google SignIn Button */}
+          <div className="flex justify-center mt-6">
+            <GoogleLogin
+              onSuccess={onSuccess}
+              onError={onFailure}
+              useOneTap
+            />
+          </div>
         </div>
       </div>
 

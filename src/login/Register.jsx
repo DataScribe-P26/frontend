@@ -5,7 +5,7 @@ import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import NeonCursor from "./neon";
-
+import { GoogleLogin } from '@react-oauth/google';
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,6 +44,7 @@ export default function Register() {
       });
     }
   };
+  
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
@@ -99,7 +100,7 @@ export default function Register() {
       });
 
        // Display success toast here
-    toast.success("Registration successful! You can now log in.", {
+    toast.success("Registration successful! Welcome to DataScribe.", {
       position: "top-center",
       autoClose: 3000,
       theme: "light",

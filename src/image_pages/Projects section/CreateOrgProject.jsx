@@ -343,10 +343,10 @@ const CreateOrgProject = () => {
               Create Project
             </button>
             <button
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/Dashboard")}
               className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-semibold transition-all"
             >
-              Cancel
+              skip
             </button>
           </div>
         </div>

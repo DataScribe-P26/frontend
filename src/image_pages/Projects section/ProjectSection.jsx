@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import { useAuth } from "../../login/AuthContext";
 import useStore from "../../Zustand/Alldata";
+import ProjectCreationModal from "./ProjectCreationPage.jsx";
+
 
 
 const ProjectSection = () => {
@@ -20,7 +22,9 @@ const ProjectSection = () => {
         set_allAnnotations,
         reset,
       } = useStore();
-      
+  
+
+   const [isModalOpen, setIsModalOpen] = useState(false);    
   const [activeTab, setActiveTab] = useState("personalProjects");
   const [projects, setProjects] = useState([]);
   const [type, setType] = useState("");
@@ -102,11 +106,18 @@ const ProjectSection = () => {
               className={`px-4 py-2 rounded-md flex items-center transition-colors duration-300 ${
                 isDarkMode ? "bg-green-500 hover:bg-green-600 text-white" : "bg-green-500 hover:bg-green-600 text-white"
               }`}
-              onClick={() => navigate("/create-project")}
+              onClick={() => setIsModalOpen(true)}
+
             >
+               <ProjectCreationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+              />
               Create New Project
             </button>
           </div>
+        
+
 
 
           {loading ? (
@@ -276,7 +287,12 @@ const ProjectSection = () => {
 
 
   return (
-    <div className="w-full h-screen bg-[#011429] text-gray-100 relative">
+    <div
+    className={`min-h-screen flex flex-col bg-cover bg-center bg-fixed  ${
+      isDarkMode ? "text-white" : "text-white"
+    } bg-cover bg-center bg-opacity-80`}
+    
+  >
       <video
         className="absolute inset-0 w-full h-full object-cover z-0"
         autoPlay

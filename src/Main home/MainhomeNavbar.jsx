@@ -47,8 +47,8 @@ const MainhomeNavbar = () => {
         <Link to="/home" className="flex items-center">
           <HiAnnotation className="mr-3 text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110  "/>
           <h1 className="text-3xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-  Datascribe.ai
-</h1>
+          Datascribe.ai
+        </h1>
 
         </Link>
 
