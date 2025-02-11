@@ -43,6 +43,7 @@ function Stages({
 
   const [annotations, setAnnotations] = useState(all_annotations);
   const [pendingAnnotation, setPendingAnnotation] = useState(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const { projectName } = useParams();
   const triggerTrainingAndInference = async () => {
@@ -406,7 +407,15 @@ function Stages({
   const onMouseMove = (event) => {
     if (!action || !isPainting.current) return;
 
+    // Get mouse position for cursor guidelines regardless of painting
     if (action === "rectangle") {
+      const mousePos = stageRef.current.getPointerPosition();
+      if (mousePos) {
+        setPosition({
+          x: mousePos.x,
+          y: mousePos.y,
+        });
+      }
       onRectangleMouseMove();
     } else if (action === "polygon") {
       handleMouseMove(event);
@@ -657,78 +666,272 @@ function Stages({
               </div>
               <div className="overflow-hidden border-2">
                 <TransformComponent>
-                  <Stage
-                    ref={stageRef}
-                    width={800}
-                    height={450}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={onMouseMove}
-                    onMouseUp={onPointerUp}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setSelectedId(null)}
-                  >
-                    <Layer>
+                  <div className="relative">
+                    <div className="fixed inset-0 pointer-events-none">
+                      {/* Vertical guideline */}
                       <div
+                        className="absolute top-0 bottom-0 w-[1px] border-l border-dashed border-gray-500"
                         style={{
-                          backgroundColor: "white",
-                          padding: "1rem",
-                          borderRadius: "0.5rem",
-                          boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+                          left: `${position.x}px`,
+                          height: "100vh",
+                          opacity: 0.75,
                         }}
-                      >
-                        <Konvaimage image={current_image} />
-                      </div>
+                      />
 
-                      {currentImage?.annotations?.map((annotation, index) => {
-                        if (annotation.type === "rectangle") {
-                          return (
-                            <Group
-                              key={annotation.class_id}
-                              onMouseEnter={() =>
-                                setHoveredId(annotation.class_id)
-                              }
-                              onMouseLeave={() => setHoveredId(null)}
-                              onClick={() => handleRectSelect(annotation)}
-                            >
-                              <Rect
-                                id={annotation?.class_id?.toString()}
-                                x={annotation.x}
-                                y={annotation.y}
-                                strokeWidth={2}
-                                listening={true}
-                                height={annotation.height}
-                                width={annotation.width}
-                                stroke={annotation.Color}
-                                fillEnabled={false}
-                                zIndex={annotation.zIndex}
-                                hitStrokeWidth={30}
-                                draggable={action === "edit"}
-                                rotation={annotation.rotation}
-                                onDragEnd={(e) => handleDragEnd(e, annotation)}
-                                onTransformEnd={(e) =>
-                                  handleTransformEnd(e, annotation)
+                      {/* Horizontal guideline */}
+                      <div
+                        className="absolute left-0 right-0 h-[1px] border-t border-dashed border-gray-500"
+                        style={{
+                          top: `${position.y}px`,
+                          width: "100vw",
+                          opacity: 0.75,
+                        }}
+                      />
+                    </div>
+                    <Stage
+                      ref={stageRef}
+                      width={800}
+                      height={450}
+                      onMouseDown={handleMouseDown}
+                      onMouseMove={onMouseMove}
+                      onMouseUp={onPointerUp}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setSelectedId(null)}
+                    >
+                      <Layer>
+                        {action === "rectangle" && (
+                          <>
+                            {/* Vertical guideline */}
+                            <Line
+                              points={[
+                                position.x,
+                                0,
+                                position.x,
+                                stageRef.current?.attrs?.height || 450,
+                              ]}
+                              stroke="#666"
+                              strokeWidth={1}
+                              dash={[4, 4]}
+                              listening={false}
+                              strokeScaleEnabled={false}
+                            />
+                            {/* Horizontal guideline */}
+                            <Line
+                              points={[
+                                0,
+                                position.y,
+                                stageRef.current?.attrs?.width || 800,
+                                position.y,
+                              ]}
+                              stroke="#666"
+                              strokeWidth={1}
+                              dash={[4, 4]}
+                              listening={false}
+                              strokeScaleEnabled={false}
+                            />
+                          </>
+                        )}
+                        <Line
+                          points={[
+                            position.x,
+                            0,
+                            position.x,
+                            stageRef.current?.attrs?.height || 450,
+                          ]}
+                          stroke="#666"
+                          strokeWidth={1}
+                          dash={[4, 4]}
+                          listening={false}
+                        />
+                        {/* Horizontal guideline */}
+                        <Line
+                          points={[
+                            0,
+                            position.y,
+                            stageRef.current?.attrs?.width || 800,
+                            position.y,
+                          ]}
+                          stroke="#666"
+                          strokeWidth={1}
+                          dash={[4, 4]}
+                          listening={false}
+                        />
+                        <div
+                          style={{
+                            backgroundColor: "white",
+                            padding: "1rem",
+                            borderRadius: "0.5rem",
+                            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+                          }}
+                        >
+                          <Konvaimage image={current_image} />
+                        </div>
+
+                        {currentImage?.annotations?.map((annotation, index) => {
+                          if (annotation.type === "rectangle") {
+                            return (
+                              <Group
+                                key={annotation.class_id}
+                                onMouseEnter={() =>
+                                  setHoveredId(annotation.class_id)
                                 }
-                                onClick={(e) => {
-                                  e.cancelBubble = true;
-                                  setSelectedId(annotation.class_id);
-                                }}
-                                onTap={(e) => {
-                                  e.cancelBubble = true;
-                                  setSelectedId(annotation.class_id);
-                                }}
-                              />
+                                onMouseLeave={() => setHoveredId(null)}
+                                onClick={() => handleRectSelect(annotation)}
+                              >
+                                <Rect
+                                  id={annotation?.class_id?.toString()}
+                                  x={annotation.x}
+                                  y={annotation.y}
+                                  strokeWidth={2}
+                                  listening={true}
+                                  height={annotation.height}
+                                  width={annotation.width}
+                                  stroke={annotation.Color}
+                                  fillEnabled={false}
+                                  zIndex={annotation.zIndex}
+                                  hitStrokeWidth={30}
+                                  draggable={action === "edit"}
+                                  rotation={annotation.rotation}
+                                  onDragEnd={(e) =>
+                                    handleDragEnd(e, annotation)
+                                  }
+                                  onTransformEnd={(e) =>
+                                    handleTransformEnd(e, annotation)
+                                  }
+                                  onClick={(e) => {
+                                    e.cancelBubble = true;
+                                    setSelectedId(annotation.class_id);
+                                  }}
+                                  onTap={(e) => {
+                                    e.cancelBubble = true;
+                                    setSelectedId(annotation.class_id);
+                                  }}
+                                />
 
-                              {hoveredId === annotation.class_id &&
-                                annotation.edit && (
-                                  <Group
-                                    x={annotation.x}
-                                    y={annotation.y}
-                                    rotation={annotation.rotation}
-                                  >
-                                    {/* Controls container - positioned at center of top edge */}
+                                {hoveredId === annotation.class_id &&
+                                  annotation.edit && (
                                     <Group
-                                      x={annotation.width / 2} // Center horizontally
-                                      y={0} // At top edge
+                                      x={annotation.x}
+                                      y={annotation.y}
+                                      rotation={annotation.rotation}
+                                    >
+                                      {/* Controls container - positioned at center of top edge */}
+                                      <Group
+                                        x={annotation.width / 2} // Center horizontally
+                                        y={0} // At top edge
+                                      >
+                                        <Rect
+                                          x={-20}
+                                          y={-8}
+                                          width={40}
+                                          height={16}
+                                          fill="transparent"
+                                          opacity={0.8}
+                                          cornerRadius={3}
+                                        />
+                                        <Text
+                                          x={-12}
+                                          y={2}
+                                          text="X"
+                                          fontSize={16}
+                                          fill="red"
+                                          onClick={() =>
+                                            handleDelete(
+                                              annotation.class_id,
+                                              annotation.type
+                                            )
+                                          }
+                                        />
+                                        <Text
+                                          x={2}
+                                          y={2}
+                                          text="E"
+                                          fontSize={16}
+                                          fill="green"
+                                          onClick={() =>
+                                            handleEdit(
+                                              annotation.class_id,
+                                              annotation.type
+                                            )
+                                          }
+                                        />
+                                      </Group>
+                                    </Group>
+                                  )}
+
+                                {selectedId === annotation.class_id &&
+                                  action === "edit" && (
+                                    <Transformer
+                                      ref={transformerRef}
+                                      anchorSize={10}
+                                      borderStrokeWidth={2}
+                                      rotationSnaps={[0, 90, 180, 270]}
+                                      rotateEnabled={true}
+                                      resizeEnabled={true}
+                                      anchorStroke="black"
+                                      borderStroke="blue"
+                                      onTransformEnd={handleTransformEnd}
+                                    />
+                                  )}
+                              </Group>
+                            );
+                          } else if (annotation.type === "polygon") {
+                            const getEdgeMiddlePoint = () => {
+                              const p1 = annotation.points[0];
+                              const p2 = annotation.points[1];
+
+                              // Calculate angle and offset
+                              const angle = Math.atan2(
+                                p2.y - p1.y,
+                                p2.x - p1.x
+                              );
+                              const offsetDistance = 5; // Reduced from 15 to 5 pixels
+
+                              // Calculate the middle point of the edge
+                              const midX = (p1.x + p2.x) / 2;
+                              const midY = (p1.y + p2.y) / 2;
+
+                              // Calculate perpendicular angle
+                              const perpAngle = angle + Math.PI / 2;
+
+                              // Offset the point slightly towards inside of polygon
+                              return {
+                                x: midX + offsetDistance * Math.cos(perpAngle),
+                                y: midY + offsetDistance * Math.sin(perpAngle),
+                                angle: angle,
+                              };
+                            };
+
+                            const controlPoint = getEdgeMiddlePoint();
+                            return (
+                              <React.Fragment key={annotation.class_id}>
+                                <Line
+                                  points={annotation.points.flatMap((point) => [
+                                    point.x,
+                                    point.y,
+                                  ])}
+                                  stroke={annotation.Color}
+                                  strokeWidth={2}
+                                  hitStrokeWidth={30}
+                                  fillEnabled={false}
+                                  closed
+                                  onMouseOver={() =>
+                                    setHoveredPolygonIndex(index)
+                                  }
+                                  onMouseOut={() => {
+                                    if (hoveredTextIndex !== index) {
+                                      setHoveredPolygonIndex(null);
+                                    }
+                                  }}
+                                />
+                                {hoveredPolygonIndex === index && (
+                                  <>
+                                    <Group
+                                      x={controlPoint.x}
+                                      y={controlPoint.y}
+                                      rotation={
+                                        controlPoint.angle * (180 / Math.PI)
+                                      }
                                     >
                                       <Rect
                                         x={-20}
@@ -741,10 +944,16 @@ function Stages({
                                       />
                                       <Text
                                         x={-12}
-                                        y={2}
+                                        y={-5}
                                         text="X"
-                                        fontSize={16}
                                         fill="red"
+                                        fontSize={16}
+                                        onMouseOver={() =>
+                                          setHoveredTextIndex(index)
+                                        }
+                                        onMouseOut={() =>
+                                          setHoveredTextIndex(null)
+                                        }
                                         onClick={() =>
                                           handleDelete(
                                             annotation.class_id,
@@ -754,10 +963,16 @@ function Stages({
                                       />
                                       <Text
                                         x={2}
-                                        y={2}
+                                        y={-5}
                                         text="E"
-                                        fontSize={16}
                                         fill="green"
+                                        fontSize={16}
+                                        onMouseOver={() =>
+                                          setHoveredTextIndex(index)
+                                        }
+                                        onMouseOut={() =>
+                                          setHoveredTextIndex(null)
+                                        }
                                         onClick={() =>
                                           handleEdit(
                                             annotation.class_id,
@@ -766,288 +981,176 @@ function Stages({
                                         }
                                       />
                                     </Group>
-                                  </Group>
+                                  </>
                                 )}
+                              </React.Fragment>
+                            );
+                          } else if (annotation.type === "segmentation") {
+                            // Calculate a position along one of the edges
+                            const getEdgeMiddlePoint = () => {
+                              const p1 = annotation.points[0];
+                              const p2 = annotation.points[1];
 
-                              {selectedId === annotation.class_id &&
-                                action === "edit" && (
-                                  <Transformer
-                                    ref={transformerRef}
-                                    anchorSize={10}
-                                    borderStrokeWidth={2}
-                                    rotationSnaps={[0, 90, 180, 270]}
-                                    rotateEnabled={true}
-                                    resizeEnabled={true}
-                                    anchorStroke="black"
-                                    borderStroke="blue"
-                                    onTransformEnd={handleTransformEnd}
-                                  />
-                                )}
-                            </Group>
-                          );
-                        } else if (annotation.type === "polygon") {
-                          const getEdgeMiddlePoint = () => {
-                            const p1 = annotation.points[0];
-                            const p2 = annotation.points[1];
+                              // Calculate angle and offset
+                              const angle = Math.atan2(
+                                p2.y - p1.y,
+                                p2.x - p1.x
+                              );
+                              const offsetDistance = 5; // Small offset from the line
 
-                            // Calculate angle and offset
-                            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-                            const offsetDistance = 5; // Reduced from 15 to 5 pixels
+                              // Calculate the middle point of the edge
+                              const midX = (p1.x + p2.x) / 2;
+                              const midY = (p1.y + p2.y) / 2;
 
-                            // Calculate the middle point of the edge
-                            const midX = (p1.x + p2.x) / 2;
-                            const midY = (p1.y + p2.y) / 2;
+                              // Calculate perpendicular angle
+                              const perpAngle = angle + Math.PI / 2;
 
-                            // Calculate perpendicular angle
-                            const perpAngle = angle + Math.PI / 2;
-
-                            // Offset the point slightly towards inside of polygon
-                            return {
-                              x: midX + offsetDistance * Math.cos(perpAngle),
-                              y: midY + offsetDistance * Math.sin(perpAngle),
-                              angle: angle,
+                              // Offset the point slightly towards inside
+                              return {
+                                x: midX + offsetDistance * Math.cos(perpAngle),
+                                y: midY + offsetDistance * Math.sin(perpAngle),
+                                angle: angle,
+                              };
                             };
-                          };
 
-                          const controlPoint = getEdgeMiddlePoint();
-                          return (
-                            <React.Fragment key={annotation.class_id}>
-                              <Line
-                                points={annotation.points.flatMap((point) => [
-                                  point.x,
-                                  point.y,
-                                ])}
-                                stroke={annotation.Color}
-                                strokeWidth={2}
-                                hitStrokeWidth={30}
-                                fillEnabled={false}
-                                closed
-                                onMouseOver={() =>
-                                  setHoveredPolygonIndex(index)
-                                }
-                                onMouseOut={() => {
-                                  if (hoveredTextIndex !== index) {
-                                    setHoveredPolygonIndex(null);
+                            const controlPoint = getEdgeMiddlePoint();
+
+                            return (
+                              <React.Fragment key={annotation.class_id}>
+                                <Line
+                                  points={annotation.points.flatMap((point) => [
+                                    point.x,
+                                    point.y,
+                                  ])}
+                                  hitStrokeWidth={30}
+                                  stroke={annotation.Color}
+                                  strokeWidth={2}
+                                  fillEnabled={false}
+                                  fill="transparent"
+                                  closed={true}
+                                  onMouseEnter={() =>
+                                    setHoveredSegmentationIndex(index)
                                   }
-                                }}
-                              />
-                              {hoveredPolygonIndex === index && (
-                                <>
-                                  <Group
-                                    x={controlPoint.x}
-                                    y={controlPoint.y}
-                                    rotation={
-                                      controlPoint.angle * (180 / Math.PI)
-                                    }
-                                  >
-                                    <Rect
-                                      x={-20}
-                                      y={-8}
-                                      width={40}
-                                      height={16}
-                                      fill="transparent"
-                                      opacity={0.8}
-                                      cornerRadius={3}
-                                    />
-                                    <Text
-                                      x={-12}
-                                      y={-5}
-                                      text="X"
-                                      fill="red"
-                                      fontSize={16}
-                                      onMouseOver={() =>
-                                        setHoveredTextIndex(index)
+                                  onMouseLeave={() =>
+                                    setHoveredSegmentationIndex(null)
+                                  }
+                                />
+                                {hoveredSegmentationIndex === index && (
+                                  <>
+                                    <Group
+                                      x={controlPoint.x}
+                                      y={controlPoint.y}
+                                      rotation={
+                                        controlPoint.angle * (180 / Math.PI)
                                       }
-                                      onMouseOut={() =>
-                                        setHoveredTextIndex(null)
-                                      }
-                                      onClick={() =>
-                                        handleDelete(
-                                          annotation.class_id,
-                                          annotation.type
-                                        )
-                                      }
-                                    />
-                                    <Text
-                                      x={2}
-                                      y={-5}
-                                      text="E"
-                                      fill="green"
-                                      fontSize={16}
-                                      onMouseOver={() =>
-                                        setHoveredTextIndex(index)
-                                      }
-                                      onMouseOut={() =>
-                                        setHoveredTextIndex(null)
-                                      }
-                                      onClick={() =>
-                                        handleEdit(
-                                          annotation.class_id,
-                                          annotation.type
-                                        )
-                                      }
-                                    />
-                                  </Group>
-                                </>
-                              )}
-                            </React.Fragment>
-                          );
-                        } else if (annotation.type === "segmentation") {
-                          // Calculate a position along one of the edges
-                          const getEdgeMiddlePoint = () => {
-                            const p1 = annotation.points[0];
-                            const p2 = annotation.points[1];
+                                    >
+                                      <Rect
+                                        x={-20}
+                                        y={-8}
+                                        width={40}
+                                        height={16}
+                                        fill="transparent"
+                                        opacity={0.8}
+                                        cornerRadius={3}
+                                      />
+                                      <Text
+                                        x={-12}
+                                        y={-5}
+                                        text="X"
+                                        fill="red"
+                                        fontSize={16}
+                                        onMouseEnter={() =>
+                                          setHoveredSegmentationIndex(index)
+                                        }
+                                        onMouseLeave={() =>
+                                          setHoveredSegmentationIndex(null)
+                                        }
+                                        onClick={() =>
+                                          handleDelete(annotation.class_id)
+                                        }
+                                      />
+                                      <Text
+                                        x={2}
+                                        y={-5}
+                                        text="E"
+                                        fill="green"
+                                        fontSize={16}
+                                        onMouseEnter={() =>
+                                          setHoveredSegmentationIndex(index)
+                                        }
+                                        onMouseLeave={() =>
+                                          setHoveredSegmentationIndex(null)
+                                        }
+                                        onClick={() =>
+                                          handleEdit(annotation.class_id)
+                                        }
+                                      />
+                                    </Group>
+                                  </>
+                                )}
+                              </React.Fragment>
+                            );
+                          }
+                          return null;
+                        })}
 
-                            // Calculate angle and offset
-                            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-                            const offsetDistance = 5; // Small offset from the line
-
-                            // Calculate the middle point of the edge
-                            const midX = (p1.x + p2.x) / 2;
-                            const midY = (p1.y + p2.y) / 2;
-
-                            // Calculate perpendicular angle
-                            const perpAngle = angle + Math.PI / 2;
-
-                            // Offset the point slightly towards inside
-                            return {
-                              x: midX + offsetDistance * Math.cos(perpAngle),
-                              y: midY + offsetDistance * Math.sin(perpAngle),
-                              angle: angle,
-                            };
-                          };
-
-                          const controlPoint = getEdgeMiddlePoint();
-
-                          return (
-                            <React.Fragment key={annotation.class_id}>
-                              <Line
-                                points={annotation.points.flatMap((point) => [
-                                  point.x,
-                                  point.y,
-                                ])}
-                                hitStrokeWidth={30}
-                                stroke={annotation.Color}
-                                strokeWidth={2}
-                                fillEnabled={false}
-                                fill="transparent"
-                                closed={true}
-                                onMouseEnter={() =>
-                                  setHoveredSegmentationIndex(index)
-                                }
-                                onMouseLeave={() =>
-                                  setHoveredSegmentationIndex(null)
-                                }
-                              />
-                              {hoveredSegmentationIndex === index && (
-                                <>
-                                  <Group
-                                    x={controlPoint.x}
-                                    y={controlPoint.y}
-                                    rotation={
-                                      controlPoint.angle * (180 / Math.PI)
-                                    }
-                                  >
-                                    <Rect
-                                      x={-20}
-                                      y={-8}
-                                      width={40}
-                                      height={16}
-                                      fill="transparent"
-                                      opacity={0.8}
-                                      cornerRadius={3}
-                                    />
-                                    <Text
-                                      x={-12}
-                                      y={-5}
-                                      text="X"
-                                      fill="red"
-                                      fontSize={16}
-                                      onMouseEnter={() =>
-                                        setHoveredSegmentationIndex(index)
-                                      }
-                                      onMouseLeave={() =>
-                                        setHoveredSegmentationIndex(null)
-                                      }
-                                      onClick={() =>
-                                        handleDelete(annotation.class_id)
-                                      }
-                                    />
-                                    <Text
-                                      x={2}
-                                      y={-5}
-                                      text="E"
-                                      fill="green"
-                                      fontSize={16}
-                                      onMouseEnter={() =>
-                                        setHoveredSegmentationIndex(index)
-                                      }
-                                      onMouseLeave={() =>
-                                        setHoveredSegmentationIndex(null)
-                                      }
-                                      onClick={() =>
-                                        handleEdit(annotation.class_id)
-                                      }
-                                    />
-                                  </Group>
-                                </>
-                              )}
-                            </React.Fragment>
-                          );
-                        }
-                        return null;
-                      })}
-
-                      {action === "polygon" && (
-                        <Line
-                          points={points.flatMap((point) => [point.x, point.y])}
-                          stroke="black"
-                          strokeWidth={1}
-                          closed={isFinished}
-                        />
-                      )}
-                      {action === "segmentation" &&
-                        segmentationPath.length > 0 && (
+                        {action === "polygon" && (
                           <Line
-                            points={segmentationPath.flatMap((p) => [p.x, p.y])}
-                            stroke="red" // Change this color to make the line visible
-                            strokeWidth={2}
-                            lineJoin="round"
-                            lineCap="round"
+                            points={points.flatMap((point) => [
+                              point.x,
+                              point.y,
+                            ])}
+                            stroke="black"
+                            strokeWidth={1}
                             closed={isFinished}
                           />
                         )}
-                      {action === "polygon" &&
-                        points?.map((point, index) => {
-                          const width = 6;
-                          const x = point.x - width / 2;
-                          const y = point.y - width / 2;
-                          const isStartPoint = index === 0;
-                          return (
-                            <Rect
-                              key={`point-${index}`}
-                              x={x}
-                              y={y}
-                              width={width}
-                              height={width}
-                              fill={isStartPoint ? "gold" : "white"}
-                              stroke={isStartPoint ? "gold" : "black"}
-                              strokeWidth={1}
-                              onMouseOver={
-                                isStartPoint
-                                  ? handleMouseOverStartPoint
-                                  : undefined
-                              }
-                              onMouseOut={
-                                isStartPoint
-                                  ? handleMouseOutStartPoint
-                                  : undefined
-                              }
+                        {action === "segmentation" &&
+                          segmentationPath.length > 0 && (
+                            <Line
+                              points={segmentationPath.flatMap((p) => [
+                                p.x,
+                                p.y,
+                              ])}
+                              stroke="red" // Change this color to make the line visible
+                              strokeWidth={2}
+                              lineJoin="round"
+                              lineCap="round"
+                              closed={isFinished}
                             />
-                          );
-                        })}
-                    </Layer>
-                  </Stage>
+                          )}
+                        {action === "polygon" &&
+                          points?.map((point, index) => {
+                            const width = 6;
+                            const x = point.x - width / 2;
+                            const y = point.y - width / 2;
+                            const isStartPoint = index === 0;
+                            return (
+                              <Rect
+                                key={`point-${index}`}
+                                x={x}
+                                y={y}
+                                width={width}
+                                height={width}
+                                fill={isStartPoint ? "gold" : "white"}
+                                stroke={isStartPoint ? "gold" : "black"}
+                                strokeWidth={1}
+                                onMouseOver={
+                                  isStartPoint
+                                    ? handleMouseOverStartPoint
+                                    : undefined
+                                }
+                                onMouseOut={
+                                  isStartPoint
+                                    ? handleMouseOutStartPoint
+                                    : undefined
+                                }
+                              />
+                            );
+                          })}
+                      </Layer>
+                    </Stage>{" "}
+                  </div>
                 </TransformComponent>
               </div>
             </>

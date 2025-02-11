@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { HiUserGroup, HiOutlineUserCircle, HiPlus, HiFolder } from "react-icons/hi";
+import {
+  HiUserGroup,
+  HiOutlineUserCircle,
+  HiPlus,
+  HiFolder,
+} from "react-icons/hi";
 import MainhomeNavbar from "../../Main home/MainhomeNavbar.jsx";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -10,32 +15,34 @@ import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import { useAuth } from "../../login/AuthContext";
 import useStore from "../../Zustand/Alldata";
 
-
 const ProjectSection = () => {
-    const {
-        isProjectModalOpen,
-        openProjectModal,
-        setprojectname,
-        setCreatedOn,
-        set_allAnnotations,
-        reset,
-      } = useStore();
-      
+  const {
+    isProjectModalOpen,
+    openProjectModal,
+    setprojectname,
+    setCreatedOn,
+    set_allAnnotations,
+    reset,
+  } = useStore();
+
   const [activeTab, setActiveTab] = useState("personalProjects");
   const [projects, setProjects] = useState([]);
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState([]);
   const { organizations, setOrganizations } = useStore();
-   const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
 
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const navigate = useNavigate();
-  
 
   const tabs = [
-    { key: "personalProjects", label: "Personal Projects", icon: HiOutlineUserCircle },
+    {
+      key: "personalProjects",
+      label: "Personal Projects",
+      icon: HiOutlineUserCircle,
+    },
     { key: "organizations", label: "Your Organizations", icon: HiUserGroup },
   ];
 
@@ -46,13 +53,19 @@ const ProjectSection = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      console.log('here123');
-      const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
+      console.log("here123");
+      const response = await axios.get(
+        `http://127.0.0.1:8000/user-projects/?email=${user.email}`
+      );
       setProjects(response.data);
-      setType('single');
+      if (response.data.length == 0) {
+        setLoading(false);
+        return;
+      }
+      setType("single");
       console.log(response.data);
       setName(response.data.map((project) => project.name));
-      setType(response.data.map((project)=>project.type));
+      setType(response.data.map((project) => project.type));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -64,9 +77,11 @@ const ProjectSection = () => {
   const fetchOrganizations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://127.0.0.1:8000/organizations/user/${user.email}`);
-      setOrganizations(response.data); 
-      console.log('ORGS---',response.data);
+      const response = await axios.get(
+        `http://127.0.0.1:8000/organizations/user/${user.email}`
+      );
+      setOrganizations(response.data);
+      console.log("ORGS---", response.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching organizations:", error);
@@ -75,23 +90,19 @@ const ProjectSection = () => {
     }
   };
 
-
   useEffect(() => {
     if (activeTab === "personalProjects") {
       fetchProjects();
-    }
-    else if (activeTab === "organizations") {
+    } else if (activeTab === "organizations") {
       fetchOrganizations();
     }
   }, [activeTab, user.email]);
 
-  const handleNavigate= () => {
-
+  const handleNavigate = () => {
     localStorage.setItem("organizationName", organizationName);
     console.log(organizationName);
-    navigate(`/dashboard`)
-
-  }
+    navigate(`/dashboard`);
+  };
 
   const renderTabContent = () => {
     if (activeTab === "personalProjects") {
@@ -101,14 +112,15 @@ const ProjectSection = () => {
             <h2 className="text-3xl font-bold">Projects</h2>
             <button
               className={`px-4 py-2 rounded-md flex items-center transition-colors duration-300 ${
-                isDarkMode ? "bg-green-500 hover:bg-green-600 text-white" : "bg-green-500 hover:bg-green-600 text-white"
+                isDarkMode
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-green-500 hover:bg-green-600 text-white"
               }`}
               onClick={() => navigate("/create-project")}
             >
               Create New Project
             </button>
           </div>
-
 
           {loading ? (
             <div className="text-center py-8">
@@ -118,7 +130,9 @@ const ProjectSection = () => {
                 }`}
               ></div>
               <p
-                className={`mt-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                className={`mt-4 ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
               >
                 Loading projects...
               </p>
@@ -126,12 +140,16 @@ const ProjectSection = () => {
           ) : projects.length === 0 ? (
             <div className="text-center py-8">
               <p
-                className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                className={`text-xl ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
               >
                 No projects available
               </p>
               <p
-                className={`mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
+                className={`mt-2 ${
+                  isDarkMode ? "text-gray-500" : "text-gray-500"
+                }`}
               >
                 Click 'Add Project' to create your first project.
               </p>
@@ -147,7 +165,9 @@ const ProjectSection = () => {
                   key={project._id}
                   whileHover={{ scale: 1.05 }}
                   className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
-                    isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
+                    isDarkMode
+                      ? "bg-gray-800 text-gray-200"
+                      : "bg-white text-gray-900"
                   }`}
                   onClick={() => {
                     setprojectname(project.name);
@@ -158,17 +178,25 @@ const ProjectSection = () => {
                   }}
                 >
                   <div className="relative">
-                    <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
+                    <div
+                      className={`p-6 border-b ${
+                        isDarkMode ? "border-gray-700" : "border-gray-300"
+                      }`}
+                    >
                       <div className="flex items-center">
                         <HiFolder
-                          className={`text-3xl mr-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`}
+                          className={`text-3xl mr-4 ${
+                            isDarkMode ? "text-purple-400" : "text-purple-600"
+                          }`}
                         />
                         <div>
                           <h3 className="text-2xl font-semibold">
                             {project.name}
                             <span
                               className={`ml-4 px-3 py-1 text-sm rounded-full ${
-                                isDarkMode ? "bg-purple-600 text-white" : "bg-purple-300 text-purple-800"
+                                isDarkMode
+                                  ? "bg-purple-600 text-white"
+                                  : "bg-purple-300 text-purple-800"
                               }`}
                             >
                               {project.type}
@@ -179,14 +207,22 @@ const ProjectSection = () => {
                     </div>
 
                     <div className="p-6 space-y-4">
-                      <p className={`text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      <p
+                        className={`text-base ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         {project.description.length > 100
                           ? `${project.description.substring(0, 40)}....`
                           : project.description}
                       </p>
                       <p className="text-sm">
                         Created on:{" "}
-                        <span className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-400" : "text-gray-500"
+                          }
+                        >
                           {new Date(project.created_on).toLocaleDateString()}
                         </span>
                       </p>
@@ -206,7 +242,9 @@ const ProjectSection = () => {
             <h2 className="text-3xl font-bold">Organizations</h2>
             <button
               className={`px-4 py-2 rounded-md flex items-center transition-colors duration-300 ${
-                isDarkMode ? "bg-green-500 hover:bg-green-600 text-white" : "bg-green-500 hover:bg-green-600 text-white"
+                isDarkMode
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-green-500 hover:bg-green-600 text-white"
               }`}
               onClick={() => navigate("/create-organization")}
             >
@@ -215,33 +253,65 @@ const ProjectSection = () => {
           </div>
           {loading ? (
             <div className="text-center py-8">
-              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Loading organizations...</p>
+              <p
+                className={`text-xl ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                Loading organizations...
+              </p>
             </div>
           ) : organizations.length === 0 ? (
             <div className="text-center py-8">
-              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>No organizations found</p>
+              <p
+                className={`text-xl ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                No organizations found
+              </p>
             </div>
           ) : Array.isArray(organizations) && organizations.length > 0 ? (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+            >
               {organizations.map((org) => (
                 <motion.div
                   key={org._id}
                   whileHover={{ scale: 1.05 }}
                   className={`rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer ${
-                    isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
+                    isDarkMode
+                      ? "bg-gray-800 text-gray-200"
+                      : "bg-white text-gray-900"
                   }`}
-                  onClick={() =>handleNavigate()  }
+                  onClick={() => handleNavigate()}
                 >
                   <div className="relative">
-                    <div className={`p-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
+                    <div
+                      className={`p-6 border-b ${
+                        isDarkMode ? "border-gray-700" : "border-gray-300"
+                      }`}
+                    >
                       <div className="flex items-center">
-                        <HiFolder className={`text-3xl mr-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} />
+                        <HiFolder
+                          className={`text-3xl mr-4 ${
+                            isDarkMode ? "text-purple-400" : "text-purple-600"
+                          }`}
+                        />
                         <h3 className="text-2xl font-semibold">{org.name}</h3>
                       </div>
                     </div>
                     <div className="p-6 space-y-4">
-                      <p className={`text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        {org.description ? org.description : "No description available"}
+                      <p
+                        className={`text-base ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {org.description
+                          ? org.description
+                          : "No description available"}
                       </p>
                     </div>
                   </div>
@@ -250,14 +320,19 @@ const ProjectSection = () => {
             </motion.div>
           ) : (
             <div className="text-center py-8">
-              <p className={`text-xl ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>No organizations found</p>
+              <p
+                className={`text-xl ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                No organizations found
+              </p>
             </div>
           )}
         </>
       );
     }
   };
-
 
   return (
     <div className="w-full h-screen bg-[#011429] text-gray-100 relative">
@@ -270,7 +345,6 @@ const ProjectSection = () => {
         <source src="/videos/121470-724697516_medium.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      
 
       <div className="relative z-10 h-full">
         <MainhomeNavbar />

@@ -43,7 +43,8 @@ function Imagehome() {
   }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
-    axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
+    axios
+      .get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
       .then((response) => {
         const projects = response.data;
         const project = projects.find((p) => p.name === projectName);
@@ -71,17 +72,17 @@ function Imagehome() {
 
     const fetchImages = async () => {
       setLoading(true);
-      let user_type="single";
+      let user_type = "single";
       try {
         setImageSrc([]);
         clear_classes();
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/`,
+          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/${user.email}`,
           { signal: controller.signal }
         );
-        console.log(projectName)
-
+        console.log(projectName);
+        console.log(response.data);
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({
             src: `data:image/jpeg;base64,${image.src}`,
