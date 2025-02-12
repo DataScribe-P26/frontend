@@ -6,7 +6,8 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import axios from "axios";
-
+import { USER_TYPE } from "../../Main home/user-type.js";
+import { useAuth } from "../../login/AuthContext.jsx";
 const HomePage = () => {
   const { projectName } = useParams();
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const HomePage = () => {
     addLabel,
   } = textStore();
   const { isDarkMode } = useTheme();
+   const { user } = useAuth();
 
   useEffect(() => {
     const fetchAnnotationsAndLabels = async () => {
@@ -33,9 +35,11 @@ const HomePage = () => {
         // Clear existing data when project changes
         setLabels([]);
         setAnnotations([]);
+        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        console.log('current user is',userType);
         let user_type='single';
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
+          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
         if (response.data?.[0]) {

@@ -7,6 +7,7 @@ import { Bar } from "react-chartjs-2";
 import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
+import { USER_TYPE } from "../../../Main home/user-type.js";
 
 import {
   Chart as ChartJS,
@@ -59,6 +60,13 @@ function Analysis({ set_analysis_page }) {
     setprojectname(projectName);
   }
 
+  useEffect(() => {
+    loadAutoAnnotation(project_name);
+    const userType = localStorage.getItem("userType");
+    console.log("Current User Type:", userType);
+
+  }, [project_name]);
+  
   useEffect(() => {
     loadAutoAnnotation(project_name);
   }, [project_name]);

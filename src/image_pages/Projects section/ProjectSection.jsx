@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import { USER_TYPE } from "../../Main home/user-type.js";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import { useAuth } from "../../login/AuthContext";
 import useStore from "../../Zustand/Alldata";
@@ -51,6 +51,9 @@ const ProjectSection = () => {
     try {
       setLoading(true);
       console.log('here123');
+      const userType = USER_TYPE.INDIVIDUAL; 
+      localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
+      console.log('current user is',userType);
       const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
       setProjects(response.data);
       if (response.data.length == 0) {
@@ -73,6 +76,9 @@ const ProjectSection = () => {
   const fetchOrganizations = async () => {
     try {
       setLoading(true);
+      const userType = USER_TYPE.ORGANIZATION; 
+      localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
+      console.log('current user is',userType);
       const response = await axios.get(`http://127.0.0.1:8000/organizations/user/${user.email}`);
       setOrganizations(response.data); 
       console.log('ORGS---',response.data);

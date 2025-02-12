@@ -72,15 +72,18 @@ function Imagehome() {
     const fetchImages = async () => {
       setLoading(true);
       let user_type="single";
+      const userType = localStorage.getItem("userType");
+      console.log("Current User Type:", userType);
       try {
         setImageSrc([]);
         clear_classes();
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/${user.email}`,
+          `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/${user.email}`,
           { signal: controller.signal }
         );
-        console.log(projectName)
+        console.log(projectName);
+        console.log(response.data);
 
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({

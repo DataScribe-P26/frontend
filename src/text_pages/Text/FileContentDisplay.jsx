@@ -8,6 +8,8 @@ import CreateLabel from "./CreateLabel.jsx";
 import { useTheme } from "./ThemeContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { USER_TYPE } from "../../Main home/user-type.js";
+import { useAuth } from "../../login/AuthContext.jsx";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -31,6 +33,7 @@ const FileContentDisplay = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
+  const { user } = useAuth();
 
   const [fetchedLabels, setFetchedLabels] = useState(false);
   const [autoAnnotationEnabled, setAutoAnnotationEnabled] = useState(false);
@@ -175,9 +178,11 @@ const FileContentDisplay = () => {
         setLabels([]);
         setAnnotations([]);
         let user_type='single';
+        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        console.log('current user is',userType);
         const response = await axios.get(
          
-          `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
+          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
         console.log('hello------',response.data[0]);
         if (response.data?.[0]) {
@@ -482,9 +487,11 @@ const FileContentDisplay = () => {
     let image=null;
     let data={image,dataToSend};
     console.log(data);
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+    console.log('current user is',userType);
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
+          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
           {
             headers: {
               "Content-Type": "application/json",

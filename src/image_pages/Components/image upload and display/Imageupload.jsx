@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
 import Spinner from "../Image Project/loading_screen";
-
+import { USER_TYPE} from "../../../Main home/user-type";
 function ImageUpload({ projectName, loading, setloading }) {
   const { imageSrc, setImageSrc } = useStore();
 
@@ -108,9 +108,11 @@ function ImageUpload({ projectName, loading, setloading }) {
         }
         let type="image";
         let user_type='single';
-
-        await axios.post(
-          `http://127.0.0.1:8000/projects/image/${user_type}/${projectName}/upload/`,
+        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+            console.log("Current User Type:", userType);
+            
+            await axios.post(
+              `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/upload/`,
         {data1:data},
           {
             headers: {

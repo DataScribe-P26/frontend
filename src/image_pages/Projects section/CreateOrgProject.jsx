@@ -5,6 +5,7 @@ import { useAuth } from "../../login/AuthContext";
 import useStore from "../../Zustand/Alldata";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { USER_TYPE } from "../../Main home/user-type.js";
 import { UserPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import MainhomeNavbar from "../../Main home/MainhomeNavbar.jsx";
@@ -20,10 +21,27 @@ const CreateOrgProject = () => {
     const [searchQuery, setSearchQuery] = useState("");
       const [searchResults, setSearchResults] = useState([]);
       const [organizationName, setOrganizationName] = useState("");
-  
+      var storedOrgName='';
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
+  useEffect(() => {
+    storedOrgName = localStorage.getItem("organizationName");
+    console.log('hellouu',storedOrgName);
+    if (storedOrgName) {
+      setOrganizationName(storedOrgName);
+      console.log('hellouu123',organizationName);
+    }
+    console.log('hellouu123',organizationName);
+  }, [organizationName]);
+  
+  useEffect(() => {
+console.log(organizationName);
+const userType = USER_TYPE.ORGANIZATION; 
+console.log('current user is',userType);
+localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
+
+  },[organizationName])
 
   useEffect(() => {
     // Fetch organization members
@@ -51,15 +69,17 @@ const CreateOrgProject = () => {
 
       addProject(name, description, type);
 
-      axios.post("http://127.0.0.1:8000/user-projects/", {
-        email: user?.email,
-        name,
-        description,
-        type,
-        members: selectedMembers,
+      axios.post("http://127.0.0.1:8000/create-org-projects/", {
+        name:name,
+        description:description,
+        type:type,
+        org_id: organizationName,
+        created_by: user?.email,
+        team_members: selectedMembers,
       })
-      .then(() => {
+      .then((response) => {
         toast.success("Project Added");
+        console.log(response.data);
         setprojectname(name);
         setCreatedOn(isoDate);
         reset();

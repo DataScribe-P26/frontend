@@ -17,6 +17,7 @@ import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { X } from "lucide-react";
 import ExportModal from "../../../export_pages/export_modal.jsx";
+import { USER_TYPE } from "../../../Main home/user-type.js";
 
 function Main({ set_analysis_page }) {
   const {
@@ -170,9 +171,11 @@ function Main({ set_analysis_page }) {
     };
     let type="image";
     let user_type='single';
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+    console.log("Current User Type:", userType);
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,
+        `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
         {data1:data},
         {
           headers: {

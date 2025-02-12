@@ -8,6 +8,7 @@ import axios from "axios";
 import FuzzySearch from "fuzzy-search";
 import MainhomeNavbar from "../../Main home/MainhomeNavbar.jsx";
 import { Building2 } from "lucide-react";
+import { USER_TYPE } from "../../Main home/user-type.js";
 
 
 const OrganizationCreationPage = () => {
@@ -29,6 +30,7 @@ const OrganizationCreationPage = () => {
       }
     };
     fetchUsers();
+    localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
   }, []);
 
   const handleSubmit = async () => {

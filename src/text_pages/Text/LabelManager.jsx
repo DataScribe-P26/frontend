@@ -10,6 +10,8 @@ import textStore from "../zustand/Textdata";
 import axios from "axios";
 import Footer from "./Footer";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import the useTheme hook
+import { USER_TYPE } from "../../Main home/user-type.js";
+import { useAuth } from "../../login/AuthContext.jsx";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();
@@ -19,14 +21,16 @@ const LabelManager = () => {
   const { projectName } = useParams();
   const [fetchedLabels, setFetchedLabels] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme(); // Use the theme context
-
+  const { user } = useAuth();
   useEffect(() => {
     const fetchLabels = async () => {
       try {
         setLabels([]);
         let user_type='single';
+        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        console.log('current user is',userType);
         const response = await axios.get(
-         `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
+         `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
         if (response.data?.[0]?.entities) {

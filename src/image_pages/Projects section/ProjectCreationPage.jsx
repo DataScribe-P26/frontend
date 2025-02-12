@@ -5,6 +5,7 @@ import { useAuth } from "../../login/AuthContext";
 import useStore from "../../Zustand/Alldata";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { USER_TYPE } from "../../Main home/user-type.js";
 
 const ProjectCreationModal = ({ isOpen, onClose }) => {
   const { addProject, setprojectname, setCreatedOn, set_allAnnotations, reset } = useStore();
@@ -50,6 +51,8 @@ const ProjectCreationModal = ({ isOpen, onClose }) => {
           console.error(error);
           toast.error("Error adding project");
         });
+        const userType = USER_TYPE.INDIVIDUAL; 
+        console.log('current user is',userType);
     } else {
       toast.error("Please complete all fields");
     }

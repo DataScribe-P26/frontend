@@ -19,9 +19,10 @@ const Dashboard = () => {
   const [organizationName, setOrganizationName] = useState("");
   const [projects, setProjects] = useState([]);
   const [organizationMembers, setOrganizationMembers] = useState([]);
+  var storedOrgName='';
 
   useEffect(() => {
-    const storedOrgName = localStorage.getItem("organizationName");
+    storedOrgName = localStorage.getItem("organizationName");
     if (storedOrgName) {
       setOrganizationName(storedOrgName);
     }
@@ -30,7 +31,9 @@ const Dashboard = () => {
   useEffect(() => {
     if (user) {
       axios
-        .get(`http://127.0.0.1:8000/user-projects/${user?.email}`)
+      .get(`http://127.0.0.1:8000/ORG-all-projects`, {
+        params: { org_name: storedOrgName }
+    })
         .then((response) => setProjects(response.data || []))
         .catch(() => toast.error("Failed to load projects"));
 
