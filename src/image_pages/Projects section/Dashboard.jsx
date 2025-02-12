@@ -35,14 +35,12 @@ const Dashboard = () => {
         params: { org_name: storedOrgName }
     })
         .then((response) => setProjects(response.data || []))
-        .catch(() => toast.error("Failed to load projects"));
 
       axios
         .get("http://127.0.0.1:8000/organization-members", {
-          params: { org_name: organizationName }
+          params: { org_name: storedOrgName }
         })
         .then((response) => setOrganizationMembers(response.data.members || []))
-        .catch(() => toast.error("Failed to load organization members"));
     }
   }, [user, organizationName]);
 

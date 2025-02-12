@@ -43,17 +43,7 @@ localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
 
   },[organizationName])
 
-  useEffect(() => {
-    // Fetch organization members
-    axios.get(`http://127.0.0.1:8000/organization-members/${user?.email}`)
-      .then(response => {
-        setMembers(response.data || []);
-      })
-      .catch(err => {
-        console.error(err);
-        toast.error("Failed to load members");
-      });
-  }, [user]);
+ 
 
   const formatDateToCustomString = (date) => {
     const day = date.getDate();

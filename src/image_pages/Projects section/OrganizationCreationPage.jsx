@@ -20,16 +20,6 @@ const OrganizationCreationPage = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/users");
-        setUsers(response.data);
-        setFilteredUsers(response.data);
-      } catch (error) {
-        toast.error("Failed to fetch users");
-      }
-    };
-    fetchUsers();
     localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
   }, []);
 
