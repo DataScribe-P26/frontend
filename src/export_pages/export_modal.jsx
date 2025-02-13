@@ -1,21 +1,17 @@
 import React from "react";
-import useStore from "../Zustand/Alldata";
-import { exportYOLODataset } from "./YoloExporter";
-import { exportYOLOv7Dataset } from "./Yolov7Exporter";
-import { exportYOLOv6Dataset } from "./exportYOLOv6Dataset";
-import { exportYOLOv5Dataset } from "./exportYOLOv5Dataset";
-import { exportPascalVOCDataset } from "./PascalVocExporter";
-import { exportDarknetDataset } from "./exportDarknetDataset";
 
 import axios from "axios";
+import { useAuth } from "../login/AuthContext";
 
 const ExportModal = ({ setExportModal, projectName }) => {
   const [splits, setSplits] = React.useState([70, 90]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isOn, setIsOn] = React.useState(false);
   const [error, setError] = React.useState("");
   const [selectedFormat, setSelectedFormat] = React.useState("");
   const sliderRef = React.useRef(null);
   const isDragging = React.useRef(null);
+  const { user } = useAuth();
 
   const exportFormats = [
     { value: "pascalvoc", label: "Pascal VOC Format" },
@@ -70,77 +66,49 @@ const ExportModal = ({ setExportModal, projectName }) => {
   };
 
   const handleExport = async () => {
-    setIsLoading(true);
-    setError("");
     try {
+      setIsLoading(true);
+      setError("");
+      const type = "detection";
+      const user_type = "single";
+      console.log(splits);
+      const test_split = 100 - (splits[0] + splits[1]);
+      console.log(splits[0], splits[1] - splits[0], 100 - splits[1]);
+
       const response = await axios.get(
-        `http://127.0.0.1:8000/projects/${projectName}/images/`
+        `http://127.0.0.1:8000/export/${type}/${user_type}/${projectName}/${user.email}/${selectedFormat}/${isOn}`,
+        {
+          params: {
+            train_split: splits[0],
+            val_split: splits[1] - splits[0],
+            test_split: 100 - splits[1],
+          },
+          responseType: "blob",
+        }
       );
 
-      const all_annotations = response.data?.filter(
-        (annotation) => annotation.rectangle_annotations.length > 0
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `${projectName}_${selectedFormat}_dataset.zip`
       );
+      document.body.appendChild(link);
+      link.click();
 
-      if (!selectedFormat) {
-        throw new Error("Please select an export format");
-      }
-
-      if (
-        !all_annotations ||
-        !Array.isArray(all_annotations) ||
-        all_annotations.length === 0
-      ) {
-        throw new Error("No images available to export");
-      }
-
-      // Handle different YOLO versions
-      switch (selectedFormat) {
-        case "darknet":
-          await exportDarknetDataset(
-            all_annotations,
-            currentSplits,
-            projectName
-          );
-          break;
-        case "pascalvoc":
-          await exportPascalVOCDataset(
-            all_annotations,
-            currentSplits,
-            projectName
-          );
-          break;
-        case "yolov8":
-          await exportYOLODataset(all_annotations, currentSplits, projectName);
-          break;
-        case "yolov7":
-          await exportYOLOv7Dataset(
-            all_annotations,
-            currentSplits,
-            projectName
-          );
-          break;
-        case "yolov6":
-          await exportYOLOv6Dataset(
-            all_annotations,
-            currentSplits,
-            projectName
-          );
-          break;
-        case "yolov5":
-          await exportYOLOv5Dataset(
-            all_annotations,
-            currentSplits,
-            projectName
-          );
-          break;
-        default:
-          throw new Error("Unsupported YOLO version");
-      }
+      // Cleanup
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
 
       setExportModal(false);
     } catch (error) {
       console.error("Export failed:", error);
-      setError(error.message || "Failed to export dataset. Please try again.");
+      setError(
+        error.response?.data?.detail ||
+          "Failed to export dataset. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -255,10 +223,53 @@ const ExportModal = ({ setExportModal, projectName }) => {
             />
           </div>
         </div>
+        <label className=" px-5 mt-5 switch flex items-center gap-2">
+          <span>Do You Want Augmentation's?</span>
+          <input
+            type="checkbox"
+            checked={isOn}
+            onChange={() => setIsOn(!isOn)}
+          />
+          <div className="slider mt-2">
+            <div className="circle">
+              {isOn ? (
+                <svg
+                  className="checkmark"
+                  viewBox="0 0 24 24"
+                  height="10"
+                  width="10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g>
+                    <path
+                      fill="currentColor"
+                      d="M9.707 19.121a.997.997 0 0 1-1.414 0l-5.646-5.647a1.5 1.5 0 0 1 0-2.121l.707-.707a1.5 1.5 0 0 1 2.121 0L9 14.171l9.525-9.525a1.5 1.5 0 0 1 2.121 0l.707.707a1.5 1.5 0 0 1 0 2.121z"
+                    />
+                  </g>
+                </svg>
+              ) : (
+                <svg
+                  className="cross"
+                  viewBox="0 0 365.696 365.696"
+                  height="6"
+                  width="6"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g>
+                    <path
+                      fill="currentColor"
+                      d="M243.188 182.86 356.32 69.726c12.5-12.5 12.5-32.766 0-45.247L341.238 9.398c-12.504-12.503-32.77-12.503-45.25 0L182.86 122.528 69.727 9.374c-12.5-12.5-32.766-12.5-45.247 0L9.375 24.457c-12.5 12.504-12.5 32.77 0 45.25l113.152 113.152L9.398 295.99c-12.503 12.503-12.503 32.769 0 45.25L24.48 356.32c12.5 12.5 32.766 12.5 45.247 0l113.132-113.132L295.99 356.32c12.503 12.5 32.769 12.5 45.25 0l15.081-15.082c12.5-12.504 12.5-32.77 0-45.25zm0 0"
+                    />
+                  </g>
+                </svg>
+              )}
+            </div>
+          </div>
+        </label>
 
         <div className="px-5 py-4 space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            YOLO Version
+            Dataset Format
           </label>
           <select
             className="w-full p-2 border border-gray-300 rounded-md bg-white"

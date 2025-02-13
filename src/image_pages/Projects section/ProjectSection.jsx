@@ -85,7 +85,6 @@ const ProjectSection = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching organizations:", error);
-      toast.error("Failed to fetch organizations");
       setLoading(false);
     }
   };

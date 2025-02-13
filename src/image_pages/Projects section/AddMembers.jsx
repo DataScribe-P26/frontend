@@ -14,11 +14,12 @@ const AddMembers = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [organizationName, setOrganizationName] = useState("");
+  var storedOrgName='';
 
   // Initialize fuzzy search
   const searcher = new FuzzySearch();
   useEffect(() => {
-    const storedOrgName = localStorage.getItem("organizationName");
+    storedOrgName = localStorage.getItem("organizationName");
     if (storedOrgName) {
       setOrganizationName(storedOrgName);
     }
@@ -43,15 +44,26 @@ const AddMembers = () => {
     }
   };
   const handleSelectMember = (email) => {
-    if (!selectedMembers.includes(email)) {
-      setSelectedMembers([...selectedMembers, email]);
+    if (!selectedMembers.some((member) => member.email === email)) {
+      setSelectedMembers([
+        ...selectedMembers,
+        { email, role: "Member" }, // Default role
+      ]);
     }
     setSearchQuery("");
     setSearchResults([]);
   };
 
+  const handleRoleChange = (email, role) => {
+    setSelectedMembers((prev) =>
+      prev.map((member) =>
+        member.email === email ? { ...member, role } : member
+      )
+    );
+  };
+
   const handleRemoveMember = (email) => {
-    setSelectedMembers(selectedMembers.filter((member) => member !== email));
+    setSelectedMembers(selectedMembers.filter((member) => member.email !== email));
   };
   // IMPLEMENT HERE
   const handleSubmit = async() => {
@@ -63,7 +75,7 @@ const AddMembers = () => {
       selectedMembers);
       let data={
         org_name: organizationName,
-        user_emails: selectedMembers,
+        members: selectedMembers,
       }
       console.log(data);
 
@@ -166,7 +178,7 @@ const AddMembers = () => {
                     <ul style={dropdownStyles.list}>
                       {searchResults.map((result) => (
                         <li
-                          key={result.email}
+                          key={result.email}className="p-3 cursor-pointer hover:bg-purple-500 hover:text-white transition"
                           onClick={() => handleSelectMember(result.email)}
                           style={dropdownStyles.listItem}
                         >
@@ -175,6 +187,7 @@ const AddMembers = () => {
                       ))}
                     </ul>
                   )}
+
                 </div>
                 <div
             style={{
@@ -206,8 +219,21 @@ const AddMembers = () => {
                     marginRight: "6px",
                   }}
                 >
-                  {member}
+                  {member.email}
                 </span>
+                <select
+                          value={member.role}
+                          onChange={(e) => handleRoleChange(member.email, e.target.value)}
+                          className={`p-2 rounded border text-sm 
+                            ${isDarkMode 
+                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400" 
+                              : "bg-white text-gray-900 border-gray-300 focus:ring-purple-500"} 
+                            focus:ring-2`}
+                        >
+                          <option value="Member">Member</option>
+                          <option value="Admin">Admin</option>
+                          <option value="Viewer">Viewer</option>
+                        </select>
                 <button
                   onClick={() => handleRemoveMember(member)}
                   style={{
