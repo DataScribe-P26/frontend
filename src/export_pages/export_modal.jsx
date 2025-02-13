@@ -20,6 +20,11 @@ const ExportModal = ({ setExportModal, projectName }) => {
     { value: "yolov7", label: "YOLO v7 Format" },
     { value: "yolov6", label: "YOLO v6 Format" },
     { value: "yolov5", label: "YOLO v5 Format" },
+    { value: "yolor", label: "YOLO-R Format" },
+    { value: "yolov8obb", label: "YOLO v8-OBB Format" },
+    { value: "yoloseg", label: "YOLO v8-SEG Format" },
+    { value: "yoloseg", label: "YOLO v7-SEG Format" },
+    { value: "yoloseg", label: "YOLO v6-SEG Format" },
   ];
 
   const currentSplits = React.useMemo(

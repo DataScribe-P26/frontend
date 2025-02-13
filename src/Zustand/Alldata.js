@@ -298,7 +298,17 @@ const useStore = create((set) => ({
   },
   organizations: [],
   setOrganizations: (organizations) => set({ organizations }),
-
+  trained: false,
+  setTrained: (projectName, value) => {
+    const key = `${projectName}_trained`;
+    localStorage.setItem(key, JSON.stringify(value));
+    set({ trained: Boolean(value) });
+  },
+  loadTrained: (projectName) => {
+    const key = `${projectName}_trained`;
+    const savedTrained = JSON.parse(localStorage.getItem(key));
+    set({ trained: savedTrained ?? false });
+  },
 }));
 
 export default useStore;
