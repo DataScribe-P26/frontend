@@ -2,6 +2,20 @@
   outline: none;
   margin: 0;
 }
+/* Hide scrollbar for Chrome, Safari, and Edge */
+::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for Firefox */
+  html {
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar for IE and Edge */
+  body {
+    -ms-overflow-style: none;
+  }
 
 .custom-color-input {
   -webkit-appearance: none;
@@ -264,4 +278,3 @@ input[type="number"] {
   -webkit-box-shadow: var(--circle-checked-shadow);
   box-shadow: var(--circle-checked-shadow);
 }
-

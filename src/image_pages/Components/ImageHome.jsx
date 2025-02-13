@@ -8,6 +8,7 @@ import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 import { useAuth } from "../../login/AuthContext";
+import TopBar from "../../partials/Header.jsx";
 
 function Imagehome() {
   const {
@@ -142,7 +143,7 @@ function Imagehome() {
       <div className="w-full h-full">
         {loading ? (
           <div className="h-screen flex flex-col">
-            <Navbar />
+            <TopBar />
             <div className="h-[100vh] flex items-center justify-center pb-80">
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>

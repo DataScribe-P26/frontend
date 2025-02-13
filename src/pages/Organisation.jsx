@@ -9,32 +9,46 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import axios from "axios";
+import { useAuth } from "../login/AuthContext";
+import { useTheme } from "../text_pages/Text/ThemeContext";
+import useStore from "../Zustand/Alldata";
+import toast from "react-hot-toast";
+import { use } from "react";
+import { useNavigate } from "react-router-dom";
 
-const OrganizationCard = ({ name, role }) => (
-  <div className="bg-white shadow-md rounded-lg p-6">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-4">
-        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-          <span className="text-lg font-semibold text-purple-600">
-            {name.charAt(0)}
-          </span>
+
+const OrganizationCard = ({ name, role }) => {
+    const navigate = useNavigate();
+  return(<div className="bg-white shadow-md rounded-lg p-6"
+    onClick={()=>{
+      localStorage.setItem("organizationName", name);
+      navigate("/Dashboard")
+    }}
+  >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <span className="text-lg font-semibold text-purple-600">
+              {name.charAt(0)}
+            </span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">{name}</h3>
+            <p className="text-sm text-gray-500">{role}</p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">{name}</h3>
-          <p className="text-sm text-gray-500">{role}</p>
+        <div className="flex items-center space-x-2">
+          <button className="p-2 rounded-md hover:bg-gray-100">
+            <Settings size={18} />
+          </button>
+          <button className="p-2 rounded-md hover:bg-gray-100">
+            <ExternalLink size={18} />
+          </button>
         </div>
       </div>
-      <div className="flex items-center space-x-2">
-        <button className="p-2 rounded-md hover:bg-gray-100">
-          <Settings size={18} />
-        </button>
-        <button className="p-2 rounded-md hover:bg-gray-100">
-          <ExternalLink size={18} />
-        </button>
-      </div>
-    </div>
-  </div>
-);
+    </div>);
+};
 
 const OrganizationIllustration = () => (
   <svg
@@ -207,7 +221,9 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     description: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const [mockUser, setMock] = useState([]);
 
   // Extended mock data for demonstration
   const slideUpAnimation = "animate-[slideUp_0.3s_ease-out]";
@@ -248,7 +264,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     { id: 15, name: "Sophie Wright", email: "sophie.w@example.com" },
   ];
 
-  const filteredUsers = mockUsers.filter(
+  const filteredUsers = mockUser.filter(
     (user) =>
       !selectedMembers.find((member) => member.id === user.id) &&
       (user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -280,6 +296,99 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     setSelectedMembers([]);
     setSearchQuery("");
     onClose();
+  };
+  const { user } = useAuth();
+
+  async function handleSubmit() {
+    const organizationData = {
+      name: orgData.name,
+      admin_id: user.email,
+    };
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/organizations/create/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(organizationData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log("Organization Created:", data);
+      toast.success("Organization created successfully!");
+    } catch (error) {
+      toast.error("Failed to create organization");
+    }
+  }
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/users/search?query=${query}`
+      );
+      setSearchResults(response.data.matches);
+      const formattedUsers = response.data.matches.map((user, index) => {
+        // Extract name from email (part before @)
+        const name = user.email
+          .split("@")[0]
+          // Replace dots and underscores with spaces
+          .replace(/[._]/g, " ")
+          // Capitalize first letter of each word
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+        return {
+          id: index + 1, // Generate sequential IDs
+          name: name,
+          email: user.email,
+          role: "member",
+        };
+      });
+      setMock(formattedUsers);
+      console.log(formattedUsers);
+    } catch (error) {
+      console.error("Error fetching search results", error);
+    }
+  };
+
+  const handleSubmitmember = async () => {
+    if (selectedMembers.length === 0) {
+      console.error("No members selected");
+      return;
+    }
+    console.log(orgData.name, selectedMembers);
+    let data = {
+      org_name: orgData.name,
+      members: selectedMembers,
+    };
+    console.log(data);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/organizations/add-members",
+        data
+      );
+      console.log(response.data);
+      if (response.status === 200) {
+        console.log("Members added successfully:", response.data);
+      }
+      handleClose();
+    } catch (error) {
+      console.error("Error adding members:", error);
+    }
   };
 
   if (!isOpen) return null;
@@ -362,7 +471,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                   placeholder="Search users..."
                 />
@@ -458,7 +567,10 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                 Cancel
               </button>
               <button
-                onClick={() => setStep(2)}
+                onClick={async () => {
+                  await handleSubmit();
+                  setStep(2);
+                }}
                 disabled={!isFirstStepValid}
                 className={`flex items-center px-5 py-2 rounded-lg text-white ${
                   isFirstStepValid
@@ -485,15 +597,15 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                     onClick={handleClose}
                     className="px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   >
-                    Skip and Create
+                    Skip
                   </button>
                 )}
                 {selectedMembers.length > 0 && (
                   <button
-                    onClick={handleClose}
+                    onClick={handleSubmitmember}
                     className="px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   >
-                    Create
+                    Done
                   </button>
                 )}
               </div>
@@ -505,14 +617,31 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
   );
 };
 
+const USER_TYPE = {
+  INDIVIDUAL: "single",
+  ORGANIZATION: "org",
+};
+
 const OrganizationsPage = () => {
   const [showModal, setShowModal] = useState(false);
-  const organizations = [
+  const organizationss = [
     { id: 1, name: "Acme Corp", role: "Admin" },
     { id: 2, name: "TechStart", role: "Member" },
     { id: 3, name: "Design Co", role: "Owner" },
   ];
+  const {
+    isProjectModalOpen,
+    openProjectModal,
+    setprojectname,
+    setCreatedOn,
+    set_allAnnotations,
+    reset,
+    organizations,
+    setOrganizations,
+  } = useStore();
   const [loading, setLoading] = useState(false);
+  const { isDarkMode } = useTheme();
+  const { user } = useAuth();
 
   const fetchOrganizations = async () => {
     try {
@@ -520,12 +649,11 @@ const OrganizationsPage = () => {
       const userType = USER_TYPE.ORGANIZATION;
       localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
       console.log("current user is", userType);
-      // const response = await axios.get(`http://127.0.0.1:8000/organizations/user/${user.email}`);
       const response = await axios.get(
-        `http://127.0.0.1:8000/organizations/user/prathameshgayake2@gmail.com`
+        `http://127.0.0.1:8000/organizations/user/${user.email}`
       );
-      setOrganizations(response.data);
       console.log("ORGS---", response.data);
+      setOrganizations(response.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching organizations:", error);
@@ -574,9 +702,23 @@ const OrganizationsPage = () => {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {organizations.map((org) => (
-              <OrganizationCard key={org.id} name={org.name} role={org.role} />
-            ))}
+            {organizations.map((org) => {
+              let role = "Member"; // Default role
+              if (org.admin_id === user.email) {
+                role = "Admin";
+              } else {
+                const memberInfo = org.members.find(
+                  (member) => member.email === user.email
+                );
+                if (memberInfo) {
+                  role = memberInfo.role;
+                }
+              }
+
+              return (
+                <OrganizationCard key={org.id} name={org.name} role={role}  />
+              );
+            })}
           </div>
         )}
       </>

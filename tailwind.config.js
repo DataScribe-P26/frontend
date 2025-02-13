@@ -3,6 +3,7 @@ import tailwindScrollbar from "tailwind-scrollbar";
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       animation: {
@@ -17,6 +18,20 @@ export default {
         fadeOut: {
           "0%": { opacity: 0 },
           "100%": { opacity: 1 },
+        },
+      },
+      colors: {
+        // Define custom colors for dark mode if needed
+        dark: {
+          primary: "#1a1a1a",
+          secondary: "#2d2d2d",
+          text: "#ffffff",
+        },
+      },
+      backgroundColor: {
+        dark: {
+          primary: "var(--dark-primary)",
+          secondary: "var(--dark-secondary)",
         },
       },
     },

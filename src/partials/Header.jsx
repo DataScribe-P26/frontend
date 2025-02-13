@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
 import { useAuth } from '../login/AuthContext';
-import { useTheme } from "../text_pages/Text/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 export const TopBar = ({ title }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { user, logout } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   // Get display name from user data
@@ -20,6 +19,32 @@ export const TopBar = ({ title }) => {
   };
 
   const displayName = getDisplayName();
+
+  // Handle theme toggle
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
+  // Initialize theme from localStorage on component mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  // Save theme preference to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   // Handle logout
   const handleLogout = () => {
@@ -41,10 +66,10 @@ export const TopBar = ({ title }) => {
   }, [showProfile]);
 
   return (
-    <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-white transition-colors duration-300">
+    <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Title Section */}
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-black">
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
           {title || `Welcome ${displayName}`}
         </h1>
       </div>
@@ -55,7 +80,7 @@ export const TopBar = ({ title }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg transition-colors duration-200"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
             aria-label="Toggle Theme"
           >
             {isDarkMode ? (
@@ -75,7 +100,7 @@ export const TopBar = ({ title }) => {
             onMouseLeave={() => setShowTooltip(false)}
           />
           {showTooltip && (
-            <div className="absolute top-[120%] right-0 z-50 bg-gray-800 bg-opacity-90 text-gray-100 text-sm rounded-lg shadow-lg p-4 w-64">
+            <div className="absolute top-[120%] right-0 z-50 bg-gray-800 text-gray-100 text-sm rounded-lg shadow-lg p-4 w-64">
               <h3 className="font-semibold text-lg mb-2 text-purple-400">
                 Key Features:
               </h3>
@@ -97,13 +122,13 @@ export const TopBar = ({ title }) => {
         <div className="relative profile-container">
           <div className="flex items-center space-x-3">
             {/* Username display */}
-            <span className="text-sm font-medium hidden md:block text-gray-700 dark:text-gray-700">
+            <span className="text-sm font-medium hidden md:block text-gray-700 dark:text-gray-300">
               {displayName}
             </span>
 
             {/* Profile Avatar */}
             <div
-              className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-800 to-indigo-800 text-white flex items-center justify-center cursor-pointer hover:bg-purple-700 transition-colors duration-300"
+              className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-800 to-indigo-800 text-white flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-300"
               onClick={() => setShowProfile(!showProfile)}
             >
               {displayName.charAt(0).toUpperCase()}
@@ -118,7 +143,7 @@ export const TopBar = ({ title }) => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2"
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-red-400 flex items-center space-x-2"
                 >
                   <LogOut size={16} />
                   <span>Logout</span>

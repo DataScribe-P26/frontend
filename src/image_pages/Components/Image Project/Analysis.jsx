@@ -66,7 +66,7 @@ function Analysis({ set_analysis_page }) {
     console.log("Current User Type:", userType);
 
   }, [project_name]);
-  
+
   useEffect(() => {
     loadAutoAnnotation(project_name);
   }, [project_name]);
@@ -157,7 +157,7 @@ function Analysis({ set_analysis_page }) {
     return { ...item, status };
   });
 
-  
+
   // Calculate the average count of balanced classes
   const balancedClasses = classStatus.filter(
     (item) =>item.status === "Balanced" ||
@@ -278,10 +278,10 @@ function Analysis({ set_analysis_page }) {
         backgroundColor: categorizedClasses.map((item) => item.Color),
       },
     ],
-   
+
   };
- 
-  
+
+
   return (
     <>
       <ImageNavbar />
@@ -445,7 +445,7 @@ function Analysis({ set_analysis_page }) {
         className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-black sm:text-sm"
         placeholder="Adjust the threshold for auto detection"
       />
-      
+
     </div>
   )}
 </div>

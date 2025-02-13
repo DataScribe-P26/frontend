@@ -1,3 +1,4 @@
+// Sidebar.jsx
 import React from "react";
 import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
@@ -5,7 +6,7 @@ import { HiAnnotation } from "react-icons/hi";
 export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
   return (
     <div
-      className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 p-4 transition-all duration-300 ease-in-out ${
+      className={`fixed z-50 left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
@@ -24,10 +25,9 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
           )}
         </div>
 
-        {/* Toggle Button stays right next to the logo when open and moves down when collapsed */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`p-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors ${
+          className={`p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
             isCollapsed ? "mt-2" : ""
           }`}
         >
@@ -38,13 +38,13 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
       {/* Sidebar Items */}
       <div className="space-y-6">
         <div>
-          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 mb-2">MAIN</h3>}
+          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">MAIN</h3>}
           <button
             onClick={() => setActiveTab("home")}
             className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
               activeTab === "home"
-                ? "bg-purple-50 text-purple-600"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <Home size={18} className="shrink-0" />
@@ -53,13 +53,13 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
         </div>
 
         <div>
-          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 mb-2">PROFILE</h3>}
+          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">PROFILE</h3>}
           <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
               activeTab === "profile"
-                ? "bg-purple-50 text-purple-600"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <User size={18} className="shrink-0" />
@@ -68,14 +68,14 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
         </div>
 
         <div>
-          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 mb-2">MORE</h3>}
+          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">MORE</h3>}
           <div className="space-y-1">
             <button
               onClick={() => setActiveTab("organizations")}
               className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
                 activeTab === "organizations"
-                  ? "bg-purple-50 text-purple-600"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               <Building2 size={18} className="shrink-0" />
@@ -86,8 +86,8 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
               onClick={() => setActiveTab("projects")}
               className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
                 activeTab === "projects"
-                  ? "bg-purple-50 text-purple-600"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               <Settings size={18} className="shrink-0" />
@@ -95,7 +95,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
             </button>
 
             <button
-              className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors duration-200"
+              className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
               onClick={() => {
                 console.log("Logout clicked");
               }}
@@ -109,5 +109,3 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
     </div>
   );
 };
-
-export default Sidebar;
