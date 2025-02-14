@@ -41,9 +41,15 @@ function Main({ set_analysis_page }) {
   const [showImages, setShowImages] = useState(false);
   const [exportModal, setExportModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [istrainedd, setIsTrainedd] = useState(false);
+
   const [annotatedCount, setAnnotatedCount] = useState(0);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsTrainedd(localStorage.getItem(`${projectName}_trained`));
+  }, [isProcessing, all_annotations]);
 
   const loadFromProjectLocalStorage = (key, defaultValue) => {
     const saved = localStorage.getItem(`${projectName}_${key}`);
@@ -153,13 +159,10 @@ function Main({ set_analysis_page }) {
       width_multiplier: currentImage_c.width_multiplier || 1,
       height_multiplier: currentImage_c.height_multiplier || 1,
     };
-    let text={
-      "text": "",
-      "entities": [
-        {
-        }
-      ]
-    }
+    let text = {
+      text: "",
+      entities: [{}],
+    };
     const data = {
       rectangle_annotations,
       polygon_annotations,
@@ -169,14 +172,14 @@ function Main({ set_analysis_page }) {
       mime_type: "image/jpeg",
       image: imageDetails,
     };
-    let type="image";
-    let user_type='single';
+    let type = "image";
+    let user_type = "single";
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     console.log("Current User Type:", userType);
     try {
       const response = await axios.post(
         `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
-        {data1:data},
+        { data1: data },
         {
           headers: {
             "Content-Type": "application/json",
@@ -384,12 +387,20 @@ function Main({ set_analysis_page }) {
                     <span className="text-sm text-slate-600">
                       Annotated: {annotatedCount}
                     </span>
-                    {isProcessing ? (
-                      <span className="text-sm text-blue-600">
-                        Processing batch with YOLO...
+                    {istrainedd ? (
+                      <span className="text-sm text-green-600">
+                        Model Trained
                       </span>
                     ) : (
-                      <span className="text-sm text-green-600">Idle</span>
+                      <>
+                        {isProcessing ? (
+                          <span className="text-sm text-blue-600">
+                            Processing batch with YOLO...
+                          </span>
+                        ) : (
+                          <span className="text-sm text-green-600">Idle</span>
+                        )}
+                      </>
                     )}
                   </div>
                   <button

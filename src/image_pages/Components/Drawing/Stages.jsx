@@ -58,53 +58,45 @@ function Stages({
     if (isProcessing) return;
     if (trained == true) return;
     try {
-      submit();
       setIsProcessing(true);
+      const user_type = localStorage.getItem("userType");
+      console.log("Sending user_type:", user_type);
       const response = await axios.post(
-        `http://127.0.0.1:8000/api/train-and-infer/${projectName}/`
+        `http://127.0.0.1:8000/api/train-and-infer/${projectName}?user_type=${user_type}` // Send as query parameter
       );
       console.log(response.data);
       if (response.data) {
-        console.log("111", last);
-        const updatedAnnotations = all_annotations?.map((item) => {
-          // Skip if item is null/undefined
-          if (!item) return item;
+        // console.log("111", last);
+        // const updatedAnnotations = all_annotations?.map((item) => {
+        //   // Skip if item is null/undefined
+        //   if (!item) return item;
 
-          // Find matching response item, ensuring response.data exists and is an array
-          const responseItem = Array.isArray(response?.data)
-            ? response.data.find((r) => r?.id === item?.id)
-            : null;
+        //   // Find matching response item, ensuring response.data exists and is an array
+        //   const responseItem = Array.isArray(response?.data)
+        //     ? response.data.find((r) => r?.id === item?.id)
+        //     : null;
 
-          if (!responseItem) return item;
+        //   if (!responseItem) return item;
 
-          // Ensure annotations are arrays
-          const existingAnnotations = Array.isArray(item?.annotations)
-            ? item.annotations
-            : [];
-          const responseAnnotations = Array.isArray(responseItem?.annotations)
-            ? responseItem.annotations
-            : [];
+        //   // Ensure annotations are arrays
+        //   const existingAnnotations = Array.isArray(item?.annotations)
+        //     ? item.annotations
+        //     : [];
+        //   const responseAnnotations = Array.isArray(responseItem?.annotations)
+        //     ? responseItem.annotations
+        //     : [];
 
-          return {
-            ...item,
-            annotations:
-              existingAnnotations.length > 0
-                ? existingAnnotations
-                : responseAnnotations,
-          };
-        });
+        //   return {
+        //     ...item,
+        //     annotations:
+        //       existingAnnotations.length > 0
+        //         ? existingAnnotations
+        //         : responseAnnotations,
+        //   };
+        // });
 
-        set_allAnnotations(updatedAnnotations);
-        console.log(updatedAnnotations);
-        console.log("222", last);
-        if (last == -1) {
-          setLast(Number(threshold) + 5);
-          console.log("newlast11", Number(threshold) + 5);
-        } else {
-          setLast(last + 5);
-          console.log("newlast", last + 5);
-        }
-        console.log("333", last);
+        // set_allAnnotations(updatedAnnotations);
+        // console.log(updatedAnnotations);
         toast.success("Auto Annotation Done.");
         setTrained(projectName, true);
       }
@@ -216,7 +208,7 @@ function Stages({
       !isProcessing
     ) {
       const processAnnotations = async () => {
-        await submit();
+        // await submit();
         if (trained == true) return;
         triggerTrainingAndInference();
       };

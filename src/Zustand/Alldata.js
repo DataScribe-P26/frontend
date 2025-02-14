@@ -288,9 +288,10 @@ const useStore = create((set) => ({
   threshold: 25,
   setThreshold: (projectName, value) => {
     const key = `${projectName}_threshold`;
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key, value);
     set({ threshold: value });
   },
+
   loadThreshold: (projectName) => {
     const key = `${projectName}_threshold`;
     const savedThreshold = JSON.parse(localStorage.getItem(key));
