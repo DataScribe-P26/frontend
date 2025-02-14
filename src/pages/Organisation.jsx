@@ -20,22 +20,22 @@ import { useNavigate } from "react-router-dom";
 
 const OrganizationCard = ({ name, role }) => {
     const navigate = useNavigate();
-  return(<div className="bg-white shadow-md rounded-lg p-6"
+  return(<div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:border-gray-100 dark:text-gray-100"
     onClick={()=>{
       localStorage.setItem("organizationName", name);
       navigate("/Dashboard")
     }}
   >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between dark:bg-gray-800 dark:text-gray-100">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-            <span className="text-lg font-semibold text-purple-600">
+            <span className="text-lg font-semibold text-purple-600 ">
               {name.charAt(0)}
             </span>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{name}</h3>
-            <p className="text-sm text-gray-500">{role}</p>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-100">{role}</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -394,35 +394,35 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 dark:bg-gray-700 dark:text-gray-100">
       <div
         className={`bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 my-6 ${fadeInAnimation}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-5 border-b dark:bg-gray-800 dark:text-gray-100" >
+          <h2 className="text-xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-gray-100">
             {step === 1 ? "Create Organization" : "Add Team Members"}
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors dark:bg-gray-800 dark:text-gray-100"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-5" style={{ minHeight: "400px" }}>
+        <div className="p-5 dark:bg-gray-800 dark:text-gray-100" style={{ minHeight: "400px" }}>
           {step === 1 ? (
             <div className={`flex gap-8 ${slideUpAnimation}`}>
               {/* Left side - Illustration */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-6 bg-purple-50 rounded-lg">
+              <div className="w-1/2 flex flex-col items-center justify-center p-6 bg-purple-50 rounded-lg dark:bg-gray-800 dark:text-gray-100">
                 <OrganizationIllustration />
-                <div className="text-center mt-6">
-                  <h3 className="text-lg font-semibold text-purple-800">
+                <div className="text-center mt-6 dark:bg-gray-800 dark:text-gray-100">
+                  <h3 className="text-lg font-semibold text-purple-800 dark:bg-gray-800 dark:text-gray-100">
                     Build Your Organization
                   </h3>
-                  <p className="text-sm text-purple-600 mt-2">
+                  <p className="text-sm text-purple-600 mt-2 dark:bg-gray-800 dark:text-gray-100">
                     Create a space for your team to collaborate and annotate
                     together
                   </p>
@@ -430,10 +430,10 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
               </div>
 
               {/* Right side - Form */}
-              <div className="w-1/2 space-y-5">
+              <div className="w-1/2 space-y-5 dark:bg-gray-800 dark:text-gray-100">
                 <div className="space-y-5">
                   <div className="group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-800 dark:text-gray-100">
                       Organization Name
                     </label>
                     <input
@@ -441,12 +441,12 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                       name="name"
                       value={orgData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300 group-hover:border-purple-400"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300 group-hover:border-purple-400 dark:bg-gray-800 dark:text-gray-100"
                       placeholder="Enter organization name"
                     />
                   </div>
                   <div className="group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-800 dark:text-gray-100">
                       Description
                     </label>
                     <textarea
@@ -454,7 +454,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                       value={orgData.description}
                       onChange={handleInputChange}
                       rows={6}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300 group-hover:border-purple-400 resize-none"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300 group-hover:border-purple-400 resize-none dark:bg-gray-800 dark:text-gray-100"
                       placeholder="What's your organization about?"
                     />
                   </div>
@@ -465,14 +465,14 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
             <div className="space-y-5">
               <div className="relative">
                 <Search
-                  className="absolute left-3 top-2.5 text-gray-400"
+                  className="absolute left-3 top-2.5 text-gray-400 dark:bg-gray-800 dark:text-gray-100"
                   size={20}
                 />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Search users..."
                 />
               </div>
@@ -480,7 +480,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
               <div className="flex gap-5" style={{ height: "300px" }}>
                 {/* Search Results */}
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                  <h3 className="text-sm font-medium text-gray-900 mb-2 dark:bg-gray-800 dark:text-gray-100">
                     Available Users
                   </h3>
                   <div
@@ -492,19 +492,19 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                         <button
                           key={user.id}
                           onClick={() => handleAddMember(user)}
-                          className="w-full text-left px-4 py-2 hover:bg-purple-50 border-b last:border-b-0 transition-colors"
+                          className="w-full text-left px-4 py-2 hover:bg-purple-50 border-b last:border-b-0 transition-colors dark:bg-gray-800 dark:text-gray-100"
                         >
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                             {user.name}
                           </p>
-                          <p className="text-sm text-gray-500">{user.email}</p>
+                          <p className="text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-100">{user.email}</p>
                         </button>
                       ))}
                     {searchQuery && filteredUsers.length === 0 && (
-                      <p className="px-4 py-2 text-gray-500">No users found</p>
+                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100">No users found</p>
                     )}
                     {!searchQuery && (
-                      <p className="px-4 py-2 text-gray-500">
+                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100">
                         Type to search users
                       </p>
                     )}
@@ -513,11 +513,11 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
 
                 {/* Selected Members */}
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                  <h3 className="text-sm font-medium text-gray-900 mb-2 dark:bg-gray-800 dark:text-gray-100">
                     Selected Members
                   </h3>
                   <div
-                    className="border rounded-lg overflow-y-auto"
+                    className="border rounded-lg overflow-y-auto dark:bg-gray-800 dark:text-gray-100"
                     style={{ maxHeight: "260px" }}
                   >
                     {selectedMembers.length > 0 ? (
@@ -525,19 +525,19 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                         {selectedMembers.map((member) => (
                           <div
                             key={member.id}
-                            className="flex items-center justify-between bg-purple-50 p-2 rounded-lg"
+                            className="flex items-center justify-between bg-purple-50 p-2 rounded-lg dark:bg-gray-800 dark:text-gray-100"
                           >
                             <div>
-                              <p className="font-medium text-gray-900">
+                              <p className="font-medium text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                                 {member.name}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-100">
                                 {member.email}
                               </p>
                             </div>
                             <button
                               onClick={() => handleRemoveMember(member.id)}
-                              className="text-gray-400 hover:text-red-500 p-1"
+                              className="text-gray-400 hover:text-red-500 p-1 dark:bg-gray-800 dark:text-gray-100"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -545,7 +545,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                         ))}
                       </div>
                     ) : (
-                      <p className="px-4 py-2 text-gray-500 ">
+                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100 ">
                         No members selected
                       </p>
                     )}
@@ -557,12 +557,12 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer - Same functionality but adjusted padding */}
-        <div className="flex justify-between p-5 border-t bg-gray-50 rounded-b-lg">
+        <div className="flex justify-between p-5 border-t bg-gray-50 rounded-b-lg dark:bg-gray-800 dark:text-gray-100">
           {step === 1 ? (
             <>
               <button
                 onClick={handleClose}
-                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-100"
               >
                 Cancel
               </button>
@@ -572,7 +572,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                   setStep(2);
                 }}
                 disabled={!isFirstStepValid}
-                className={`flex items-center px-5 py-2 rounded-lg text-white ${
+                className={`flex items-center px-5 py-2 rounded-lg text-white dark:bg-gray-800 dark:text-gray-100 ${
                   isFirstStepValid
                     ? "bg-purple-600 hover:bg-purple-700"
                     : "bg-gray-300 cursor-not-allowed"
@@ -586,7 +586,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
             <>
               <button
                 onClick={() => setStep(1)}
-                className="flex items-center px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="flex items-center px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-100"
               >
                 <ArrowLeft size={18} className="mr-2" />
                 Previous
@@ -666,18 +666,18 @@ const OrganizationsPage = () => {
   }, [showModal]);
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-8 dark:bg-gray-900 dark:text-gray-100">
+      <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
             Organizations
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-gray-500 mt-1 dark:text-gray-100">
             Manage your organization memberships and settings
           </p>
         </div>
         <button
-          className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors"
+          className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors dark:text-gray-100"
           onClick={() => setShowModal(true)}
         >
           <Plus size={18} className="mr-2" />

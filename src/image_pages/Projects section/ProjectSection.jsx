@@ -30,7 +30,7 @@ const ProjectSection = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 dark:text-gray-100">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -41,7 +41,7 @@ const ProjectSection = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 ">
         <div className="text-center p-6 bg-white rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600">{error}</p>
@@ -91,7 +91,7 @@ const ProjectSection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -105,7 +105,7 @@ const ProjectSection = () => {
       >
         <TopBar title={getPageTitle()} user={user} isCollapsed={isCollapsed} />
         <main
-          className={`container mx-auto transition-all duration-300 ${
+          className={`container mx-auto transition-all duration-300 dark:bg-gray-900 dark:text-gray-100 ${
             activeTab === "home" ? "p-0" : "p-8"
           }`}
         >

@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
-import {
-  FaUserCircle,
-  FaCog,
-  FaQuestionCircle,
-  FaSun,
-  FaMoon,
-  FaSignOutAlt,
-} from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useTheme } from "./ThemeContext";
-import HelpModal from "./HelpModal";
+import { useTheme } from "../Text/ThemeContext";
+import HelpModalImg from "../Text/HelpModalImg";
 import { useAuth } from '../../login/AuthContext';
 
 const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
 
@@ -28,8 +22,8 @@ const Navbar = () => {
 
   const displayName = getDisplayName();
 
-  // Handle clicking outside profile dropdown
-  React.useEffect(() => {
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (showProfile && !event.target.closest('.profile-container')) {
         setShowProfile(false);
@@ -40,102 +34,96 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showProfile]);
 
-  const openHelpModal = () => setHelpOpen(true);
-  const closeHelpModal = () => setHelpOpen(false);
-
   return (
-    <nav
-      className={`${
-        isDarkMode
-          ? "bg-gray-900"
-          : "bg-gradient-to-r from-purple-700 to-purple-900"
-      } text-white px-6 py-5 shadow-lg transition-colors duration-300`}
-    >
-      <div className="flex items-center justify-between">
-        {/* Left side: Datascribe.ai */}
-        <Link to="/home" className="flex items-center">
-          <HiAnnotation className="mr-3 text-4xl transform transition-transform duration-300 hover:scale-110" />
-          <h1 className="text-3xl font-extrabold tracking-wide">Datascribe.ai</h1>
-        </Link>
+    <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
+      {/* Left side: Logo and Title */}
+      <Link to="/home" className="flex items-center gap-3">
 
-        {/* Right side: Icons */}
-        <div className="flex items-center space-x-10">
-          {/* Dark Mode Toggle */}
-          <div className="flex items-center space-x-4">
-            <FaSun
-              className={`text-xl ${
-                isDarkMode ? "text-gray-400" : "text-yellow-300"
-              }`}
-            />
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer focus:outline-none focus:ring-0 active:ring-0"
-                checked={isDarkMode}
-                onChange={toggleTheme}
-              />
-              <div className="w-12 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-0 peer-checked:ring-0 dark:bg-gray-700 transition-colors duration-300 flex items-center">
-                <div
-                  className={`${
-                    isDarkMode ? "translate-x-6" : "translate-x-1"
-                  } w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300`}
-                />
-              </div>
-            </label>
-            <FaMoon
-              className={`text-xl ${
-                isDarkMode ? "text-purple-300" : "text-gray-400"
-              }`}
-            />
-          </div>
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Welcome User...
+        </h1>
+      </Link>
 
-          {/* Help and Settings Icons */}
-          <div className="flex items-center space-x-10">
-            <FaQuestionCircle
-              className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110"
-              onClick={openHelpModal}
-            />
-            <FaCog className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
+      {/* Right-Side Icons & User Profile */}
+      <div className="flex items-center gap-6">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+          aria-label="Toggle Theme"
+        >
+          {isDarkMode ? (
+            <Sun className="text-yellow-400" size={20} />
+          ) : (
+            <Moon className="text-gray-400" size={20} />
+          )}
+        </button>
 
-            {/* User Profile Section */}
-            <div className="relative profile-container">
-              {user ? (
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium hidden md:block">
-                    {displayName}
-                  </span>
-                  <div
-                    className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center cursor-pointer hover:bg-purple-400 transition-colors duration-300"
-                    onClick={() => setShowProfile(!showProfile)}
-                  >
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
-
-                  {showProfile && (
-                    <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl py-2 w-48 z-50">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{displayName}</p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
-                      </div>
-                      <button
-                        onClick={logout}
-                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <FaSignOutAlt />
-                        <span>Logout</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <FaUserCircle className="text-2xl cursor-pointer hover:text-purple-300 transition-transform duration-300 hover:scale-110" />
-              )}
+        {/* Help Icon with Tooltip */}
+        <div className="relative">
+          <HelpCircle
+            className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer transition-colors duration-200"
+            size={20}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={() => setHelpOpen(true)}
+          />
+          {showTooltip && (
+            <div className="absolute top-[120%] right-0 z-50 bg-gray-800 text-gray-100 text-sm rounded-lg shadow-lg p-4 w-64">
+              <h3 className="font-semibold text-lg mb-2 text-purple-400">
+                Key Features:
+              </h3>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Image annotation with bounding boxes, polygons, and segmentation.</li>
+                <li>Text annotation with NER tagging.</li>
+                <li>AI-driven auto-annotation.</li>
+                <li>Dynamic label management.</li>
+              </ul>
             </div>
+          )}
+        </div>
+
+        {/* Other Icons */}
+        <Search className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
+        <Bell className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
+
+        {/* User Profile Section */}
+        <div className="relative profile-container">
+          <div className="flex items-center space-x-3">
+            {/* Username display */}
+            <span className="text-sm font-medium hidden md:block text-gray-700 dark:text-gray-300">
+              {displayName}
+            </span>
+
+            {/* Profile Avatar */}
+            <div
+              className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-800 to-indigo-800 text-white flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-300"
+              onClick={() => setShowProfile(!showProfile)}
+            >
+              {displayName.charAt(0).toUpperCase()}
+            </div>
+
+            {/* Dropdown Menu */}
+            {showProfile && (
+              <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 w-48 z-50">
+                <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{displayName}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                </div>
+                <button
+                  onClick={logout}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-red-400 flex items-center space-x-2"
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <HelpModal isOpen={isHelpOpen} onClose={closeHelpModal} />
-    </nav>
+      <HelpModalImg isOpen={isHelpOpen} onClose={() => setHelpOpen(false)} />
+    </div>
   );
 };
 

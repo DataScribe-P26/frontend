@@ -140,9 +140,6 @@ const useStore = create((set) => ({
   setcurrent: (current) => {
     set({ current });
     const { project_name } = useStore.getState();
-    if (project_name) {
-      localStorage.setItem(`${project_name}_current`, current);
-    }
   },
 
   setCurrentIndex: (currentIndex) => {
@@ -240,7 +237,6 @@ const useStore = create((set) => ({
     });
 
     if (!savedCurrent && !savedCurrentIndex) {
-      localStorage.setItem(`${project_name}_current`, null);
       localStorage.setItem(`${project_name}_currentIndex`, JSON.stringify(0));
     }
   },

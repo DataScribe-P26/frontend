@@ -4,8 +4,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../login/AuthContext";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
-import MainhomeNavbar from "../../Main home/MainhomeNavbar";
+// import MainhomeNavbar from "../../Main home/MainhomeNavbar";
+import Navbar from "../../text_pages/Text/Navbar";
 import { UserPlus, Layout, Users, Settings, FolderPlus, Home } from "lucide-react";
+import { MdWorkOutline } from "react-icons/md"; // Project icon
+import { FiSettings,FiTrash2  } from "react-icons/fi"; // Settings icon
+import CreateOrgProjectModal from "./CreateOrgProject";
+import { HiAnnotation } from "react-icons/hi";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,6 +27,57 @@ const Dashboard = () => {
   const [organizationMembers, setOrganizationMembers] = useState([]);
   var storedOrgName='';
 
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Add new state for organization details
+  const [orgDetails, setOrgDetails] = useState({
+    name: '',
+    description: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalOrgDetails, setOriginalOrgDetails] = useState({});
+
+  // Add useEffect to fetch organization details
+  useEffect(() => {
+    if (user) {
+      storedOrgName = localStorage.getItem("organizationName");
+      console.log(storedOrgName);
+      axios.get(`http://127.0.0.1:8000/organization-details`, {
+        params: { org_name: storedOrgName }
+      })
+      .then((response) => {
+        setOrgDetails(response.data);
+        setOriginalOrgDetails(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching organization details:", error);
+      });
+    }
+  }, [user]);
+
+  // Add handler for updating organization details
+  const handleUpdateOrg = async () => {
+    try {
+      const response = await axios.put(`http://127.0.0.1:8000/organization-update`, {
+        org_name: storedOrgName,
+        new_name: orgDetails.name,
+        description: orgDetails.description
+      });
+
+      if (response.status === 200) {
+        toast.success("Organization details updated successfully");
+        setIsEditing(false);
+        setOriginalOrgDetails(orgDetails);
+        localStorage.setItem("organizationName", orgDetails.name);
+      }
+    } catch (error) {
+      toast.error("Failed to update organization details");
+      console.error("Error updating organization:", error);
+    }
+  };
+
+
   useEffect(() => {
     storedOrgName = localStorage.getItem("organizationName");
     if (storedOrgName) {
@@ -31,8 +88,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (user) {
       axios
-      .get(`http://127.0.0.1:8000/ORG-all-projects`, {
-        params: { org_name: storedOrgName }
+      .get(`http://127.0.0.1:8000/ORG-user-projects`, {
+        params: { org_name: storedOrgName ,user_email: user.email}
     })
         .then((response) => setProjects(response.data || []))
 
@@ -43,6 +100,7 @@ const Dashboard = () => {
         .then((response) => setOrganizationMembers(response.data.members || []))
     }
   }, [user, organizationName]);
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim() === "") {
@@ -51,7 +109,6 @@ const Dashboard = () => {
     }
 
     try {
-
       const response = await axios.get(
         `http://127.0.0.1:8000/users/search?query=${query}`
       );
@@ -61,6 +118,7 @@ const Dashboard = () => {
       console.error("Error fetching search results", error);
     }
   };
+
   const handleSelectMember = (email) => {
     if (!selectedMembers.some((member) => member.email === email)) {
       setSelectedMembers([
@@ -81,68 +139,79 @@ const Dashboard = () => {
   };
 
   const handleRemoveMember = (email) => {
-    setSelectedMembers(selectedMembers.filter((member) => member.email !== email));
+    setSelectedMembers((prevMembers) => prevMembers.filter((member) => member.email !== email));
   };
-  // IMPLEMENT HERE
-  const handleSubmit = async() => {
-    if (selectedMembers.length === 0) {
-      console.error("No members selected");
-      return;
-    }
-    console.log(organizationName,
-      selectedMembers);
-      const data = {
-      org_name: organizationName,
-      members: selectedMembers,
-    };
-      console.log(data);
 
 
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/organizations/add-members", data
-      );
-  
-      if (response.status === 200) {
-        console.log("Members added successfully:", response.data);
-      }
-    } catch (error) {
-      console.error("Error adding members:", error);
+ // IMPLEMENT HERE
+ const handleSubmit = async() => {
+  if (selectedMembers.length === 0) {
+    console.error("No members selected");
+    return;
+  }
+  console.log(organizationName,
+    selectedMembers);
+    const data = {
+    org_name: organizationName,
+    members: selectedMembers,
+  };
+    console.log(data);
+
+
+  try {
+    const response = await axios.post("http://127.0.0.1:8000/organizations/add-members", data
+    );
+
+    if (response.status === 200) {
+      console.log("Members added successfully:", response.data);
     }
-  };
-  const dropdownStyles = {
-    list: {
-      position: "absolute",
-      zIndex: 10,
-      backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-      border: `1px solid ${isDarkMode ? "#4b5563" : "#d1d5db"}`,
-      borderRadius: "0.375rem",
-      top: "80%",
-      width: "90%",
-      maxHeight: "150px",
-      overflowY: "auto",
-      margin: 0,
-      padding: "0.5rem 0",
-      boxShadow: isDarkMode
-        ? "0 4px 6px rgba(0, 0, 0, 0.3)"
-        : "0 4px 6px rgba(0, 0, 0, 0.1)",
+  } catch (error) {
+    console.error("Error adding members:", error);
+  }
+};
+const dropdownStyles = {
+  list: {
+    position: "absolute",
+    zIndex: 10,
+    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+    border: `1px solid ${isDarkMode ? "#4b5563" : "#d1d5db"}`,
+    borderRadius: "0.375rem",
+    top: "80%",
+    width: "90%",
+    maxHeight: "150px",
+    overflowY: "auto",
+    margin: 0,
+    padding: "0.5rem 0",
+    boxShadow: isDarkMode
+      ? "0 4px 6px rgba(0, 0, 0, 0.3)"
+      : "0 4px 6px rgba(0, 0, 0, 0.1)",
+  },
+  listItem: {
+    padding: "0.75rem",
+    cursor: "pointer",
+    color: isDarkMode ? "#ffffff" : "#000000",
+    transition: "all 0.2s",
+    ":hover": {
+      backgroundColor: isDarkMode ? "#4b5563" : "#F3E5F5",
     },
-    listItem: {
-      padding: "0.75rem",
-      cursor: "pointer",
-      color: isDarkMode ? "#ffffff" : "#000000",
-      transition: "all 0.2s",
-      ":hover": {
-        backgroundColor: isDarkMode ? "#4b5563" : "#F3E5F5",
-      },
-    },
-  };
+  },
+};
+
+
 
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
         return (
           <div className="p-6">
-            <h2 className="text-3xl font-semibold mb-8">Dashboard Overview</h2>
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-purple-600 text-white text-xl font-bold">
+                {organizationName.charAt(0).toUpperCase()}
+              </div>
+              <h2 className="text-2xl font-bold">{organizationName} Organization</h2>
+            </div>
+
+            <h2 className="text-2xl font-semibold mb-8">Dashboard Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="p-6 bg-purple-600 dark:bg-purple-700 bg-opacity-80 rounded-lg text-white">
                 <h3 className="text-xl font-semibold mb-2">Total Projects</h3>
@@ -158,123 +227,319 @@ const Dashboard = () => {
 
         case "projects":
           return (
-            <div className={`p-6 min-h-screen `}>
-              <h2 className="text-3xl font-semibold mb-8">Projects</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {/* Header Section */}
+              <div className="flex justify-between items-center mb-12">
+                <div>
+                  <h2 className="text-3xl font-bold tracking-tight">Projects</h2>
+                  <p className="mt-2 text-gray-600 dark:text-gray-400">
+                    Manage and access all your organization's projects
+                  </p>
+                </div>
+                <button
+                  className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
+                             text-white font-medium rounded-lg shadow-sm transition-colors duration-200
+                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                  onClick={() => setIsModalOpen(true)}
+
+
+                >
+
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create Project
+
+                </button>
+                <CreateOrgProjectModal
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+
+                />
+              </div>
+
+              {/* Projects Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project) => (
                   <div
                     key={project.name}
-                    className={`p-6 rounded-xl shadow-lg hover:scale-105 transform transition-all duration-200 cursor-pointer 
-                      ${isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-900"}`}
+                    className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md
+                              hover:shadow-xl transition-all duration-300 overflow-hidden"
                     onClick={() => navigate(`/user-project/${project.type}/${project.name}`)}
                   >
-                    <h3 className="text-2xl font-bold mb-2">{project.name}</h3>
-                    <p className="text-sm mb-1">{project.description}</p>
-                    <span className="text-xs italic">{project.type}</span>
+                    {/* Card Content Container */}
+                    <div className="p-6 cursor-pointer">
+                      {/* Project Icon and Settings */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-3 flex items-center bg-purple-100 dark:bg-purple-900/30 rounded-lg space-x-2">
+                          {/* Project Icon */}
+                          <MdWorkOutline className="text-xl text-purple-600 dark:text-purple-400" />
+                          {/* Project Name */}
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                            {project.name}
+                          </h3>
+                        </div>
+                        {/* Action Icons */}
+                        <div className="flex space-x-2">
+                          <button
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full
+                                      transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/project-settings`);
+                            }}
+                          >
+                            <FiSettings className="text-lg text-gray-500 hover:text-gray-700
+                                                 dark:text-gray-400 dark:hover:text-gray-300" />
+                          </button>
+                          <button
+                            className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full
+                                      transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Add your delete handling logic here
+                              handleDeleteProject(project.name);
+                            }}
+                          >
+                            <FiTrash2 className="text-lg text-gray-500 hover:text-red-600
+                                               dark:text-gray-400 dark:hover:text-red-400" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                        {project.description}
+                      </p>
+
+                      {/* Project Type Badge */}
+                      <div className="mt-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm
+                                       font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/50
+                                       dark:text-purple-300">
+                          {project.type}
+                        </span>
+                      </div>
+                    </div>
+
+
                   </div>
                 ))}
               </div>
-              <button
-                className={`mt-8 px-8 py-3 rounded-lg shadow transition focus:ring 
-                  ${isDarkMode 
-                    ? "bg-purple-700 hover:bg-purple-800 focus:ring-purple-400 text-white" 
-                    : "bg-purple-600 hover:bg-purple-700 focus:ring-purple-300 text-white"}`}
-                onClick={() => navigate("/CreateOrgProject")}
-              >
-                Create New Project
-              </button>
             </div>
           );
 
-          case "members":
-            return (
-              <div className={`p-6 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                <h2 className="text-3xl font-semibold mb-8">Team Members</h2>
-          
-                {/* Current Members */}
-                <div className={`rounded-lg p-6 mb-8 ${isDarkMode ? "bg-gray-800" : "bg-white"} bg-opacity-90 shadow`}>
-                  <h3 className="text-xl font-semibold mb-4">{storedOrgName} Current Members</h3>
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {organizationMembers.map((member, index) => (
-                      <div 
-                        key={index} 
-                        className={`p-4 rounded-lg ${isDarkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} shadow-sm`}
-                      >
-                        <p className="font-medium">{member.email}</p>
-                        <p className="text-sm text-gray-500">{member.role}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-          
-                {/* Add New Members */}
-                <div className={`rounded-lg p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"} bg-opacity-90 shadow`}>
-                  <h3 className="text-xl font-semibold mb-4">Add New Members</h3>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className={`w-full p-3 pl-10 rounded-lg border ${isDarkMode ? "bg-gray-700 border-gray-600 text-white focus:ring-purple-400" : "border-gray-300 text-gray-900 focus:ring-purple-500"} focus:ring-2`}
-                    placeholder="Search members..."
-                  />
-          
-                  {searchResults.length > 0 && (
-                    <ul style={dropdownStyles.list} className={`border rounded-lg mt-1 max-h-48 overflow-y-auto ${isDarkMode ? "border-gray-600 bg-gray-700 text-white" : "border-gray-300 bg-white text-gray-900"}`}>
-                      {searchResults.map((result) => (
-                        <li key={result.email} className="p-3 cursor-pointer hover:bg-purple-500 hover:text-white transition" onClick={() => handleSelectMember(result.email)}>
-                          {result.email}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-          
-                  {/* Selected Members with Roles */}
-                  <div className="flex flex-col gap-4 mt-4">
-                    {selectedMembers.map((member) => (
-                      <div
-                        key={member.email}
-                        className="flex items-center gap-4 p-2 rounded-lg bg-purple-100 dark:bg-purple-800"
+      case "members":
+        return (
+          <div className={`p-6 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          {/* Header Section */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-semibold">Team Members</h2>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={`px-4 py-2 rounded-lg transition ${
+                isDarkMode ? "bg-purple-700 hover:bg-purple-800 text-white" : "bg-purple-600 hover:bg-purple-700 text-white"
+              }`}
+            >
+              + Add Members
+            </button>
+          </div>
+
+          {/* Members List */}
+          <div className={`rounded-lg p-6 mb-8 ${isDarkMode ? "bg-gray-800" : "bg-white"} bg-opacity-90 shadow`}>
+            <h3 className="text-xl font-semibold mb-4">Current Members</h3>
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {organizationMembers.map((member,index) => (
+                <div
+                key={index}
+                className={`p-4 rounded-lg ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} shadow-sm`}
+              >
+                <p className="font-medium">{member.email}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-100">{member.role}</p>
+              </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Add Members Modal */}
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className={`p-6 w-1/2 rounded-lg ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} shadow-lg`}>
+              <h3 className="text-xl font-semibold mb-4">Add New Members</h3>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className={`w-full p-3 pl-10 rounded-lg border ${
+                    isDarkMode
+                      ? "bg-gray-700 border-gray-600 text-white focus:ring-purple-400"
+                      : "border-gray-300 text-gray-900 focus:ring-purple-500"
+                  } focus:ring-2`}
+                  placeholder="Search members..."
+                />
+
+                {searchResults.length > 0 && (
+                  <ul
+                    className={`absolute z-10 w-full border rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg ${
+                      isDarkMode
+                        ? "border-gray-600 bg-gray-700 text-white"
+                        : "border-gray-300 bg-white text-gray-900"
+                    }`}
+                  >
+                    {searchResults.map((result) => (
+                      <li
+                        key={result.email}
+                        className="p-3 cursor-pointer hover:bg-purple-500 hover:text-white transition"
+                        onClick={() => handleSelectMember(result.email)}
                       >
-                        <span>{member.email}</span>
-                        <select
+                        {result.email}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+                {/* Selected Members with Roles */}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {selectedMembers.map((member) => (
+                    <div key={member} className={`px-3 py-1 rounded-full flex items-center gap-2 ${isDarkMode ? "bg-purple-900 text-white" : "bg-purple-100 text-gray-900"}`}>
+                      <span>{member.email}</span>
+                      <select
                           value={member.role}
                           onChange={(e) => handleRoleChange(member.email, e.target.value)}
-                          className={`p-2 rounded border text-sm 
-                            ${isDarkMode 
-                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400" 
-                              : "bg-white text-gray-900 border-gray-300 focus:ring-purple-500"} 
+                          className={`p-2 rounded border text-sm
+                            ${isDarkMode
+                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400"
+                              : "bg-purple-200 text-gray-900 border-gray-300 focus:ring-purple-500"}
                             focus:ring-2`}
                         >
                           <option value="Member">Member</option>
                           <option value="Admin">Admin</option>
                           <option value="Viewer">Viewer</option>
                         </select>
+                        {selectedMembers.map((member) => (
+                        <div key={member.email} className="flex items-center space-x-2 bg-gray-200 px-3 py-1 rounded-lg">
 
-                        <button
-                          onClick={() => handleRemoveMember(member.email)}
-                          className="text-red-600"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-          
+                          <button onClick={() => handleRemoveMember(member.email)} className="text-red-600 hover:text-red-800">
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end space-x-2 mt-4">
                   <button
-                    className={`mt-4 px-6 py-2 rounded-lg transition ${isDarkMode ? "bg-purple-700 hover:bg-purple-800 text-white" : "bg-purple-600 hover:bg-purple-700 text-white"}`}
-                    onClick={handleSubmit}
+                    className={`px-4 py-2 rounded-lg transition ${isDarkMode ? "bg-gray-600 hover:bg-gray-700" : "bg-gray-300 hover:bg-gray-400"}`}
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={`px-4 py-2 rounded-lg transition ${isDarkMode ? "bg-purple-700 hover:bg-purple-800 text-white" : "bg-purple-600 hover:bg-purple-700 text-white"}`}
+                    onClick={() => {
+                      handleSubmit();
+                      setIsModalOpen(false);
+                    }}
                   >
                     Add Members
                   </button>
                 </div>
               </div>
-            );
-          
-    
+            </div>
+          )}
+        </div>
+        );
 
-          
-        
+        case "Org settings":
+          return (
+           // <div className="max-w-4xl mx-auto p-6">
+              <div className="bg-white dark:bg-gray-900 ">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold dark:bg-gray-900 dark:text-gray-100">Organization Settings</h2>
+                  {!isEditing ? (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Edit Details
+                    </button>
+                  ) : (
+                    <div className="space-x-2">
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          setOrgDetails(originalOrgDetails);
+                        }}
+                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleUpdateOrg}
+                        className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Organization Name
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={storedOrgName}
+                        onChange={(e) => setOrgDetails({ ...orgDetails, name: e.target.value })}
+                        className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      />
+                    ) : (
+                      <p className="text-lg">{storedOrgName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Description
+                    </label>
+                    {isEditing ? (
+                      <textarea
+                        value={orgDetails.description}
+                        onChange={(e) => setOrgDetails({ ...orgDetails, description: e.target.value })}
+                        rows="4"
+                        className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      />
+                    ) : (
+                      <p className="text-gray-600 dark:text-gray-400">{orgDetails.description}</p>
+                    )}
+                  </div>
+
+                  <div className="border-t pt-6 mt-6">
+                    <h3 className="text-lg font-medium mb-4">Organization Statistics</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Members</p>
+                        <p className="text-2xl font-bold">{organizationMembers.length}</p>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Projects</p>
+                        <p className="text-2xl font-bold">{projects.length}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+           // </div>
+          );
+
+
 
       default:
         return null;
@@ -282,16 +547,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
-      {/* Navbar */}
-      <MainhomeNavbar />
+    <div className={`h-screen flex flex-col ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
 
-      {/* Layout with Sidebar */}
-      <div className="flex">
-        {/* Sidebar */}
-        <div className={`w-64 fixed h-screen ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} bg-opacity-90 shadow-lg`}>
+      <div className="flex flex-1">
+        <div className={`w-64 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} bg-opacity-90 shadow-lg`}>
+
           <div className="p-6">
-            <h2 className="text-xl font-bold mb-8">Organization</h2>
+          <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+              Datascribe.ai
+            </h1>
             <nav className="space-y-4">
               <button
                 className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
@@ -325,15 +589,32 @@ const Dashboard = () => {
                 }`}
                 onClick={() => setActiveSection("members")}
               >
+
+
                 <Users size={20} />
                 <span>Members</span>
+              </button>
+
+              <button
+                className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
+                  activeSection === "Org settings"
+                    ? "bg-purple-600 text-white"
+                    : "hover:bg-purple-200 dark:hover:bg-gray-700"
+                }`}
+                onClick={() => {
+                  setActiveSection("Org settings"); // Set active section
+
+                }}
+              >
+                <Layout size={20} />
+                <span>Org Settings</span>
               </button>
             </nav>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="ml-64 flex-1">
+        <div className="flex-1">
+        <Navbar />
           <main className="p-6">{renderContent()}</main>
         </div>
       </div>

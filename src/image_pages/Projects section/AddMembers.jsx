@@ -83,7 +83,7 @@ const AddMembers = () => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/organizations/add-members", data
       );
-  
+
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);
         navigate("/CreateOrgProject"); // Navigate after successful API call
@@ -224,10 +224,10 @@ const AddMembers = () => {
                 <select
                           value={member.role}
                           onChange={(e) => handleRoleChange(member.email, e.target.value)}
-                          className={`p-2 rounded border text-sm 
-                            ${isDarkMode 
-                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400" 
-                              : "bg-white text-gray-900 border-gray-300 focus:ring-purple-500"} 
+                          className={`p-2 rounded border text-sm
+                            ${isDarkMode
+                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400"
+                              : "bg-white text-gray-900 border-gray-300 focus:ring-purple-500"}
                             focus:ring-2`}
                         >
                           <option value="Member">Member</option>
@@ -251,7 +251,7 @@ const AddMembers = () => {
           </div>
               </motion.div>
 
-             
+
 
               {/* Action Buttons */}
               <motion.div

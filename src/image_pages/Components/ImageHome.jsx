@@ -18,7 +18,7 @@ function Imagehome() {
     setcurrent,
     setCurrentIndex,
     setCreatedOn,
-    created_on,
+    created_on,project_name
   } = useStore();
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
@@ -68,13 +68,15 @@ function Imagehome() {
   }
 
   useEffect(() => {
+    // Create a new controller for each effect instance
     const controller = new AbortController();
 
     const fetchImages = async () => {
       setLoading(true);
-      let user_type="single";
+      let user_type = "single";
       const userType = localStorage.getItem("userType");
       console.log("Current User Type:", userType);
+
       try {
         setImageSrc([]);
         clear_classes();
@@ -83,8 +85,6 @@ function Imagehome() {
           `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/${user.email}`,
           { signal: controller.signal }
         );
-        console.log(projectName);
-        console.log(response.data);
 
         if (response.data.length > 0) {
           const formattedImages = response.data.map((image) => ({
@@ -103,9 +103,8 @@ function Imagehome() {
           setImageSrc([]);
         }
       } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log("Request canceled:");
-        } else {
+        // Only show error if it's not a cancellation
+        if (!axios.isCancel(error)) {
           console.error("Error fetching images:", error);
           toast.error("Project Not Found", {
             style: {
@@ -127,10 +126,13 @@ function Imagehome() {
       fetchImages();
     }
 
+    // Cleanup function will be called when either projectName or project_name changes
+    // or when the component unmounts
     return () => {
+      console.log('Aborting previous request');
       controller.abort();
     };
-  }, [projectName, clear_classes, setImageSrc]);
+  }, [projectName, project_name, clear_classes, setImageSrc]);
 
   return (
     <div

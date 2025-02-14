@@ -1,168 +1,152 @@
 import React, { useState } from "react";
-import {
-  AiOutlineDatabase,
-  AiOutlineTag,
-  AiOutlineDown,
-  AiOutlineUp,
-  AiOutlineHome, // Home icon
-} from "react-icons/ai";
-import { BsFillGridFill } from "react-icons/bs"; // Workspace icon
-import { FiUpload } from "react-icons/fi";
-import { LuDownload } from "react-icons/lu";
-import { Link, useParams } from "react-router-dom"; // Import necessary hooks
-import textStore from "../zustand/Textdata"; // Import Zustand store
-import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import useTheme hook
+import { Link, useParams } from "react-router-dom";
+import { Menu, Home, Database, Tag, Grid, Upload, Download } from "lucide-react";
+import { HiAnnotation } from "react-icons/hi";
+import textStore from "../zustand/Textdata";
+import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import ExportModal from "./ExportModal.jsx";
+
 const Sidebar = () => {
-  const [isDatasetOpen, setDatasetOpen] = useState(true); // Initially open
-  const { projectName } = useParams(); // Get project name from URL
-  const { isUploaded, content } = textStore(); // Get isUploaded and content from Zustand store
-  const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isDatasetOpen, setDatasetOpen] = useState(true);
+  const { projectName } = useParams();
+  const { isUploaded, content } = textStore();
+  const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Determine if the import option should be shown
   const shouldShowImport = !isUploaded && !content;
 
   return (
     <div
-      className={`flex flex-col h-screen w-64 p-5 shadow-xl border-r ${
-        isDarkMode
-          ? "bg-gray-800 text-gray-100 border-gray-700"
-          : "bg-white text-gray-800 border-gray-200"
+      className={`fixed z-50 left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 ease-in-out ${
+        isCollapsed ? "w-20" : "w-64"
       }`}
     >
-      <h2
-        className={`text-lg font-semibold mb-5 ${
-          isDarkMode ? "text-gray-100" : "text-gray-800"
-        }`}
-      >
-        Menu
-      </h2>
-      <ul className="space-y-3">
-        {/* Home Button */}
-        <li>
-          <Link   
-            to={`/user-project/ner_tagging/${projectName}`} // Link to HomePage with projectName in URL
-            className={`flex items-center w-full text-left p-3 rounded-lg hover:bg-purple-600 hover:text-white transition ${
-              isDarkMode ? "hover:bg-purple-500" : ""
-            }`}
-          >
-            <AiOutlineHome
-              className={`mr-2 ${
-                isDarkMode ? "text-gray-100" : "text-gray-800"
+      {/* Logo and Toggle Button */}
+      <div className={`flex items-center mb-6 ${isCollapsed ? "flex-col" : "justify-between"}`}>
+        <Link to="/home" className="flex items-center gap-3">
+          <div className="flex items-center">
+            <HiAnnotation
+              className={`text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110 ${
+                isCollapsed ? "mb-2" : "mr-2"
               }`}
             />
-            Home
+            {!isCollapsed && (
+              <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+                Datascribe.ai
+              </h1>
+            )}
+          </div>
+        </Link>
+
+        {/* <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+            isCollapsed ? "mt-2" : ""
+          }`}
+        >
+          <Menu size={22} />
+        </button> */}
+      </div>
+
+      {/* Sidebar Items */}
+      <div className="space-y-6">
+        {/* Home Section */}
+        <div>
+          {!isCollapsed && (
+            <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+              MAIN
+            </h3>
+          )}
+          <Link
+            to={`/user-project/ner_tagging/${projectName}`}
+            className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+          >
+            <Home size={18} className="shrink-0" />
+            {!isCollapsed && <span>Home</span>}
           </Link>
-        </li>
+        </div>
 
         {/* Dataset Section */}
-        <li>
-          <button
-            className={`flex items-center justify-between w-full text-left p-3 rounded-lg hover:bg-purple-600 hover:text-white transition ${
-              isDarkMode ? "hover:bg-purple-500" : ""
-            }`}
-            onClick={() => setDatasetOpen(!isDatasetOpen)} // Toggle open/close
-          >
-            <div className="flex items-center">
-              <AiOutlineDatabase
-                className={`mr-2 ${
-                  isDarkMode ? "text-gray-100" : "text-gray-800"
-                }`}
-              />
-              Dataset
-            </div>
-            {isDatasetOpen ? (
-              <AiOutlineUp
-                className={`${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
-              />
-            ) : (
-              <AiOutlineDown
-                className={`${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
-              />
-            )}
-          </button>
-          {isDatasetOpen && (
-            <ul className="pl-4 mt-2 space-y-1">
-              {/* Conditionally render Import option */}
-              {shouldShowImport && (
-                <li>
-                  <Link
-                    to={`/text/${projectName}/content`} // Import page link
-                    className={`flex items-center w-full text-left p-2 rounded-lg hover:bg-purple-200 transition ${
-                      isDarkMode ? "hover:bg-purple-700" : ""
-                    }`}
-                  >
-                    <FiUpload
-                      className={`mr-2 ${
-                        isDarkMode ? "text-gray-100" : "text-gray-800"
-                      }`}
-                    />
-                    Import
-                  </Link>
-                </li>
-              )}
-              <li>
-                <button
-                  className={`flex items-center w-full text-left p-2 rounded-lg hover:bg-purple-200 transition ${
-                    isDarkMode ? "hover:bg-purple-700" : ""
-                  }`}
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <LuDownload
-                    className={`mr-2 ${
-                      isDarkMode ? "text-gray-100" : "text-gray-800"
-                    }`}
-                  />
-                  Export
-                </button>
-              </li>
-              {/* Export Modal */}
-              <ExportModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                projectName={projectName}
-              />
-            </ul>
+        <div>
+          {!isCollapsed && (
+            <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+              DATASET
+            </h3>
           )}
-        </li>
+          <button
+            className="w-full flex items-center justify-between px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+            onClick={() => setDatasetOpen(!isDatasetOpen)}
+          >
+            <div className="flex items-center space-x-3">
+              <Database size={18} className="shrink-0" />
+              {!isCollapsed && <span>Dataset</span>}
+            </div>
+          </button>
+
+          {isDatasetOpen && !isCollapsed && (
+            <div className="pl-4 mt-2 space-y-1">
+              {shouldShowImport && (
+                <Link
+                  to={`/text/${projectName}/content`}
+                  className="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                >
+                  <Upload size={18} className="shrink-0" />
+                  <span>Import</span>
+                </Link>
+              )}
+              <button
+                className="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Download size={18} className="shrink-0" />
+                <span>Export</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Label Section */}
-        <li>
+        <div>
+          {!isCollapsed && (
+            <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+              LABELING
+            </h3>
+          )}
           <Link
-            to={`/text/${projectName}/labelManager`} // LabelManager page link
-            className={`flex items-center w-full text-left p-3 rounded-lg hover:bg-purple-600 hover:text-white transition ${
-              isDarkMode ? "hover:bg-purple-500" : ""
-            }`}
+            to={`/text/${projectName}/labelManager`}
+            className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
           >
-            <AiOutlineTag
-              className={`mr-2 ${
-                isDarkMode ? "text-gray-100" : "text-gray-800"
-              }`}
-            />
-            Label
+            <Tag size={18} className="shrink-0" />
+            {!isCollapsed && <span>Label</span>}
           </Link>
-        </li>
+        </div>
 
         {/* Workspace Section */}
         {content && (
-          <li>
+          <div>
+            {!isCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+                WORKSPACE
+              </h3>
+            )}
             <Link
               to={`/text/${projectName}/filecontentdisplay`}
-              className={`flex items-center w-full text-left p-3 rounded-lg hover:bg-purple-600 hover:text-white transition ${
-                isDarkMode ? "hover:bg-purple-500" : ""
-              }`}
+              className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
             >
-              <BsFillGridFill
-                className={`mr-2 ${
-                  isDarkMode ? "text-gray-100" : "text-gray-800"
-                }`}
-              />
-              Workspace
+              <Grid size={18} className="shrink-0" />
+              {!isCollapsed && <span>Workspace</span>}
             </Link>
-          </li>
+          </div>
         )}
-      </ul>
+      </div>
+
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        projectName={projectName}
+      />
     </div>
   );
 };

@@ -27,11 +27,14 @@ export const ProfileForm = ({ user, onUpdate }) => {
     onUpdate(formData);
   };
 
+  const inputClasses = "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-colors duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600";
+  const labelClasses = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-white dark:bg-gray-900 rounded-lg transition-colors duration-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-gray-900">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Full Name
           </label>
           <input
@@ -39,12 +42,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Title
           </label>
           <input
@@ -52,12 +55,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Email
           </label>
           <input
@@ -65,12 +68,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Phone
           </label>
           <input
@@ -78,12 +81,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Location
           </label>
           <input
@@ -91,12 +94,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             Website
           </label>
           <input
@@ -104,12 +107,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="website"
             value={formData.website}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="md:col-span-2 dark:bg-gray-900">
+          <label className={labelClasses}>
             Bio
           </label>
           <textarea
@@ -117,12 +120,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             value={formData.bio}
             onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             GitHub Profile
           </label>
           <input
@@ -130,12 +133,12 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="github"
             value={formData.github}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClasses}>
             LinkedIn Profile
           </label>
           <input
@@ -143,7 +146,7 @@ export const ProfileForm = ({ user, onUpdate }) => {
             name="linkedin"
             value={formData.linkedin}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+            className={inputClasses}
           />
         </div>
       </div>
@@ -151,7 +154,7 @@ export const ProfileForm = ({ user, onUpdate }) => {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
         >
           Save Changes
         </button>

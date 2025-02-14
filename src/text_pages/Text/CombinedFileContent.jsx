@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -16,22 +16,22 @@ const CombinedFileContent = () => {
     const fileInput = event.target; // Get the file input element
     const selectedFile = fileInput.files[0];
     const allowedFileTypes = ["text/plain", "application/json"]; // Allowed MIME types for .txt and .json files
-  
+
     if (!selectedFile) {
       alert("No file selected.");
       return;
     }
-  
+
     if (!allowedFileTypes.includes(selectedFile.type)) {
       alert("Uploaded file format not supported. Please upload text (.txt) or JSON (.json) files only.");
       fileInput.value = ""; // Clear the file input value
       return;
     }
-  
+
     setFile(selectedFile); // Set the valid file
   };
-  
-  
+
+
 
   const handleFileUpload = () => {
     if (!file) {
@@ -66,6 +66,8 @@ const CombinedFileContent = () => {
   const handleGoToWorkspace = () => {
     navigate(`/text/${projectName}/filecontentdisplay`);
   };
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const renderUploadPage = () => (
     <div className={`flex-grow p-8 ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gradient-to-r from-gray-50 to-gray-100'} flex flex-col justify-between`}>
@@ -132,16 +134,28 @@ const CombinedFileContent = () => {
   );
 
   return (
-    <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gray-900' : ''}`}>
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar isUploaded={isUploaded} /> {/* Pass isUploaded as a prop */}
-        <div className="flex-grow flex flex-col">
-          {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
+    <div className={`flex flex-col min-h-screen overflow-hidden ${isDarkMode ? 'bg-gray-900' : ''}`}>
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar with transition */}
+        <Sidebar
+          isUploaded={isUploaded}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          className={`transition-all duration-300 ${isCollapsed ? "w-20" : "w-64"}`}
+        />
+
+        {/* Main Content Adjusts Dynamically */}
+        <div className={`flex flex-col flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}>
+
+          <Navbar />
+          <div className="flex-grow flex flex-col">
+            {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
+          </div>
         </div>
       </div>
     </div>
   );
+
 };
 
 export default CombinedFileContent;

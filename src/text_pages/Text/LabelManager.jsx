@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faBars } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import toast from "react-hot-toast";
@@ -9,7 +9,7 @@ import CreateLabel from "./CreateLabel";
 import textStore from "../zustand/Textdata";
 import axios from "axios";
 import Footer from "./Footer";
-import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import the useTheme hook
+import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import { USER_TYPE } from "../../Main home/user-type.js";
 import { useAuth } from "../../login/AuthContext.jsx";
 
@@ -19,18 +19,19 @@ const LabelManager = () => {
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
   const { projectName } = useParams();
-  const [fetchedLabels, setFetchedLabels] = useState(false);
-  const { isDarkMode, toggleTheme } = useTheme(); // Use the theme context
+  const { isDarkMode } = useTheme();
   const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   useEffect(() => {
     const fetchLabels = async () => {
       try {
         setLabels([]);
-        let user_type='single';
-        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-        console.log('current user is',userType);
+        const userType =
+          localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        console.log("current user is", userType);
         const response = await axios.get(
-         `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
         if (response.data?.[0]?.entities) {
@@ -99,107 +100,84 @@ const LabelManager = () => {
   };
 
   return (
-    <div
-      className={`flex flex-col h-screen overflow-hidden ${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-      }`}
-    >
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
-        <div
-          className={`flex-grow p-8 ${
-            isDarkMode
-              ? "bg-gray-800"
-              : "bg-gradient-to-r from-gray-50 to-gray-100"
-          }`}
-        >
-          <h1 className="text-3xl font-bold mb-4">Label Manager</h1>
-          <button
-            onClick={() => {
-              setCurrentLabel(null);
-              setEditMode(false);
-              setModalOpen(true);
-            }}
-            className={`bg-purple-700 text-white mt-14 mb-14 px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl mb-4 ${
-              isDarkMode ? "bg-purple-600" : ""
-            }`}
-          >
-            Create Label
-          </button>
-          {labels.length > 0 ? (
-            <div className="overflow-auto items-center h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-              <table
-                className={`min-w-full border ${
-                  isDarkMode ? "border-gray-600" : "border-gray-300"
-                } text-sm text-left ${
-                  isDarkMode ? "bg-gray-700" : "bg-white"
-                } shadow-md rounded-lg`}
-              >
-                <thead>
-                  <tr className={isDarkMode ? "bg-gray-600" : "bg-gray-100"}>
-                    <th className="p-2 border-b text-center">Name</th>
-                    <th className="p-2 border-b text-center">Color</th>
-                    <th className="p-2 border-b text-center"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {labels.map((label, index) => (
-                    <tr
-                      key={index}
-                      className={`border-b ${
-                        isDarkMode ? "border-gray-600" : "border-gray-300"
-                      }`}
+    <div className={`flex min-h-screen ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
+  <Sidebar isOpen={sidebarOpen} />
+
+  {/* Dynamic width adjustment */}
+  <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? "ml-64 w-[calc(100%-16rem)]" : "ml-16 w-[calc(100%-4rem)]"}`}>
+    <Navbar />
+    <div className="flex items-center p-4">
+      
+      <h1 className="text-3xl font-bold ml-4">Label Manager</h1>
+    </div>
+    <div className="flex-grow p-8 overflow-hidden">
+      <button
+        onClick={() => {
+          setCurrentLabel(null);
+          setEditMode(false);
+          setModalOpen(true);
+        }}
+        className="bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-shadow shadow-lg hover:shadow-xl mb-4"
+      >
+        Create Label
+      </button>
+
+      {labels.length > 0 ? (
+        <div className="overflow-auto h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <table className="min-w-full border border-gray-300 text-sm text-left bg-white shadow-md rounded-lg">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-2 border-b text-center">Name</th>
+                <th className="p-2 border-b text-center">Color</th>
+                <th className="p-2 border-b text-center"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {labels.map((label, index) => (
+                <tr key={index} className="border-b border-gray-300">
+                  <td className="p-2 text-center">{label.name}</td>
+                  <td className="p-2 text-center">
+                    <div className="flex justify-center items-center">
+                      <div className="w-6 h-6 rounded-full mr-2" style={{ backgroundColor: label.color }}></div>
+                    </div>
+                  </td>
+                  <td className="p-2 text-center flex justify-center space-x-2">
+                    <button
+                      onClick={() => handleEditLabel(label)}
+                      className="text-yellow-500 p-2 hover:text-yellow-600 transition"
                     >
-                      <td className="p-2 text-center">{label.name}</td>
-                      <td className="p-2 text-center">
-                        <div className="flex justify-center items-center">
-                          <div
-                            className="w-6 h-6 rounded-full mr-2"
-                            style={{ backgroundColor: label.color }}
-                          ></div>
-                        </div>
-                      </td>
-                      <td className="p-2 text-center flex justify-center space-x-2">
-                        <button
-                          onClick={() => handleEditLabel(label)}
-                          className={`text-yellow-500 p-2 hover:text-yellow-600 transition ${
-                            isDarkMode ? "hover:text-yellow-400" : ""
-                          }`}
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          onClick={() => deleteLabel(label.name)}
-                          className={`text-red-500 p-2 hover:text-red-600 transition ${
-                            isDarkMode ? "hover:text-red-400" : ""
-                          }`}
-                        >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="mb-8">No labels created yet.</div>
-          )}
-          <CreateLabel
-            isOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-            onCreateLabel={handleCreateLabel}
-            onUpdateLabel={handleUpdateLabel}
-            currentLabel={currentLabel}
-            editMode={editMode}
-          />
-          <div className="mt-10">
-            <Footer />
-          </div>
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => deleteLabel(label.name)}
+                      className="text-red-500 p-2 hover:text-red-600 transition"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+      ) : (
+        <div className="mb-8">No labels created yet.</div>
+      )}
+      <CreateLabel
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onCreateLabel={handleCreateLabel}
+        onUpdateLabel={handleUpdateLabel}
+        currentLabel={currentLabel}
+        editMode={editMode}
+      />
+      <div className="mt-10">
+        <Footer />
       </div>
     </div>
+  </div>
+</div>
+
   );
 };
 

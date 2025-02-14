@@ -10,6 +10,7 @@ import { Transformer } from "react-konva";
 import { all } from "axios";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../../login/AuthContext";
 
 function Stages({
   images,
@@ -29,6 +30,7 @@ function Stages({
   const [selectedId, setSelectedId] = useState(null); // For selecting rectangles
   const transformerRef = useRef(null); // Ref for the Transformer
   const transformRef = useRef();
+  const { user } = useAuth();
 
   const {
     all_annotations,
@@ -60,9 +62,10 @@ function Stages({
     try {
       setIsProcessing(true);
       const user_type = localStorage.getItem("userType");
-      console.log("Sending user_type:", user_type);
+      const email = user.email;
+      console.log(email);
       const response = await axios.post(
-        `http://127.0.0.1:8000/api/train-and-infer/${projectName}?user_type=${user_type}` // Send as query parameter
+        `http://127.0.0.1:8000/api/train-and-infer/${projectName}?user_type=${user_type}&email=${email}` // Use & instead of ?
       );
       console.log(response.data);
       if (response.data) {
@@ -112,11 +115,19 @@ function Stages({
   useEffect(() => {
     const performInference = async (imageIds) => {
       try {
+        const user_type = localStorage.getItem("userType");
+        const email = user.email;
+        console.log(email);
         const response = await axios.post(
           `http://127.0.0.1:8000/api/infer/${projectName}`,
-          { image_ids: imageIds }
+          {
+            image_ids: imageIds,
+            user_type: user_type,
+            email: email,
+          }
         );
 
+        console.log(response.data);
         if (response.data) {
           const updatedAnnotations = all_annotations?.map((item) => {
             if (!item) return item;

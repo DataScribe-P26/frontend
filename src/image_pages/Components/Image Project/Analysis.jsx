@@ -8,6 +8,7 @@ import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { USER_TYPE } from "../../../Main home/user-type.js";
+import { Sidebar } from "../../../partials/Sidebar.jsx";
 
 import {
   Chart as ChartJS,
@@ -33,24 +34,26 @@ ChartJS.register(
 );
 
 function Analysis({ set_analysis_page }) {
-  const { projectName } = useParams();
-  const {
-    imageSrc,
-    toggleAutoAnnotation,
-    all_annotations,
-    add_classes,
-    classes,
-    project_name,
-    created_on,
-    autoAnnotation,
-    loadAutoAnnotation,
-    threshold,
-    setThreshold,
-    loadThreshold,
-    set_allAnnotations,
-    setprojectname,
-  } = useStore();
-  const { isDarkMode } = useTheme();
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [activeTab, setActiveTab] = useState("analysis");
+    const { projectName } = useParams();
+    const {
+      imageSrc,
+      toggleAutoAnnotation,
+      all_annotations,
+      add_classes,
+      classes,
+      project_name,
+      created_on,
+      autoAnnotation,
+      loadAutoAnnotation,
+      threshold,
+      setThreshold,
+      loadThreshold,
+      set_allAnnotations,
+      setprojectname,
+    } = useStore();
+    const { isDarkMode } = useTheme();
 
   const [annotations, setAnnotations] = useState(all_annotations);
 
@@ -282,14 +285,25 @@ function Analysis({ set_analysis_page }) {
   };
 
 
+
   return (
     <>
-      <ImageNavbar />
+    <div className="flex h-screen bg-white dark:bg-gray-900">
+    <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+      />
+
+    <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}><ImageNavbar />
+
       <div
         className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
+
         <div className="mt-8 flex justify-between gap-12">
           {/* Class Statistics Section */}
           <div className="flex-1">
@@ -478,6 +492,8 @@ function Analysis({ set_analysis_page }) {
             </div>
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </>
   );

@@ -48,7 +48,7 @@ const OrganizationCreationPage = () => {
       const data = await response.json();
       console.log("Organization Created:", data);
       toast.success("Organization created successfully!");
-     
+
     } catch (error) {
       toast.error("Failed to create organization");
     }
@@ -57,7 +57,7 @@ const OrganizationCreationPage = () => {
   };
 
   return (
-    
+
     <div
     className={`h-screen overflow-hidden flex flex-col  ${
       isDarkMode ? "text-white" : "text-black"
@@ -82,7 +82,7 @@ const OrganizationCreationPage = () => {
 >
   Create New Organization
 </h1>
-            
+
           </div>
 
           <div
@@ -139,7 +139,7 @@ const OrganizationCreationPage = () => {
                     handleSubmit(); // Your existing logic
                     navigate("/add-members");
                   }}
-            
+
                   className={`px-6 py-3 rounded-md font-semibold transition-all ${
                     isDarkMode
                       ? "bg-green-700 hover:bg-green-800 text-white"

@@ -2,6 +2,7 @@
 import React from "react";
 import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
   return (
@@ -12,6 +13,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
     >
       {/* Logo and Toggle Button */}
       <div className={`flex items-center mb-6 ${isCollapsed ? "flex-col" : "justify-between"}`}>
+        <Link to="/home" className="flex items-center gap-3">
         <div className="flex items-center">
           <HiAnnotation
             className={`text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110 ${
@@ -24,6 +26,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
             </h1>
           )}
         </div>
+        </Link>
 
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -53,7 +56,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
         </div>
 
         <div>
-          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">PROFILE</h3>}
+          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500  mb-2">PROFILE</h3>}
           <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
