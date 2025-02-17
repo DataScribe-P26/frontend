@@ -97,7 +97,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
               {!isCollapsed && <span>Projects</span>}
             </button>
 
-            <button
+            {/* <button
               className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
               onClick={() => {
                 console.log("Logout clicked");
@@ -105,7 +105,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
             >
               <LogOut size={18} className="shrink-0" />
               {!isCollapsed && <span>Log out</span>}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

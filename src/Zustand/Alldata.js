@@ -306,6 +306,8 @@ const useStore = create((set) => ({
     const savedTrained = JSON.parse(localStorage.getItem(key));
     set({ trained: savedTrained ?? false });
   },
+  projecttype: "",
+  setprojectType: (projecttype) => set({ projecttype }),
 }));
 
 export default useStore;

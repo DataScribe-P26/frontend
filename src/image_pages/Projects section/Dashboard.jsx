@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../login/AuthContext";
@@ -547,15 +547,25 @@ const dropdownStyles = {
   };
 
   return (
-    <div className={`h-screen flex flex-col ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
+    <div className={`h-screen flex flex-col  ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
 
-      <div className="flex flex-1">
-        <div className={`w-64 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} bg-opacity-90 shadow-lg`}>
+      <div className="flex flex-1 ">
+        <div className={`w-64 border-r border-gray-100 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} bg-opacity-90 shadow-lg`}>
 
-          <div className="p-6">
-          <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-              Datascribe.ai
-            </h1>
+          <div className="p-6 mb-2 ">
+          <Link to="/home" className="flex items-center gap-3 mb-10">
+                 <div className="flex items-center">
+                   <HiAnnotation
+                     className={"text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110"
+                     }
+                   />
+
+                     <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+                       Datascribe.ai
+                     </h1>
+
+                 </div>
+                 </Link>
             <nav className="space-y-4">
               <button
                 className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${

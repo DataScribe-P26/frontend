@@ -5,46 +5,55 @@ import { FaLock, FaRegSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { FaAnchorLock } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import useStore from "../../../Zustand/Alldata";
 
 function Options({ action, setAction, submit }) {
+  const { projecttype } = useStore();
   return (
     <div>
       <div className="w-[3.43rem] h-auto bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-md">
-        <button
-          className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
+        {projecttype === "image" && (
+          <button
+            className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${
               action === "rectangle"
                 ? "bg-indigo-50 text-indigo-600 shadow-sm"
                 : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
             }`}
-          onClick={() => setAction(action === "rectangle" ? "" : "rectangle")}
-        >
-          <RiRectangleLine style={{ width: "50%", height: "50%" }} />
-        </button>
-        <button
-          className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
+            onClick={() => setAction(action === "rectangle" ? "" : "rectangle")}
+          >
+            <RiRectangleLine style={{ width: "50%", height: "50%" }} />
+          </button>
+        )}
+        {projecttype === "instance-segmentation" && (
+          <>
+            {" "}
+            <button
+              className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${
               action === "polygon"
                 ? "bg-indigo-50 text-indigo-600 shadow-sm"
                 : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
             }`}
-          onClick={() => setAction(action === "polygon" ? "" : "polygon")}
-        >
-          <BsVectorPen style={{ width: "50%", height: "50%" }} />
-        </button>
-        <button
-          className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
+              onClick={() => setAction(action === "polygon" ? "" : "polygon")}
+            >
+              <BsVectorPen style={{ width: "50%", height: "50%" }} />
+            </button>
+            <button
+              className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${
               action === "segmentation"
                 ? "bg-indigo-50 text-indigo-600 shadow-sm"
                 : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800"
             }`}
-          onClick={() =>
-            setAction(action === "segmentation" ? "" : "segmentation")
-          }
-        >
-          <BiPolygon style={{ width: "50%", height: "50%" }} />
-        </button>
+              onClick={() =>
+                setAction(action === "segmentation" ? "" : "segmentation")
+              }
+            >
+              <BiPolygon style={{ width: "50%", height: "50%" }} />
+            </button>
+          </>
+        )}
         <button
           className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${

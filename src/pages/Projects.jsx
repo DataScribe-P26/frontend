@@ -378,7 +378,7 @@ const ObjectDetectionIllustration = () => (
       description: "",
       type: "",
     });
-    const { setprojectname, setCreatedOn, set_allAnnotations, reset } =
+    const { setprojectname, setCreatedOn, set_allAnnotations, reset ,setprojectType} =
         useStore();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -426,41 +426,49 @@ const ObjectDetectionIllustration = () => (
       projectData.description.trim() !== "" &&
       projectData.type !== "";
 
-    const handleSubmit = () => {
-      if (isFormValid) {
-        axios
-          .post("http://127.0.0.1:8000/user-projects/", {
-            email:user?.email,
-            name: projectData.name,
-            description: projectData.description,
-            type: projectData.type,
-          })
-          .then((response) => {
-            toast.success("Project created successfully!");
-            setprojectname(projectData.name);
-            //onCreateProject(response.data); // Pass the created project data to the parent component
-            navigate(`/user-project/${projectData.type}/${projectData.name}`);
-            setProjectData({ name: "", description: "", type: "" });
-            onClose();
-          })
-          .catch((error) => {
-            console.error("Error creating project:", error);
-            toast.error("Failed to create project. Please try again.");
-          });
-      } else {
-        toast.error("Please complete all fields.");
-      }
-    };
+      const handleSubmit = () => {
+        if (isFormValid) {
+          axios
+            .post("http://127.0.0.1:8000/user-projects/", {
+              email: user?.email,
+              name: projectData.name,
+              description: projectData.description,
+              type: projectData.type,
+            })
+            .then((response) => {
+              toast.success("Project created successfully!");
+              reset();
+              setprojectname(projectData.name);
+              setprojectType(projectData.type);
+              if (
+                projectData.type === "image" ||
+                projectData.type === "instance-segmentation"
+              ) {
+                navigate(`/user-project/image/${projectData.name}`);
+              } else {
+                navigate(`/user-project/ner_tagging/${projectData.name}`);
+              }
+              setProjectData({ name: "", description: "", type: "" });
+              onClose();
+            })
+            .catch((error) => {
+              console.error("Error creating project:", error);
+              toast.error("Failed to create project. Please try again.");
+            });
+        } else {
+          toast.error("Please complete all fields.");
+        }
+      };
 
     if (!isOpen) return null;
 
     const selectedType = projectTypes.find((type) => type.id === projectData.type);
 
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl mx-4 my-6">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl mx-4 my-6 dark:bg-gray-900 dark:text-gray-100">
           <div className="flex items-center justify-between p-5 border-b">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-gray-900 dark:bg-gray-900 dark:text-gray-100">
               Create New Project
             </h2>
             <button
@@ -468,7 +476,7 @@ const ObjectDetectionIllustration = () => (
                 setProjectData({ name: "", description: "", type: "" });
                 onClose();
               }}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-500 hover:text-gray-700 transition-colors dark:bg-gray-900 dark:text-gray-100"
             >
               <X size={20} />
             </button>
@@ -476,17 +484,17 @@ const ObjectDetectionIllustration = () => (
 
           <div className="p-5">
             <div className="flex gap-8">
-              <div className="w-1/2 flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+              <div className="w-1/2 flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg dark:bg-gray-900 dark:text-gray-100">
                 {selectedType ? (
                   <>
-                    <div className="w-full">
+                    <div className="w-full dark:bg-gray-900 dark:text-gray-100">
                       <selectedType.illustration />
                     </div>
-                    <div className="text-center mt-6">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="text-center mt-6 dark:bg-gray-900 dark:text-gray-100">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                         {selectedType.title}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:bg-gray-900 dark:text-gray-100">
                         {selectedType.description}
                       </p>
                     </div>
@@ -494,19 +502,19 @@ const ObjectDetectionIllustration = () => (
                 ) : (
                   <div className="w-full">
                   <CombinedIllustration />
-                  <div className="text-center mt-6">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                  <div className="text-center mt-6 dark:bg-gray-900 dark:text-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                       Automate Your Data Annotation Process
                     </h3>
                   </div>
                 </div>
                 )}
               </div>
-              <div className="w-1/2">
-                <div className="mb-4">
+              <div className="w-1/2 dark:bg-gray-900 dark:text-gray-100">
+                <div className="mb-4 dark:bg-gray-900 dark:text-gray-100">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-100"
                   >
                     Project Name
                   </label>
@@ -516,13 +524,13 @@ const ObjectDetectionIllustration = () => (
                     type="text"
                     value={projectData.name}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div className="mb-4">
                   <label
                     htmlFor="description"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-100"
                   >
                     Project Description
                   </label>
@@ -532,13 +540,13 @@ const ObjectDetectionIllustration = () => (
                     value={projectData.description}
                     onChange={handleInputChange}
                     rows={2}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div>
 
                   <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-900 dark:text-gray-100">
                     Project Type
                   </label>
                   <div className="grid grid-cols-1 gap-4">
@@ -548,14 +556,14 @@ const ObjectDetectionIllustration = () => (
                         onClick={() => handleTypeSelect(type.id)}
                         className={`p-4 border rounded-lg text-left transition-all duration-300 ${
                           projectData.type === type.id
-                            ? `ring-2 ring-${type.color}-500 border-${type.color}-500`
+                            ? `ring-2 ring-${type.color}-500 border-${type.color}-500 dark:bg-gray-700 bg-blue-100`
                             : "hover:border-gray-300"
                         }`}
                       >
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-gray-900  dark:text-gray-100">
                           {type.title}
                         </h3>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-gray-500 mt-1  dark:text-gray-100">
                           {type.description}
                         </p>
                       </button>
@@ -567,7 +575,7 @@ const ObjectDetectionIllustration = () => (
             </div>
             <div className="flex justify-between mt-6"> <button
                 onClick={onClose}
-                className="ml-4 px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600-700"
+                className="ml-4 px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600-700 dark:bg-red-800 dark:text-gray-100"
               >
                 Cancel
               </button>
@@ -577,7 +585,7 @@ const ObjectDetectionIllustration = () => (
                 className={`px-5 py-2 rounded-md ${
                   isFormValid
                     ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-purple-600 text-gray-100 cursor-not-allowed"
                 }`}
               >
                 Create Project
@@ -645,7 +653,7 @@ const ProjectCard = ({ project, onProjectClick }) => {
         setprojectname,
         setCreatedOn,
         set_allAnnotations,
-        reset,
+        reset,setprojectType
       } = useStore();
 
       const fetchProjects = async () => {
@@ -670,7 +678,12 @@ const ProjectCard = ({ project, onProjectClick }) => {
         setCreatedOn(project.created_on);
         reset();
         set_allAnnotations([]);
-        navigate(`/user-project/${project.type}/${project.name}`);
+        setprojectType(project.type);
+        if (project.type === "image" || project.type === "instance-segmentation") {
+          navigate(`/user-project/image/${project.name}`);
+        } else {
+          navigate(`/user-project/ner_tagging/${project.name}`);
+        }
       };
 
       return (

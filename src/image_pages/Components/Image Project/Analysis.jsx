@@ -289,14 +289,15 @@ function Analysis({ set_analysis_page }) {
   return (
     <>
     <div className="flex h-screen bg-white dark:bg-gray-900">
-    <Sidebar
+    {/* <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
-      />
+      /> */}
 
-    <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}><ImageNavbar />
+    <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-0" : "ml-0"}`}
+    ><ImageNavbar />
 
       <div
         className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
@@ -424,9 +425,9 @@ function Analysis({ set_analysis_page }) {
     </div>
 
     {/* Auto Annotation and Threshold */}
-<div className="flex flex-col mt-2 space-y-6 w-1/2 p-6 bg-gray-100 rounded-lg shadow-md border border-gray-200">
+<div className="flex flex-col mt-0 space-y-6 w-1/2 p-6 bg-gray-100 rounded-lg shadow-md  dark:bg-gray-700 dark:text-gray-100" >
   <div className="flex items-center gap-2 mb-2">
-    <div className="font-medium text-xl text-gray-800">Auto Annotation</div>
+    <div className="font-medium text-xl text-gray-800 dark:bg-gray-700 dark:text-gray-100 ">Auto Annotation</div>
     <button
       onClick={() => toggleAutoAnnotation(projectName)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${autoAnnotation ? "bg-green-600" : "bg-gray-400"}`}
@@ -441,14 +442,14 @@ function Analysis({ set_analysis_page }) {
 
   {/* Text when toggle is off */}
   {!autoAnnotation && (
-    <div className="text-sm text-purple-600 mb-2 ">
+    <div className="text-sm text-purple-600 mb-2 dark:bg-gray-700 dark:text-gray-100 ">
       <p>Want to kickstart auto annotation? Set the threshold, and let the magic happen!</p>
     </div>
   )}
 
   {autoAnnotation && (
-    <div className="px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 shadow-sm">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="px-4 py-3 rounded-lg bg-gray-100  shadow-sm dark:bg-gray-800 dark:text-gray-100">
+      <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-800 dark:text-gray-100">
         Set Threshold Value
       </label>
       <input
@@ -456,7 +457,7 @@ function Analysis({ set_analysis_page }) {
         type="number"
         value={threshold}
         onChange={(e) => setThreshold(projectName, e.target.value)}
-        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-black sm:text-sm"
+        className="block w-full rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-black sm:text-sm dark:bg-gray-700 dark:text-gray-100"
         placeholder="Adjust the threshold for auto detection"
       />
 
@@ -472,7 +473,7 @@ function Analysis({ set_analysis_page }) {
                 <Spinner />
               ) : (
                 <>
-                  <div className="flex justify-between items-center gap-10">
+                  <div className="flex justify-between items-center gap-10 ">
                     <ImageUpload
                       projectName={projectName}
                       loading={loading}
@@ -480,7 +481,7 @@ function Analysis({ set_analysis_page }) {
                     />
                     {imageSrc.length > 0 && (
                       <button
-                        className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center"
+                        className="mt-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center "
                         onClick={() => set_analysis_page(false)}
                       >
                         Continue
