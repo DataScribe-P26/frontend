@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
 import { useAuth } from '../login/AuthContext';
 import { useNavigate } from "react-router-dom";
-
+import axios from 'axios'; // For making HTTP requests
+ 
 export const TopBar = ({ title }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false); // For notifications
+  const [notifications, setNotifications] = useState([]); // Store notifications (invitations)
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
+ 
   // Get display name from user data
   const getDisplayName = () => {
     if (!user) return '';
@@ -17,9 +20,9 @@ export const TopBar = ({ title }) => {
     if (user.email) return user.email.split('@')[0];
     return 'User';
   };
-
+ 
   const displayName = getDisplayName();
-
+ 
   // Handle theme toggle
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -29,30 +32,30 @@ export const TopBar = ({ title }) => {
       document.documentElement.classList.remove('dark');
     }
   };
-
+ 
   // Initialize theme from localStorage on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
+ 
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
       setIsDarkMode(true);
       document.documentElement.classList.add('dark');
     }
   }, []);
-
+ 
   // Save theme preference to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
-
+ 
   // Handle logout
   const handleLogout = () => {
     logout();
     navigate('/login');
     setShowProfile(false);
   };
-
+ 
   // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -60,11 +63,40 @@ export const TopBar = ({ title }) => {
         setShowProfile(false);
       }
     };
-
+ 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showProfile]);
-
+ 
+  // Handle Notifications Toggle
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+ 
+  // Fetch Pending Invitations for the User
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(`/api/invitations/${user?.email}`, {
+        headers: {
+          'Authorization': `Bearer ${user?.token}`, // Pass token if required
+        }
+      });
+      // Ensure the response is an array
+      setNotifications(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Error fetching invitations:', error);
+      setNotifications([]); // Fallback to empty array in case of error
+    }
+  };
+ 
+ 
+  // Call fetchNotifications when notification icon is clicked
+  useEffect(() => {
+    if (showNotifications) {
+      fetchNotifications();
+    }
+  }, [showNotifications]);
+ 
   return (
     <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Title Section */}
@@ -73,7 +105,7 @@ export const TopBar = ({ title }) => {
           {title || `Welcome ${displayName}`}
         </h1>
       </div>
-
+ 
       {/* Right-Side Icons & User Profile */}
       <div className="flex items-center gap-6">
         {/* Theme Toggle */}
@@ -90,7 +122,7 @@ export const TopBar = ({ title }) => {
             )}
           </button>
         </div>
-
+ 
         {/* Help Icon with Tooltip */}
         <div className="relative">
           <HelpCircle
@@ -113,11 +145,35 @@ export const TopBar = ({ title }) => {
             </div>
           )}
         </div>
-
+ 
         {/* Other Icons */}
         <Search className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
-        <Bell className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
-
+ 
+        {/* Notification Icon */}
+        <div className="relative">
+          <Bell
+            className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer"
+            size={20}
+            onClick={toggleNotifications}
+          />
+          {showNotifications && (
+            <div className="absolute top-[120%] right-0 z-50 bg-white dark:bg-gray-800 text-sm rounded-lg shadow-lg p-4 w-64">
+              <h3 className="font-semibold text-lg mb-2 text-purple-400">Invitations</h3>
+              {notifications.length > 0 ? (
+                <ul className="list-disc pl-5 space-y-1">
+                  {notifications.map((notif) => (
+                    <li key={notif.org_id} className="text-gray-700 dark:text-gray-300">
+                      {`You have an invitation to join ${notif.invite_type}: ${notif.org_id} as a ${notif.role}`}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400">No new invitations.</p>
+              )}
+            </div>
+          )}
+        </div>
+ 
         {/* User Profile Section */}
         <div className="relative profile-container">
           <div className="flex items-center space-x-3">
@@ -125,7 +181,7 @@ export const TopBar = ({ title }) => {
             <span className="text-sm font-medium hidden md:block text-gray-700 dark:text-gray-300">
               {displayName}
             </span>
-
+ 
             {/* Profile Avatar */}
             <div
               className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-800 to-indigo-800 text-white flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-300"
@@ -133,7 +189,7 @@ export const TopBar = ({ title }) => {
             >
               {displayName.charAt(0).toUpperCase()}
             </div>
-
+ 
             {/* Dropdown Menu */}
             {showProfile && (
               <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 w-48 z-50">
@@ -156,5 +212,5 @@ export const TopBar = ({ title }) => {
     </div>
   );
 };
-
+ 
 export default TopBar;

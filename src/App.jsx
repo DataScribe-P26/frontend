@@ -20,14 +20,14 @@ import OrganizationCreationPage from "./image_pages/Projects section/Organizatio
 import CreateOrgProject from "./image_pages/Projects section/CreateOrgProject.jsx";
 import AddMembers from "./image_pages/Projects section/AddMembers.jsx";
 import Dashboard from "./image_pages/Projects section/Dashboard.jsx";
-
+import LandingPage from "../src/Main home/landing.jsx"
 function App() {
   return (
     <AuthProvider>
       <div className="">
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Register />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 

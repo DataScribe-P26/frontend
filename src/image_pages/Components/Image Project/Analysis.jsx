@@ -458,21 +458,27 @@ function Analysis({ set_analysis_page }) {
       </div>
     </div>
 
-    {/* Auto Annotation and Threshold */}
-<div className="flex flex-col mt-2 space-y-6 w-1/2 p-6 bg-gray-100 rounded-lg shadow-md border border-gray-200">
+{/* Auto Annotation and Threshold */}
+<div className="flex flex-col mt-0 space-y-6 w-1/2 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
   <div className="flex items-center gap-2 mb-2">
-    <div className="font-medium text-xl text-gray-800">Auto Annotation</div>
+    <div className="font-medium text-xl text-gray-800 dark:text-gray-100">Auto Annotation</div>
     <button
       onClick={() => toggleAutoAnnotation(projectName)}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${autoAnnotation ? "bg-green-600" : "bg-gray-400"}`}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+        autoAnnotation ? "bg-green-600 dark:bg-green-500" : "bg-gray-400 dark:bg-gray-600"
+      }`}
       role="switch"
       aria-checked={autoAnnotation}
     >
       <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${autoAnnotation ? "translate-x-6" : "translate-x-1"}`}
+        className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-200 transition-transform ${
+          autoAnnotation ? "translate-x-6" : "translate-x-1"
+        }`}
       />
     </button>
   </div>
+
+
 
   {/* Text when toggle is off */}
   {!autoAnnotation && (
@@ -481,22 +487,22 @@ function Analysis({ set_analysis_page }) {
     </div>
   )}
 
-  {autoAnnotation && (
-    <div className="px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 shadow-sm">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Set Threshold Value
-      </label>
-      <input
-        id="threshold"
-        type="number"
-        value={threshold}
-        onChange={(e) => setThreshold(projectName, e.target.value)}
-        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-black sm:text-sm"
-        placeholder="Adjust the threshold for auto detection"
-      />
+{autoAnnotation && (
+  <div className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-sm">
+    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+      Set Threshold Value
+    </label>
+    <input
+      id="threshold"
+      type="number"
+      value={threshold}
+      onChange={(e) => setThreshold(projectName, e.target.value)}
+      className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-700 sm:text-sm"
+      placeholder="Adjust the threshold for auto detection"
+    />
+  </div>
+)}
 
-    </div>
-  )}
 </div>
 
   </div>
