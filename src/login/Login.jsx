@@ -96,40 +96,98 @@ export default function Login() {
 
   return (
     <div className="flex h-screen">
-      {/* Left Side - Brand Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-purple-800 to-indigo-900 relative">
-        <NeonCursor />
+    {/* Left Side - Brand Section */}
+    <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-purple-800 to-indigo-900 relative">
+    <NeonCursor/>
+    
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
+      >
+        
+        <source src="/videos/17085-278405143_medium.mp4" type="video/mp4" />
+      </video>
+      
 
-        {/* Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
-        >
-          <source src="/videos/17085-278405143_small.mp4" type="video/mp4" />
-        </video>
+      {/* Enhanced Content Overlay */}
+      <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+      
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 flex justify-center">
+          <div className="w-1/2 h-full bg-gradient-to-b from-purple-500/10 to-transparent blur-xl"></div>
+        </div>
 
-        {/* Enhanced Content Overlay */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
-          <div className="relative flex flex-col items-center mb-22">
-            <div className="flex items-center gap-6 mb-4">
-              <div className="relative">
-                <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-md"></div>
-                <HiAnnotation className="text-8xl text-white animate-pulse relative" />
-              </div>
-              <h1 className="text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-indigo-400">
-                Datascribe.ai
-              </h1>
+        {/* Logo and Title Section */}
+        <div className="relative flex flex-col items-center mb-22">
+          <div className="flex items-center gap-6 mb-4">
+            <div className="relative">
+              <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-md"></div>
+              <HiAnnotation className="text-8xl text-white animate-pulse relative" />
             </div>
+            <h1 className="text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-indigo-400">
+              Datascribe.ai
+            </h1>
+          </div>
+
+          {/* Tagline with gradient underline */}
+          <div className="relative">
             <p className="text-xl text-purple-100 text-center max-w-2xl leading-relaxed">
-              Empowering your data with advanced, AI-driven auto annotations for
-              images, text, and more providing unified, data-agnostic solutions.
+              Empowering your data with advanced, AI-driven auto annotations for images, text, and more providing unified, data-agnostic solutions.
             </p>
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-1/3 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
           </div>
         </div>
+
+        {/* Enhanced Features Section */}
+        <div className="relative mt-10 space-y-2 text-l w-full max-w-2xl items-center justify-center flex flex-col">
+          {/* Feature Items */}
+          <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+              </div>
+              <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                Unified and Intuitive Interface for Diverse Annotation Tasks
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+              </div>
+              <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                AI-Powered Auto Annotations for Faster Data Labeling
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-item group hover:bg-purple-900/20 p-4 rounded-xl transition-all duration-300">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-3 h-3 bg-purple-400 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                <div className="absolute inset-0 bg-purple-400/50 rounded-full animate-ping"></div>
+              </div>
+              <p className="text-purple-100 group-hover:text-white transition-colors duration-300">
+                Integrated Augmentations to Enhance Diversity
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Decorative Bottom Element */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/40 to-transparent"></div>
+        
       </div>
+      
+    </div>
 
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">

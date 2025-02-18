@@ -51,6 +51,8 @@ function App() {
 
           <Route path="/CreateOrgProject" element={<CreateOrgProject />} />
 
+          <Route path="/organizations" element={<Dashboard />} />
+
           <Route path="/dashboard" element={<Dashboard />} />
 
           {/* Protected Image Routes */}

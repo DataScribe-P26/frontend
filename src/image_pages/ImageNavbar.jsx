@@ -40,7 +40,7 @@ const ImageNavbar = () => {
       <Link to="/home" className="flex items-center gap-3">
         
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-          Welcome User...
+          Welcome {displayName}
         </h1>
       </Link>
 

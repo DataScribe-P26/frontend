@@ -69,7 +69,7 @@ const ProjectSection = () => {
       case "organizations":
         return "Organizations";
       case "projects":
-        return "Projects";
+        return "ALL Projects";
       default:
         return "";
     }

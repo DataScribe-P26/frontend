@@ -3,15 +3,24 @@ import React from "react";
 import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useAuth } from '../login/AuthContext';
+import { useAuth } from "../../../login/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { BsPersonWorkspace } from "react-icons/bs";
 
 export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
   const { user, logout } = useAuth();
-  // Handle logout
-  const handleLogout = () => {
+  const navigate = useNavigate();
+
+  
+
+   // Handle logout
+   const handleLogout = () => {
     logout();
     navigate('/login');
+    setShowProfile(false);
   };
+
+
 
   return (
     <div
@@ -62,20 +71,20 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
             {!isCollapsed && <span>Home</span>}
           </button>
         </div>
-
         <div>
-          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500  mb-2">PROFILE</h3>}
-          <button
-            onClick={() => setActiveTab("profile")}
-            className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
-              activeTab === "profile"
-                ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
-                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-            }`}
-          >
-            <User size={18} className="shrink-0" />
-            {!isCollapsed && <span>Public Profile</span>}
-          </button>
+          {!isCollapsed && <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">WORKSPACE</h3>}
+          <div className="space-y-1"></div>
+            <button
+                onClick={()=>setActiveTab("Workspace")}
+                className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    activeTab === "Workspace"
+                    ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
+                >
+                <BsPersonWorkspace  size={18} className="shrink-0" />
+                {!isCollapsed && <span>Workspace</span>}
+            </button>
         </div>
 
         <div>
@@ -107,7 +116,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
 
             <button
               className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
-              onClick={handleLogout}
+           onClick={handleLogout}
             >
               <LogOut size={18} className="shrink-0" />
               {!isCollapsed && <span>Log out</span>}

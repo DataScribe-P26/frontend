@@ -110,7 +110,7 @@ function ImageUpload({ projectName, loading, setloading }) {
         let user_type='single';
         const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
             console.log("Current User Type:", userType);
-            
+
             await axios.post(
               `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/upload/`,
         {data1:data},
@@ -144,8 +144,8 @@ function ImageUpload({ projectName, loading, setloading }) {
   } else {
     return (
       <>
-        <div className="bg-gray-100 p-8 rounded-xl shadow-md border border-gray-200 flex flex-col items-center mt-4">
-          <div className="flex items-center text-lg mb-1 text-black">
+        <div className="bg-gray-100 p-8 rounded-xl shadow-md  flex flex-col items-center mt-4 dark:bg-gray-700 dark:text-gray-100">
+          <div className="flex items-center text-lg mb-1 text-black dark:bg-gray-700 dark:text-gray-100">
             Upload More Images
           </div>
           <input
@@ -158,7 +158,7 @@ function ImageUpload({ projectName, loading, setloading }) {
           />
           <label
             htmlFor="file-upload"
-            className="group flex items-center justify-center w-48 px-6 py-3 rounded-lg bg-purple-600 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200 ease-in-out shadow-sm hover:shadow-md mb-2"
+            className="group flex items-center justify-center w-48 px-6 py-3 rounded-lg bg-purple-600 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200 ease-in-out shadow-sm hover:shadow-md mb-2 "
           >
             <MdCloudUpload className="text-l mr-2 group-hover:scale-110 transition-transform duration-200" />
             <span className="font-medium">Upload Files</span>
@@ -182,7 +182,7 @@ function ImageUpload({ projectName, loading, setloading }) {
             <span className="font-medium">Upload Folder</span>
           </label>
 
-          <p className="mt-2 text-sm text-gray-500 text-center">
+          <p className="mt-2 text-sm text-gray-500 text-center dark:bg-gray-700 dark:text-gray-100">
             Select images or folders to upload.
           </p>
         </div>

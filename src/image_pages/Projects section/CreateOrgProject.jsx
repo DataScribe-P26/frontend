@@ -700,7 +700,7 @@ const ObjectDetectionIllustration = () => (
                         onClick={() => handleTypeSelect(type.id)}
                         className={`p-2 border rounded-lg text-left transition-all duration-300 ${
                           projectData.type === type.id
-                            ? `ring-2 ring-${type.color}-500 border-${type.color}-500 bg-gray-700 text-gray-100`
+                            ? `ring-2 ring-${type.color}-500 border-${type.color}-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-100`
                             : "hover:border-gray-100 dark:bg-gray-900"
                         }`}
                       >

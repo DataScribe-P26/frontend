@@ -666,7 +666,7 @@ const OrganizationsPage = () => {
   }, [showModal]);
 
   return (
-    <div className="p-8 dark:bg-gray-900 dark:text-gray-100">
+    <div className="p-8 h-screen dark:bg-gray-900 dark:text-gray-100">
       <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">

@@ -8,7 +8,13 @@ import ImageNavbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { USER_TYPE } from "../../../Main home/user-type.js";
-import { Sidebar } from "../../../partials/Sidebar.jsx";
+import { Sidebar } from "./ImageSidebar.jsx";
+import { useUser } from "../../../pages/Profile.jsx";
+import HomePage from "../../../pages/Hero";
+import ProjectsPage from "../../../pages/Projects.jsx";
+import OrganizationsPage from "../../../pages/Organisation.jsx";
+import { Profile } from "../../../pages/Profile.jsx";
+
 
 import {
   Chart as ChartJS,
@@ -34,8 +40,9 @@ ChartJS.register(
 );
 
 function Analysis({ set_analysis_page }) {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [activeTab, setActiveTab] = useState("analysis");
+
+  const [activeTab, setActiveTab] = useState("Workspace");
+  const [isCollapsed, setIsCollapsed] = useState(false);
     const { projectName } = useParams();
     const {
       imageSrc,
@@ -58,6 +65,8 @@ function Analysis({ set_analysis_page }) {
   const [annotations, setAnnotations] = useState(all_annotations);
 
   const classesAddedRef = useRef(false);
+
+  
 
   if (project_name === "") {
     setprojectname(projectName);
@@ -283,20 +292,42 @@ function Analysis({ set_analysis_page }) {
     ],
 
   };
+  const renderContent = () => {
+    switch (activeTab) {
+      case "home":
+        return <HomePage isCollapsed={isCollapsed} />;
+      case "profile":
+        return <Profile />;
+      case "organizations":
+        return <OrganizationsPage />;
+      case "projects":
+        return <ProjectsPage />;
+      case "Workspace":
+        return;  
+      default:
+        return <ProjectsPage />;
+    }
+  };
+
 
 
 
   return (
     <>
-    <div className="flex h-screen bg-white dark:bg-gray-900">
-    <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isCollapsed={isCollapsed}
-        setIsCollapsed={setIsCollapsed}
-      />
-
-    <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}><ImageNavbar />
+   <div className="flex h-screen bg-white dark:bg-gray-900">
+    
+          <Sidebar
+                 activeTab={activeTab}
+                 setActiveTab={setActiveTab}
+                 isCollapsed={isCollapsed}
+                 setIsCollapsed={setIsCollapsed}
+               />
+    <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}>
+      <ImageNavbar />
+      {renderContent()}
+ 
+  
+   
 
       <div
         className={`w-full h-screen overflow-y-auto image_scrollbar  px-12 pt-2 pb-28 ${
@@ -304,7 +335,11 @@ function Analysis({ set_analysis_page }) {
         }`}
       >
 
+ 
+        
+
         <div className="mt-8 flex justify-between gap-12">
+      
           {/* Class Statistics Section */}
           <div className="flex-1">
             <div className="flex flex-row justify-left gap-10 items-center ">
@@ -490,11 +525,18 @@ function Analysis({ set_analysis_page }) {
                 </>
               )}
             </div>
+            
           </div>
         </div>
       </div>
       </div>
       </div>
+      <main
+          className={`container mx-auto transition-all duration-300 dark:bg-gray-900 dark:text-gray-100 p-8`}
+        >
+          {renderContent()}
+        </main>
+ 
     </>
   );
 }
