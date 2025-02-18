@@ -17,6 +17,7 @@ const LandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState({ image: false, text: false });
 
   useEffect(() => {
     setIsVisible(true);
@@ -76,6 +77,13 @@ const LandingPage = () => {
     { label: 'Time Saved', value: '75%' }
   ];
 
+  const handleVideoClick = (type) => {
+    setIsVideoPlaying(prev => ({
+      ...prev,
+      [type]: !prev[type]
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <style>
@@ -115,7 +123,7 @@ const LandingPage = () => {
       {/* Rest of the navigation remains the same */}
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-md shadow-sm fixed w-full z-40">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-2 py-2 flex justify-between items-center">
         <div className="flex items-center justify-between">
             <HiAnnotation className=" ml-2 text-3xl  text-purple-600" />
             <h1 className="text-2xl font-bold px-4 py-2 text-purple-900 ml-2">Datascribe.ai</h1>
@@ -225,104 +233,105 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Tabs */}
-      <section id="features" className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-purple-900">
-            Advanced Annotation Features
-          </h2>
-          <div className="flex justify-center mb-8">
-            <div className="flex space-x-4 bg-purple-50 p-1 rounded-lg">
-              <button 
-                className={`px-6 py-2 rounded-lg transition-all ${
-                  activeTab === 'image' ? 'bg-white shadow-lg text-purple-600' : 'text-purple-600'
-                }`}
-                onClick={() => setActiveTab('image')}
-              >
-                Image Annotation
-              </button>
-              <button 
-                className={`px-6 py-2 rounded-lg transition-all ${
-                  activeTab === 'text' ? 'bg-white shadow-lg text-purple-600' : 'text-purple-600'
-                }`}
-                onClick={() => setActiveTab('text')}
-              >
-                Text Annotation
-              </button>
+      <section id="features" className="py-16 bg-gradient-to-b from-purple-50/50 to-white">
+  <div className="container mx-auto px-2">
+    {/* Heading */}
+    <h2 className="text-3xl font-bold text-center mb-6 text-purple-900">
+      Advanced Annotation Features
+    </h2>
+
+    {/* Tabs */}
+    <div className="flex justify-center mb-8">
+      <div className="flex space-x-4 bg-purple-50 p-1 rounded-lg">
+        <button
+          className={`px-6 py-2 rounded-lg transition-all ${
+            activeTab === 'image' ? 'bg-white shadow-lg text-purple-600' : 'text-purple-600'
+          }`}
+          onClick={() => setActiveTab('image')}
+        >
+          Image Annotation
+        </button>
+        <button
+          className={`px-6 py-2 rounded-lg transition-all ${
+            activeTab === 'text' ? 'bg-white shadow-lg text-purple-600' : 'text-purple-600'
+          }`}
+          onClick={() => setActiveTab('text')}
+        >
+          Text Annotation
+        </button>
+      </div>
+    </div>
+
+    {/* Video Section */}
+    <div className="max-w-3xl mx-auto mb-8">
+      <div className="relative aspect-video bg-purple-100 rounded-xl overflow-hidden">
+        {activeTab === 'image' ? (
+          <video
+            src={`/videos/1154-143492926_small.mp4`}
+            className="absolute inset-0 w-full h-full object-cover"
+            controls
+          />
+        ) : (
+          <video
+            src={`/videos/5074-182666828_small.mp4`}
+            className="absolute inset-0 w-full h-full object-cover"
+            controls
+          />
+        )}
+      </div>
+    </div>
+
+    {/* Feature Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      {activeTab === 'image' ? (
+        <>
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center gap-3 mb-4">
+              <Box className="w-8 h-8 text-purple-500" />
+              <h3 className="text-xl font-semibold text-purple-900">Object Detection</h3>
             </div>
+            <p className="text-purple-700">
+              Precise identification and localization of objects using advanced models.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {activeTab === 'image' ? (
-              <>
-                <div 
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                  onMouseEnter={() => setHoveredCard('object')}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Box className={`w-8 h-8 text-purple-500 transition-transform duration-300 ${
-                      hoveredCard === 'object' ? 'scale-125' : ''
-                    }`} />
-                    <h3 className="text-xl font-semibold text-purple-900">Object Detection</h3>
-                  </div>
-                  <p className="text-purple-700">
-                    Precise identification and localization of objects using state-of-the-art YOLO models.
-                  </p>
-                </div>
-                <div 
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                  onMouseEnter={() => setHoveredCard('segment')}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Layers className={`w-8 h-8 text-purple-500 transition-transform duration-300 ${
-                      hoveredCard === 'segment' ? 'scale-125' : ''
-                    }`} />
-                    <h3 className="text-xl font-semibold text-purple-900">Instance Segmentation</h3>
-                  </div>
-                  <p className="text-purple-700">
-                    Pixel-perfect segmentation for detailed object analysis.
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div 
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                  onMouseEnter={() => setHoveredCard('ner')}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <FileText className={`w-8 h-8 text-purple-500 transition-transform duration-300 ${
-                      hoveredCard === 'ner' ? 'scale-125' : ''
-                    }`} />
-                    <h3 className="text-xl font-semibold text-purple-900">Named Entity Recognition</h3>
-                  </div>
-                  <p className="text-purple-700">
-                    Automatically identify and classify named entities in text.
-                  </p>
-                </div>
-                <div 
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                  onMouseEnter={() => setHoveredCard('sentiment')}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Brain className={`w-8 h-8 text-purple-500 transition-transform duration-300 ${
-                      hoveredCard === 'sentiment' ? 'scale-125' : ''
-                    }`} />
-                    <h3 className="text-xl font-semibold text-purple-900">Sentiment Analysis</h3>
-                  </div>
-                  <p className="text-purple-700">
-                    Analyze text sentiment and emotional content with high accuracy.
-                  </p>
-                </div>
-              </>
-            )}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center gap-3 mb-4">
+              <Layers className="w-8 h-8 text-purple-500" />
+              <h3 className="text-xl font-semibold text-purple-900">Instance Segmentation</h3>
+            </div>
+            <p className="text-purple-700">
+              Pixel-perfect segmentation for detailed object analysis.
+            </p>
           </div>
-        </div>
-      </section>
+        </>
+      ) : (
+        <>
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center gap-3 mb-4">
+              <FileText className="w-8 h-8 text-purple-500" />
+              <h3 className="text-xl font-semibold text-purple-900">Named Entity Recognition</h3>
+            </div>
+            <p className="text-purple-700">
+              Automatically identify and classify named entities in text.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center gap-3 mb-4">
+              <Brain className="w-8 h-8 text-purple-500" />
+              <h3 className="text-xl font-semibold text-purple-900">Sentiment Analysis</h3>
+            </div>
+            <p className="text-purple-700">
+              Analyze text sentiment and emotional content with high accuracy.
+            </p>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+</section>
+
 
       {/* Benefits Section */}
       <section className="py-16 bg-purple-50">

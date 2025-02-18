@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Sparkles, Building2, X } from 'lucide-react';
+import { Check, Globe, Building2, Zap, Rocket } from 'lucide-react';
 
 const PricingModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
@@ -7,108 +7,154 @@ const PricingModal = ({ isOpen, onClose }) => {
   const plans = [
     {
       name: "Free",
-      icon: <Sparkles className="w-5 h-5 text-purple-500" />,
-      description: "Perfect for starters",
+      icon: <Globe className="w-5 h-5 text-purple-600" />,
+      description: "For personal use",
       price: "0",
-      period: "forever",
+      period: "/month",
       features: [
-        "5 Projects",
+        "3 Projects",
         "Basic Analytics",
         "Community Support",
         "1GB Storage",
-        "Basic API Access"
+        "Public API"
       ],
       buttonText: "Get Started",
-      highlighted: false
+      highlighted: false,
+      badge: null
+    },
+    {
+      name: "Basic",
+      icon: <Zap className="w-5 h-5 text-purple-600" />,
+      description: "For small teams",
+      price: "29",
+      period: "/month",
+      features: [
+        "10 Projects",
+        "Advanced Analytics",
+        "Email Support",
+        "10GB Storage",
+        "API Access",
+        "Team Collaboration"
+      ],
+      buttonText: "Start Trial",
+      highlighted: false,
+      badge: null
+    },
+    {
+      name: "Growth",
+      icon: <Rocket className="w-5 h-5 text-purple-600" />,
+      description: "For scaling teams",
+      price: "99",
+      period: "/month",
+      features: [
+        "Unlimited Projects",
+        "Custom Analytics",
+        "Priority Support",
+        "100GB Storage",
+        "Advanced API",
+        "Advanced Security",
+        "Custom Integrations"
+      ],
+      buttonText: "Start Trial",
+      highlighted: true,
+      badge: "POPULAR"
     },
     {
       name: "Enterprise",
-      icon: <Building2 className="w-5 h-5 text-purple-500" />,
-      description: "For growing teams",
+      icon: <Building2 className="w-5 h-5 text-purple-600" />,
+      description: "For organizations",
       price: "Custom",
-      period: "billed annually",
+      period: "",
       features: [
-        "Unlimited Projects",
-        "Advanced Analytics",
-        "Priority Support",
+        "Everything in Growth",
+        "24/7 Premium Support",
         "Unlimited Storage",
-        "Custom Integration"
+        "Custom Solutions",
+        "SLA Guarantee",
+        "Dedicated Account Manager",
+        "On-premise Deployment"
       ],
       buttonText: "Contact Sales",
-      highlighted: true
+      highlighted: false,
+      badge: null
     }
   ];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div 
-        className="bg-white rounded-xl shadow-xl max-w-3xl w-full mx-auto transform transition-all duration-300 scale-95 hover:scale-100"
-        style={{ maxWidth: '800px',
-          
-         }}
-      >
+      <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full mx-auto animate-fadeIn">
         {/* Header */}
-        <div className="relative p-5 text-center">
-          <button 
-            onClick={onClose}
-            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-indigo-400">
-            Choose Your Plan
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">Unlock the perfect features for your needs</p>
+        <div className="p-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-400">Choose Your Plan</h2>
+              <p className="mt-2 text-gray-600">Get started with our flexible pricing options</p>
+            </div>
+            <button 
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-500 transition-colors rounded-full p-2 hover:bg-gray-100"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Plans Grid */}
-        <div className="p-5 grid md:grid-cols-2 gap-4">
+        <div className="px-6 pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {plans.map((plan) => (
-            <div nt
+            <div 
               key={plan.name}
-              className={`relative rounded-lg p-5 transition-all duration-200 ${
+              className={`relative rounded-xl p-5 transition-all duration-200 ${
                 plan.highlighted 
-                  ? 'bg-gradient-to-b from-purple-50 to-white border-2 border-purple-200 shadow-lg' 
-                  : 'bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md'
+                  ? 'border-2 border-indigo-500 shadow-lg bg-gradient-to-b from-indigo-50 to-white' 
+                  : 'border border-gray-200 hover:border-indigo-300 hover:shadow-md'
               }`}
             >
-              {plan.highlighted && (
-                <div className="absolute -top-3 right-4 bg-purple-500 text-white text-xs px-3 py-1 rounded-full">
-                  Popular
-                </div>
+              {plan.badge && (
+                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-full">
+                  {plan.badge}
+                </span>
               )}
-
-              <div className="flex items-center space-x-2">
-                <div className={`p-2 rounded-lg ${plan.highlighted ? 'bg-purple-100' : 'bg-gray-50'}`}>
+              
+              {/* Plan Header */}
+              <div className="flex items-center space-x-3">
+                <div className={`p-2 rounded-lg ${plan.highlighted ? 'bg-white' : 'bg-gray-50'}`}>
                   {plan.icon}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{plan.name}</h3>
-                  <p className="text-xs text-gray-500">{plan.description}</p>
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
               </div>
+              <p className="mt-2 text-sm text-gray-600">{plan.description}</p>
 
+              {/* Pricing */}
               <div className="mt-4 flex items-baseline">
-                <span className="text-3xl font-bold text-gray-900">
-                  {plan.price === "0" ? "Free" : plan.price}
-                </span>
-                <span className="ml-2 text-sm text-gray-500">{plan.period}</span>
+                {plan.price === "Custom" ? (
+                  <span className="text-2xl font-bold text-gray-900">Custom</span>
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-gray-900">${plan.price}</span>
+                    <span className="text-gray-600 ml-1">{plan.period}</span>
+                  </>
+                )}
               </div>
 
-              <ul className="mt-4 space-y-3">
+              {/* Features */}
+              <ul className="mt-5 space-y-3">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center text-sm">
-                    <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                    <span className="text-gray-600">{feature}</span>
+                  <li key={feature} className="flex items-start text-sm">
+                    <Check className="w-4 h-4 text-indigo-600 mt-0.5 shrink-0" />
+                    <span className="ml-3 text-gray-600">{feature}</span>
                   </li>
                 ))}
               </ul>
 
+              {/* Action Button */}
               <button
-                className={`mt-5 w-full py-2 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                className={`mt-6 w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
                   plan.highlighted
-                    ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
+                    : 'bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50'
                 }`}
               >
                 {plan.buttonText}
@@ -117,9 +163,10 @@ const PricingModal = ({ isOpen, onClose }) => {
           ))}
         </div>
 
-        <div className="p-4 text-center border-t border-gray-100">
-          <p className="text-xs text-gray-500">
-            Questions? Contact our sales team for help
+        {/* Footer */}
+        <div className="p-4 bg-gray-50 rounded-b-xl border-t border-gray-200">
+          <p className="text-center text-gray-600 text-sm">
+            All plans include automatic platform updates and basic customer support
           </p>
         </div>
       </div>

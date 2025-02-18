@@ -29,7 +29,7 @@ const FileContentDisplay = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedText, setSelectedText] = useState("");
   const { projectName } = useParams();
-
+   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
@@ -566,12 +566,14 @@ const FileContentDisplay = () => {
     handleExitProject();
   };
   return (
-    <div className="flex flex-col h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-      <Navbar /> {/* Add Navbar */}
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar /> {/* Add Sidebar */}
+
+    <div className="flex flex-col h-screen bg-white dark:bg-gray-900">
+        
+              <Sidebar/>
+              <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}>
+              <Navbar />
         <div
-          className={`flex-grow p-8 bg-gradient-to-r bg-gray-100 overflow-y-auto custom-scrollbar ${
+          className={`flex-grow h-screen p-8 bg-gradient-to-r bg-gray-100 overflow-y-auto custom-scrollbar ${
             isDarkMode ? "bg-gray-900" : ""
           }`}
         >
