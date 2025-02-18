@@ -18,6 +18,11 @@ import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { X } from "lucide-react";
 import ExportModal from "../../../export_pages/export_modal.jsx";
 import { USER_TYPE } from "../../../Main home/user-type.js";
+import { Sidebar } from "./ImageSidebar.jsx";
+import HomePage from "../../../pages/Hero";
+import ProjectsPage from "../../../pages/Projects.jsx";
+import OrganizationsPage from "../../../pages/Organisation.jsx";
+import { Profile } from "../../../pages/Profile.jsx";
 
 function Main({ set_analysis_page }) {
   const {
@@ -34,6 +39,9 @@ function Main({ set_analysis_page }) {
     setCurrentIndex,
     project_name,
   } = useStore();
+
+  const [activeTab, setActiveTab] = useState("Workspace");
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { isDarkMode } = useTheme();
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
@@ -250,264 +258,298 @@ function Main({ set_analysis_page }) {
     };
   }, [handleNext, handlePrev]);
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case "home":
+        return <HomePage isCollapsed={isCollapsed} />;
+      case "profile":
+        return <Profile />;
+      case "organizations":
+        return <OrganizationsPage />;
+      case "projects":
+        return <ProjectsPage />;
+      case "Workspace":
+        return;  
+      default:
+        return <ProjectsPage />;
+    }
+  };
+
+  const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+
   return (
-    <>
-      <ImageNavbar />
-      <div
-        className={`select-none w-full h-[95vh] flex justify-center items-center overflow-hidden ${
-          isDarkMode ? "bg-black" : "bg-white"
-        }`}
-      >
-        {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
-        {exportModal && (
-          <ExportModal
-            setExportModal={setExportModal}
-            projectName={project_name}
-          />
-        )}
-        {imageSrc.length > 0 ? (
-          <div className="flex w-full h-full">
-            <div
-              className={`w-[20vw] h-screen py-6 pt-10 px-[20px] shadow-sm ${
-                isDarkMode ? "bg-slate-800" : "bg-white"
-              }`}
-            >
-              <AnnotationsLabels
-                currentImage={currentImage}
-                classes={classes}
-                setExportModal={setExportModal}
-              />
-            </div>
-            <div
-              className={`w-[80vw] h-full flex-col ${
-                isDarkMode ? "bg-slate-900" : "bg-slate-50"
-              }`}
-            >
-              <div className="w-full h-full ">
-                <div
-                  className={`fixed top-[75px] right-0 z-50 transition-transform duration-300 ease-in-out ${
-                    showImages ? "translate-x-0" : "translate-x-full"
-                  }`}
-                >
-                  <aside
-                    className={`w-[300px] h-[calc(100vh-75px)] ${
-                      isDarkMode ? "bg-gray-800" : "bg-white"
-                    } shadow-xl`}
+    <div className="flex flex-row h-screen w-full overflow-hidden">
+      <div className={`${sidebarWidth} transition-all duration-300 h-screen`}>
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+        />
+      </div>
+      
+      <div className="flex flex-col flex-1 h-screen overflow-hidden">
+        <div className="h-16">
+          <ImageNavbar />
+        </div>
+        {renderContent()}
+        
+        <div
+          className={`flex-1 flex justify-center items-center overflow-hidden ${
+            isDarkMode ? "bg-black" : "bg-white"
+          }`}
+        >
+          {isModalOpen && <Modal classes={classes} cl={cl} setcl={setcl} />}
+          {exportModal && (
+            <ExportModal
+              setExportModal={setExportModal}
+              projectName={project_name}
+            />
+          )}
+          {imageSrc.length > 0 ? (
+            <div className="flex w-full h-full">
+              <div
+                className={`w-1/5 h-full py-6 pt-10 px-4 shadow-sm overflow-y-auto ${
+                  isDarkMode ? "bg-slate-800" : "bg-white"
+                }`}
+              >
+                <AnnotationsLabels
+                  currentImage={currentImage}
+                  classes={classes}
+                  setExportModal={setExportModal}
+                />
+              </div>
+              <div
+                className={`w-4/5 h-full flex flex-col ${
+                  isDarkMode ? "bg-slate-900" : "bg-slate-50"
+                }`}
+              >
+                <div className="w-full h-full flex flex-col">
+                  <div
+                    className={`fixed top-[64px] right-0 z-50 transition-transform duration-300 ease-in-out ${
+                      showImages ? "translate-x-0" : "translate-x-full"
+                    }`}
                   >
-                    <button
-                      onClick={() => setShowImages(false)}
-                      className={`absolute top-4 right-2 p-1.5 rounded-lg ${
-                        isDarkMode
-                          ? "bg-gray-700 hover:bg-gray-600"
-                          : "bg-gray-200 hover:bg-gray-300"
-                      } transition-colors duration-200 z-40`}
-                      aria-label="Close sidebar"
+                    <aside
+                      className={`w-[300px] h-[calc(100vh-64px)] ${
+                        isDarkMode ? "bg-gray-800" : "bg-white"
+                      } shadow-xl`}
                     >
-                      <X
-                        className={`w-5 h-5 ${
-                          isDarkMode ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      />
-                    </button>
+                      <button
+                        onClick={() => setShowImages(false)}
+                        className={`absolute top-4 right-2 p-1.5 rounded-lg ${
+                          isDarkMode
+                            ? "bg-gray-700 hover:bg-gray-600"
+                            : "bg-gray-200 hover:bg-gray-300"
+                        } transition-colors duration-200 z-40`}
+                        aria-label="Close sidebar"
+                      >
+                        <X
+                          className={`w-5 h-5 ${
+                            isDarkMode ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        />
+                      </button>
 
-                    <div className="w-full h-full overflow-y-auto image_scrollbar">
-                      <div className="p-4 pt-16 space-y-3">
-                        {imageSrc.map((item, index) => (
-                          <div
-                            key={item.id}
-                            ref={
-                              index === currentIndex
-                                ? (el) => {
-                                    if (el && showImages) {
-                                      el.scrollIntoView({
-                                        behavior: "auto",
-                                        block: "center",
-                                      });
-                                    }
-                                  }
-                                : null
-                            }
-                            className={`group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg ${
-                              isDarkMode
-                                ? "bg-gray-700 hover:bg-gray-600"
-                                : "bg-gray-100 hover:bg-gray-200"
-                            } transition-colors duration-200`}
-                            onClick={() => {
-                              setCurrentIndex(index);
-                              setcurrent(imageSrc[index].src);
-                            }}
-                          >
-                            <span
-                              className={`absolute top-4 left-4 min-w-[24px] h-6 flex items-center justify-center rounded-full ${
-                                isDarkMode
-                                  ? "bg-gray-700 text-gray-300"
-                                  : "bg-gray-100 text-gray-600"
-                              } text-sm font-medium z-10`}
-                            >
-                              {index + 1}
-                            </span>
-
+                      <div className="w-full h-full overflow-y-auto image_scrollbar">
+                        <div className="p-4 pt-16 space-y-3">
+                          {imageSrc.map((item, index) => (
                             <div
-                              className="w-full h-48"
+                              key={item.id}
+                              ref={
+                                index === currentIndex
+                                  ? (el) => {
+                                      if (el && showImages) {
+                                        el.scrollIntoView({
+                                          behavior: "auto",
+                                          block: "center",
+                                        });
+                                      }
+                                    }
+                                  : null
+                              }
+                              className={`group cursor-pointer relative flex items-center gap-3 p-2 rounded-lg ${
+                                isDarkMode
+                                  ? "bg-gray-700 hover:bg-gray-600"
+                                  : "bg-gray-100 hover:bg-gray-200"
+                              } transition-colors duration-200`}
                               onClick={() => {
                                 setCurrentIndex(index);
                                 setcurrent(imageSrc[index].src);
                               }}
                             >
-                              <img
-                                src={item.src}
-                                alt={`Image ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </aside>
-                </div>
-                <div className="w-full h-[8vh] flex items-center justify-between pl-5 ">
-                  <button
-                    onClick={() => set_analysis_page(true)}
-                    className={`
-     px-4 py-2 rounded-lg transition-all duration-300 
-     flex items-center gap-2
-     ${
-       isDarkMode
-         ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-         : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-     }
-   `}
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                    <span className="font-medium">Back</span>
-                  </button>
+                              <span
+                                className={`absolute top-4 left-4 min-w-[24px] h-6 flex items-center justify-center rounded-full ${
+                                  isDarkMode
+                                    ? "bg-gray-700 text-gray-300"
+                                    : "bg-gray-100 text-gray-600"
+                                } text-sm font-medium z-10`}
+                              >
+                                {index + 1}
+                              </span>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-600">
-                      Annotated: {annotatedCount}
-                    </span>
-                    {istrainedd ? (
-                      <span className="text-sm text-green-600">
-                        Model Trained
-                      </span>
-                    ) : (
-                      <>
-                        {isProcessing ? (
-                          <span className="text-sm text-blue-600">
-                            Processing batch with YOLO...
-                          </span>
-                        ) : (
-                          <span className="text-sm text-green-600">Idle</span>
-                        )}
-                      </>
-                    )}
+                              <div
+                                className="w-full h-48"
+                                onClick={() => {
+                                  setCurrentIndex(index);
+                                  setcurrent(imageSrc[index].src);
+                                }}
+                              >
+                                <img
+                                  src={item.src}
+                                  alt={`Image ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </aside>
                   </div>
-                  <button
-                    className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${
-                      isDarkMode
-                        ? "bg-gray-700 text-gray-200 hover:bg-gray-600 shadow-sm shadow-gray-600"
-                        : "bg-blue-100 text-blue-800 hover:bg-blue-200 shadow-md shadow-purple-300"
-                    }`}
+                  <div className="h-[8vh] flex items-center justify-between px-5">
+                    <button
+                      onClick={() => set_analysis_page(true)}
+                      className={`
+       px-4 py-2 rounded-lg transition-all duration-300 
+       flex items-center gap-2
+       ${
+         isDarkMode
+           ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+           : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+       }
+     `}
+                    >
+                      <ArrowLeft className="w-5 h-5" />
+                      <span className="font-medium">Back</span>
+                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">
+                        Annotated: {annotatedCount}
+                      </span>
+                      {istrainedd ? (
+                        <span className="text-sm text-green-600">
+                          Model Trained
+                        </span>
+                      ) : (
+                        <>
+                          {isProcessing ? (
+                            <span className="text-sm text-blue-600">
+                              Processing batch with YOLO...
+                            </span>
+                          ) : (
+                            <span className="text-sm text-green-600">Idle</span>
+                          )}
+                        </>
+                      )}
+                    </div>
+                    <button
+                      className={`flex items-center justify-center w-10 h-10 rounded-l-lg transition-colors duration-200 ${
+                        isDarkMode
+                          ? "bg-gray-700 text-gray-200 hover:bg-gray-600 shadow-sm shadow-gray-600"
+                          : "bg-blue-100 text-blue-800 hover:bg-blue-200 shadow-md shadow-purple-300"
+                      }`}
+                      onClick={() => {
+                        setShowImages(true);
+                      }}
+                    >
+                      <PanelLeftClose className="w-6 h-6 " />
+                    </button>
+                  </div>
+                  <div
+                    className="flex-1 gap-4 flex justify-center items-center animate-scaleUp overflow-hidden"
                     onClick={() => {
-                      setShowImages(true);
+                      setShowImages(false);
                     }}
                   >
-                    <PanelLeftClose className="w-6 h-6 " />
-                  </button>
-                </div>
-                <div
-                  className="h-[67.9%] gap-4 flex justify-center items-center animate-scaleUp "
-                  onClick={() => {
-                    setShowImages(false);
-                  }}
-                >
-                  <Stages
-                    imageSrc={imageSrc.find((img) => img.src === current)}
-                    action={action}
-                    images={imageSrc}
-                    current={current}
-                    cl={cl}
-                    setcl={setcl}
-                    submit={submit}
-                    isProcessing={isProcessing}
-                    setIsProcessing={setIsProcessing}
-                    annotatedCount={annotatedCount}
-                    setAnnotatedCount={setAnnotatedCount}
-                  />
-                  <div>
-                    <Options
-                      setAction={setAction}
+                    <Stages
+                      imageSrc={imageSrc.find((img) => img.src === current)}
                       action={action}
+                      images={imageSrc}
+                      current={current}
+                      cl={cl}
+                      setcl={setcl}
                       submit={submit}
+                      isProcessing={isProcessing}
+                      setIsProcessing={setIsProcessing}
+                      annotatedCount={annotatedCount}
+                      setAnnotatedCount={setAnnotatedCount}
                     />
-                  </div>
-                </div>
-                <div
-                  className="flex justify-center items-center p-6"
-                  onClick={() => {
-                    setShowImages(false);
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    <button
-                      className={`p-3 rounded-lg transition-all duration-200 hover:scale-102 ${
-                        isDarkMode
-                          ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                      }`}
-                      onClick={handlePrev}
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-
-                    <div className="flex items-center">
-                      <input
-                        type="text"
-                        className={`w-12 h-10 px-2 text-center font-medium rounded-l-lg focus:outline-none ${
-                          isDarkMode
-                            ? "bg-gray-800 text-white border-r border-gray-700"
-                            : "bg-gray-100 text-gray-900 border-r border-gray-200"
-                        }`}
-                        value={currentIndex + 1}
-                        onChange={handleInputChange}
-                        min={1}
-                        max={imageSrc.length}
-                        aria-label="Current image number"
+                    <div>
+                      <Options
+                        setAction={setAction}
+                        action={action}
+                        submit={submit}
                       />
-                      <div
-                        className={`h-10 px-3 flex items-center font-medium rounded-r-lg ${
-                          isDarkMode
-                            ? "bg-gray-800 text-gray-400"
-                            : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {imageSrc.length}
-                      </div>
                     </div>
+                  </div>
+                  <div
+                    className="h-[10vh] flex justify-center items-center p-4"
+                    onClick={() => {
+                      setShowImages(false);
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <button
+                        className={`p-3 rounded-lg transition-all duration-200 hover:scale-102 ${
+                          isDarkMode
+                            ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        }`}
+                        onClick={handlePrev}
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
 
-                    <button
-                      className={`p-3 rounded-lg transition-all duration-200 hover:scale-102  ${
-                        isDarkMode
-                          ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                      }`}
-                      onClick={handleNext}
-                      aria-label="Next image"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
+                      <div className="flex items-center">
+                        <input
+                          type="text"
+                          className={`w-12 h-10 px-2 text-center font-medium rounded-l-lg focus:outline-none ${
+                            isDarkMode
+                              ? "bg-gray-800 text-white border-r border-gray-700"
+                              : "bg-gray-100 text-gray-900 border-r border-gray-200"
+                          }`}
+                          value={currentIndex + 1}
+                          onChange={handleInputChange}
+                          min={1}
+                          max={imageSrc.length}
+                          aria-label="Current image number"
+                        />
+                        <div
+                          className={`h-10 px-3 flex items-center font-medium rounded-r-lg ${
+                            isDarkMode
+                              ? "bg-gray-800 text-gray-400"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {imageSrc.length}
+                        </div>
+                      </div>
+
+                      <button
+                        className={`p-3 rounded-lg transition-all duration-200 hover:scale-102  ${
+                          isDarkMode
+                            ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        }`}
+                        onClick={handleNext}
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div>Loading...</div>
-        )}
+          ) : (
+            <div>Loading...</div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

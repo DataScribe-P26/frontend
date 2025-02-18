@@ -42,9 +42,11 @@ function Modal({ classes, setcl }) {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex items-center justify-start bg-black/30 w-full h-full pl-12 "
-      onClick={handleBackgroundClick} // Click event for outside the modal
-    >
+    className="fixed inset-0 z-10 flex items-center justify-start bg-black/30 w-full h-full pl-60"
+    onClick={handleBackgroundClick} // Click event for outside the modal
+  >
+  
+  
       <div
         className="bg-white rounded-lg p-6 w-3/4 max-w-md h-auto relative pt-14"
         onClick={handleModalClick} // Prevent click event from closing modal

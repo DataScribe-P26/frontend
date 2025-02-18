@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
+import { Search, Bell, HelpCircle, Sun, Moon, LogOut,DollarSign } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useTheme } from "../text_pages/Text/ThemeContext";
 import HelpModalImg from "../text_pages/Text/HelpModalImg";
-import { useAuth } from '../login/AuthContext';
-
-const ImageNavbar = () => {
+import { useAuth } from "../login/AuthContext";
+const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -38,7 +37,7 @@ const ImageNavbar = () => {
     <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Left side: Logo and Title */}
       <Link to="/home" className="flex items-center gap-3">
-        
+
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
           Welcome {displayName}
         </h1>
@@ -59,6 +58,7 @@ const ImageNavbar = () => {
           )}
         </button>
 
+     
         {/* Help Icon with Tooltip */}
         <div className="relative">
           <HelpCircle
@@ -127,4 +127,4 @@ const ImageNavbar = () => {
   );
 };
 
-export default ImageNavbar;
+export default Navbar;

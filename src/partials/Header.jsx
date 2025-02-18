@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
+import { Search, Bell, HelpCircle, Sun, Moon, LogOut ,DollarSign} from "lucide-react";
 import { useAuth } from '../login/AuthContext';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'; // For making HTTP requests
@@ -108,6 +108,7 @@ export const TopBar = ({ title }) => {
  
       {/* Right-Side Icons & User Profile */}
       <div className="flex items-center gap-6">
+       
         {/* Theme Toggle */}
         <div className="flex items-center space-x-4">
           <button
@@ -121,6 +122,17 @@ export const TopBar = ({ title }) => {
               <Moon className="text-gray-400" size={20} />
             )}
           </button>
+        </div>
+
+           {/* Pricing Icon */}
+           <div className="flex items-center space-x-4">
+           <button
+          onClick={() => setShowPricingModal(true)}
+          className="p-2 rounded-lg dark:hover:bg-gray-800 transition-colors duration-200"
+          aria-label="Open Pricing"
+        >
+          <DollarSign className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20}/>
+        </button>
         </div>
  
         {/* Help Icon with Tooltip */}

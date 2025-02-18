@@ -4,7 +4,7 @@ import useStore from "../../../Zustand/Alldata";
 import { useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
 import { Bar } from "react-chartjs-2";
-import ImageNavbar from "../../ImageNavbar.jsx";
+import Navbar from "../../ImageNavbar.jsx";
 import { useTheme } from "../../../text_pages/Text/ThemeContext.jsx";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { USER_TYPE } from "../../../Main home/user-type.js";
@@ -323,7 +323,7 @@ function Analysis({ set_analysis_page }) {
                  setIsCollapsed={setIsCollapsed}
                />
     <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}>
-      <ImageNavbar />
+      <Navbar />
       {renderContent()}
  
   
@@ -537,11 +537,7 @@ function Analysis({ set_analysis_page }) {
       </div>
       </div>
       </div>
-      <main
-          className={`container mx-auto transition-all duration-300 dark:bg-gray-900 dark:text-gray-100 p-8`}
-        >
-          {renderContent()}
-        </main>
+   
  
     </>
   );

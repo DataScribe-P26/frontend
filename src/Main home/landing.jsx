@@ -7,6 +7,7 @@ import {
   Box, Layers, ArrowRight, Mouse, Code,
   PieChart, GitBranch, Upload, Download
 } from 'lucide-react';
+import PricingModal from '../partials/PricingModal';
 
 const LandingPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -15,6 +16,7 @@ const LandingPage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -119,8 +121,12 @@ const LandingPage = () => {
             <h1 className="text-2xl font-bold px-4 py-2 text-purple-900 ml-2">Datascribe.ai</h1>
             </div>
           <div className="hidden md:flex space-x-6">
-            <a href="#features" className= "px-4 py-2 text-purple-600 hover:text-purple-900 transition-colors">Features</a>
+            <a href="#features" className= "px-4 py-2 text-purple-600 hover:text-purple-900 transition-colors"
+            >Features</a>
             <a href="#models" className=" px-4 py-2 text-purple-600 hover:text-purple-900 transition-colors">Models</a>
+            <a href="#models" className=" px-4 py-2 text-purple-600 hover:text-purple-900 transition-colors"
+            onClick={() => setIsModalOpen(true)}>Pricing  </a>
+            
             <a href="#contact" className="px-4 py-2 text-purple-600 hover:text-purple-900 transition-colors">Contact</a>
             <Link to="/register" className="flex items-center">
             <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all hover:scale-105">
@@ -129,7 +135,9 @@ const LandingPage = () => {
             </Link>
             
           </div>
+        
         </div>
+        
       </nav>
 
       {/* Enhanced Hero Section */}
@@ -409,6 +417,7 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+      <PricingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

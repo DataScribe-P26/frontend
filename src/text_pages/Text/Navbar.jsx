@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Bell, HelpCircle, Sun, Moon, LogOut } from "lucide-react";
+import { Search, Bell, HelpCircle, Sun, Moon, LogOut,DollarSign } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useTheme } from "../Text/ThemeContext";
@@ -58,6 +58,8 @@ const Navbar = () => {
             <Moon className="text-gray-400" size={20} />
           )}
         </button>
+
+         
 
         {/* Help Icon with Tooltip */}
         <div className="relative">
