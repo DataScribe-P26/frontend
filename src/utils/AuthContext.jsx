@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isPublicRoute = (path) => {
-    const publicRoutes = ['/', '/login', '/register'];
+    const publicRoutes = ['/', '/login', '/register','/price'];
     return publicRoutes.includes(path);
   };
 

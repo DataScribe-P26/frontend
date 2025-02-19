@@ -76,25 +76,51 @@ export const TopBar = ({ title }) => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`/api/invitations/${user?.email}`, {
+      console.log('tututututu')
+      const response = await axios.get(`http://127.0.0.1:8000/notification`, {
+        params: { email: user?.email },
         headers: {
           'Authorization': `Bearer ${user?.token}`, // Pass token if required
         }
       });
+      console.log(response.data);
       // Ensure the response is an array
-      setNotifications(Array.isArray(response.data) ? response.data : []);
+      const notificationsArray = response.data.notifications || []; // Default to an empty array if notifications is undefined
+      setNotifications(notificationsArray);
+      console.log(notificationsArray);
     } catch (error) {
       console.error('Error fetching invitations:', error);
       setNotifications([]); // Fallback to empty array in case of error
     }
   };
- 
- 
-  // Call fetchNotifications when notification icon is clicked
-  useEffect(() => {
-    if (showNotifications) {
-      fetchNotifications();
+  // Handle responding to an invitation
+  const respondToInvitation = async (notificationId, action) => {
+    try {
+      console.log(notificationId," ",action)
+      const response = await axios.post(
+        `http://127.0.0.1:8000/notifications/respond`,
+        { notification_id: notificationId, action },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`, // Pass token if required
+          },
+        }
+      );
+
+      console.log(response.data.message);
+
+      // Update the notifications list after responding
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notif) => notif._id !== notificationId)
+      );
+    } catch (error) {
+      console.error("Error responding to invitation:", error);
     }
+  };
+ 
+  // Call fetchNotifications
+  useEffect(() => {
+      fetchNotifications();
   }, [showNotifications]);
  
   return (
@@ -168,15 +194,43 @@ export const TopBar = ({ title }) => {
             size={20}
             onClick={toggleNotifications}
           />
+          {/* Badge for notification count */}
+          {notifications.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full h-3 w-3 flex items-center justify-center">
+              {notifications.length}
+            </span>
+          )}
+          {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute top-[120%] right-0 z-50 bg-white dark:bg-gray-800 text-sm rounded-lg shadow-lg p-4 w-64">
+            <div className="absolute top-[120%] right-0 z-50 bg-white dark:bg-gray-800 text-sm rounded-lg shadow-lg p-4 w-72">
               <h3 className="font-semibold text-lg mb-2 text-purple-400">Invitations</h3>
               {notifications.length > 0 ? (
-                <ul className="list-disc pl-5 space-y-1">
-                  {notifications.map((notif) => (
-                    <li key={notif.org_id} className="text-gray-700 dark:text-gray-300">
-                      {`You have an invitation to join ${notif.invite_type}: ${notif.org_id} as a ${notif.role}`}
-                    </li>
+                <ul className="list-none space-y-4">
+                  {notifications.map((notif, index) => (
+                    <React.Fragment key={notif._id}>
+                      <li className="flex flex-col text-gray-700 dark:text-gray-300">
+                        <p>
+                          {`You have an invitation to join organization "${notif.org_name}" as a ${notif.role}`}
+                        </p>
+                        <div className="mt-2 flex justify-end gap-2">
+                          <button
+                            className="px-2 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                            onClick={() => respondToInvitation(notif._id, "Accept")}
+                          >
+                            Accept
+                          </button>
+                          <button
+                            className="px-2 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+                            onClick={() => respondToInvitation(notif._id, "Reject")}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </li>
+                      {index < notifications.length - 1 && (
+                        <hr className="border-t border-gray-300 dark:border-gray-600 my-2" />
+                      )}
+                    </React.Fragment>
                   ))}
                 </ul>
               ) : (

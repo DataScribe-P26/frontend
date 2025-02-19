@@ -106,7 +106,7 @@ const LabelManager = () => {
   {/* Dynamic width adjustment */}
   <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? "ml-64 w-[calc(100%-16rem)]" : "ml-16 w-[calc(100%-4rem)]"}`}>
     <Navbar />
-    <div className="flex items-center p-4">
+    <div className={`flex items-center p-4 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
       
       <h1 className="text-3xl font-bold ml-4">Label Manager</h1>
     </div>
@@ -124,9 +124,9 @@ const LabelManager = () => {
 
       {labels.length > 0 ? (
         <div className="overflow-auto h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-          <table className="min-w-full border border-gray-300 text-sm text-left bg-white shadow-md rounded-lg">
+          <table className="min-w-full border border-gray-700 text-sm text-left bg-white shadow-md rounded-lg">
             <thead>
-              <tr className="bg-gray-100">
+              <tr className={`bg-gray-100  ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
                 <th className="p-2 border-b text-center">Name</th>
                 <th className="p-2 border-b text-center">Color</th>
                 <th className="p-2 border-b text-center"></th>
@@ -134,7 +134,7 @@ const LabelManager = () => {
             </thead>
             <tbody>
               {labels.map((label, index) => (
-                <tr key={index} className="border-b border-gray-300">
+                <tr key={index} className={`border-b border-gray-700 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} `}>
                   <td className="p-2 text-center">{label.name}</td>
                   <td className="p-2 text-center">
                     <div className="flex justify-center items-center">

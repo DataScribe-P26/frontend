@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useAuth } from "../utils/AuthContext";
+import { useAuth } from "../login/AuthContext";
 import api from "../utils/api";
 import NeonCursor from "./Neon";
 import { GoogleLogin } from "@react-oauth/google";

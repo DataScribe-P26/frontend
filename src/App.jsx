@@ -21,6 +21,7 @@ import CreateOrgProject from "./image_pages/Projects section/CreateOrgProject.js
 import AddMembers from "./image_pages/Projects section/AddMembers.jsx";
 import Dashboard from "./image_pages/Projects section/Dashboard.jsx";
 import LandingPage from "../src/Main home/landing.jsx"
+import PricingPage from "./partials/PricingPage.jsx";
 function App() {
   return (
     <AuthProvider>
@@ -28,9 +29,12 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/price" element={ <PricingPage /> } />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-
+          
+          
+         
           {/* Protected Routes */}
           <Route
             path="/home"
@@ -40,6 +44,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
           <Route path="/create-project" element={<ProjectCreationPage />} />
 
           <Route path="/add-members" element={<AddMembers />} />
