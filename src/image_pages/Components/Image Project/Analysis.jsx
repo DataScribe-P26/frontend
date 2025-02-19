@@ -326,7 +326,7 @@ function Analysis({ set_analysis_page }) {
     {renderContent()}
 
     <div
-      className={`w-full h-screen overflow-y-auto image_scrollbar px-8 py-6 ${
+      className={`w-full h-screen overflow-y-auto image_scrollbar px-8 py-4 ${
         isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
@@ -351,7 +351,7 @@ function Analysis({ set_analysis_page }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Class Statistics */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-          <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-1 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
               <h2 className="text-xl font-semibold">Class Statistics</h2>
               <div className="relative group ml-2">
@@ -452,9 +452,9 @@ function Analysis({ set_analysis_page }) {
           </div>
 
           {/* Upload Section FIRST followed by Auto Annotation Section - Horizontal Layout */}
-          <div className="grid grid-cols-5 gap-6">
+          <div className="grid grid-cols-5 gap-6 ">
             {/* Upload Section - FIRST (3 columns) */}
-            <div className="col-span-3 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+            <div className="col-span-3  bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden ">
               
               <div className="p-4">
                 {loading ? (
@@ -473,7 +473,7 @@ function Analysis({ set_analysis_page }) {
 
             {/* Auto Annotation - SECOND (2 columns) */}
             <div className="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-              <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-medium">Auto Annotation</h2>
                   <button
