@@ -372,7 +372,7 @@ function Analysis({ set_analysis_page }) {
             {sorted_class.length > 0 ? (
               <div className="w-full">
                 <Bar data={chartData} options={chartOptions} />
-                <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow">
+                <div className="mt-4 p-4 text-gray-500 bg-gray-100 rounded-lg shadow dark:bg-gray-700 dark:text-white">
                   <h4 className="flex items-center font-semibold mb-2 group relative">
                     Class Insights
                     <HiOutlineQuestionMarkCircle className="ml-2 cursor-pointer" />

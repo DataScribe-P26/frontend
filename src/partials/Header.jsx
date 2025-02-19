@@ -150,16 +150,7 @@ export const TopBar = ({ title }) => {
           </button>
         </div>
 
-           {/* Pricing Icon */}
-           <div className="flex items-center space-x-4">
-           <button
-          onClick={() => setShowPricingModal(true)}
-          className="p-2 rounded-lg dark:hover:bg-gray-800 transition-colors duration-200"
-          aria-label="Open Pricing"
-        >
-          <DollarSign className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20}/>
-        </button>
-        </div>
+          
  
         {/* Help Icon with Tooltip */}
         <div className="relative">
