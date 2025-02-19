@@ -6,7 +6,7 @@ import { useAuth } from "../../login/AuthContext";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import Navbar from "../../text_pages/Text/Navbar";
-import { UserPlus, Layout, Users, Settings, FolderPlus, Home } from "lucide-react";
+import { UserPlus, Layout, Users, Settings, FolderPlus, Home,Menu } from "lucide-react";
 import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings,FiTrash2  } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "./CreateOrgProject";
@@ -26,10 +26,8 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [organizationMembers, setOrganizationMembers] = useState([]);
   var storedOrgName='';
-
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   // Add new state for organization details
   const [orgDetails, setOrgDetails] = useState({
     name: '',
@@ -37,6 +35,10 @@ const Dashboard = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [originalOrgDetails, setOriginalOrgDetails] = useState({});
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   // Add useEffect to fetch organization details
   useEffect(() => {
@@ -549,88 +551,123 @@ const dropdownStyles = {
   };
 
   return (
-    <div className={`h-screen flex flex-col  ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
-
-      <div className="flex flex-1 ">
-        <div className={`w-64 border-r border-gray-100 ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} bg-opacity-90 shadow-lg`}>
-
-          <div className="p-6 mb-2 ">
-          <Link to="/home" className="flex items-center gap-3 mb-10">
-                 <div className="flex items-center">
-                   <HiAnnotation
-                     className={"text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110"
-                     }
-                   />
-
-                     <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-                       Datascribe.ai
-                     </h1>
-
-                 </div>
-                 </Link>
-            <nav className="space-y-4">
-              <button
-                className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
-                  activeSection === "dashboard"
-                    ? "bg-purple-600 text-white"
-                    : "hover:bg-purple-200 dark:hover:bg-gray-700"
-                }`}
-                onClick={() => setActiveSection("dashboard")}
-              >
-                <Home size={20} />
-                <span>Dashboard</span>
-              </button>
-
-              <button
-                className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
-                  activeSection === "projects"
-                    ? "bg-purple-600 text-white"
-                    : "hover:bg-purple-200 dark:hover:bg-gray-700"
-                }`}
-                onClick={() => setActiveSection("projects")}
-              >
-                <Layout size={20} />
-                <span>Projects</span>
-              </button>
-
-              <button
-                className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
-                  activeSection === "members"
-                    ? "bg-purple-600 text-white"
-                    : "hover:bg-purple-200 dark:hover:bg-gray-700"
-                }`}
-                onClick={() => setActiveSection("members")}
-              >
-
-
-                <Users size={20} />
-                <span>Members</span>
-              </button>
-
-              <button
-                className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
-                  activeSection === "Org settings"
-                    ? "bg-purple-600 text-white"
-                    : "hover:bg-purple-200 dark:hover:bg-gray-700"
-                }`}
-                onClick={() => {
-                  setActiveSection("Org settings"); // Set active section
-
-                }}
-              >
-                <Layout size={20} />
-                <span>Org Settings</span>
-              </button>
-            </nav>
+    <div className={`h-screen flex flex-col ${isDarkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-800"}`}>
+    <div className="flex flex-1">
+      {/* Sidebar */}
+      <div 
+        className={`transition-all duration-300 ease-in-out border-r border-gray-100 ${
+          isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
+        } bg-opacity-90 shadow-lg ${
+          isSidebarCollapsed ? "w-20" : "w-64"
+        }`}
+      >
+        <div className={`p-4 ${isSidebarCollapsed ? "items-center" : "p-6"} mb-2`}>
+        <div className={`flex items-center mb-6 ${isSidebarCollapsed ? "flex-col" : "justify-between"}`}>
+                <Link to="/home" className="flex items-center gap-3">
+                <div className="flex items-center">
+                  <HiAnnotation
+                    className={`text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110 ${
+                      isSidebarCollapsed ? "mb-2" : "mr-2"
+                    }`}
+                  />
+                  {!isSidebarCollapsed && (
+                    <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+                      Datascribe.ai
+                    </h1>
+                  )}
+                </div>
+                </Link>
+            
+            <button 
+              onClick={toggleSidebar}
+              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
+              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? (
+                <Menu size={20} />
+              ) : (
+                <Menu size={20} />
+              )}
+            </button>
           </div>
-        </div>
 
-        <div className="flex-1">
-        <Navbar />
-          <main className="p-6">{renderContent()}</main>
+          <nav className="space-y-4">
+            <button
+              className={`flex items-center ${
+                isSidebarCollapsed ? "justify-center" : "space-x-3"
+              } w-full p-3 rounded-lg transition-colors ${
+                activeSection === "dashboard"
+                  ? "bg-purple-600 text-white"
+                  : "hover:bg-purple-200 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveSection("dashboard")}
+              title="Dashboard"
+            >
+              <Home size={20} />
+              {!isSidebarCollapsed && <span>Dashboard</span>}
+            </button>
+
+            <button
+              className={`flex items-center ${
+                isSidebarCollapsed ? "justify-center" : "space-x-3"
+              } w-full p-3 rounded-lg transition-colors ${
+                activeSection === "projects"
+                  ? "bg-purple-600 text-white"
+                  : "hover:bg-purple-200 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveSection("projects")}
+              title="Projects"
+            >
+              <Layout size={20} />
+              {!isSidebarCollapsed && <span>Projects</span>}
+            </button>
+
+            <button
+              className={`flex items-center ${
+                isSidebarCollapsed ? "justify-center" : "space-x-3"
+              } w-full p-3 rounded-lg transition-colors ${
+                activeSection === "members"
+                  ? "bg-purple-600 text-white"
+                  : "hover:bg-purple-200 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveSection("members")}
+              title="Members"
+            >
+              <Users size={20} />
+              {!isSidebarCollapsed && <span>Members</span>}
+            </button>
+
+            <button
+              className={`flex items-center ${
+                isSidebarCollapsed ? "justify-center" : "space-x-3"
+              } w-full p-3 rounded-lg transition-colors ${
+                activeSection === "Org settings"
+                  ? "bg-purple-600 text-white"
+                  : "hover:bg-purple-200 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveSection("Org settings")}
+              title="Organization Settings"
+            >
+              <Settings size={20} />
+              {!isSidebarCollapsed && <span>Org Settings</span>}
+            </button>
+          </nav>
         </div>
       </div>
+
+      {/* Main content */}
+      <div className="flex-1">
+        <Navbar />
+        <main 
+          className={`p-6 transition-all duration-300 ${
+            isSidebarCollapsed ? "ml-0" : "ml-0"
+          }`}
+        >
+          {renderContent()}
+        </main>
+      </div>
     </div>
+  </div>
   );
 };
 

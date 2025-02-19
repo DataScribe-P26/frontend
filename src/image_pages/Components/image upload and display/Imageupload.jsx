@@ -144,8 +144,8 @@ function ImageUpload({ projectName, loading, setloading }) {
   } else {
     return (
       <>
-        <div className="bg-gray-100 p-8 rounded-xl shadow-md  flex flex-col items-center mt-4 dark:bg-gray-700 dark:text-gray-100">
-          <div className="flex items-center text-lg mb-1 text-black dark:bg-gray-700 dark:text-gray-100">
+        <div className="bg-white p-8 rounded-xl shadow-md  flex flex-col items-center mt-2 dark:bg-gray-700 dark:text-gray-100">
+          <div className="flex items-center text-lg mb-2 text-black dark:bg-gray-700 dark:text-gray-100">
             Upload More Images
           </div>
           <input
