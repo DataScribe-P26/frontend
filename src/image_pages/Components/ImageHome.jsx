@@ -19,11 +19,12 @@ function Imagehome() {
     setcurrent,
     setCurrentIndex,
     setCreatedOn,
-    created_on,project_name
+    created_on,
+    project_name,
   } = useStore();
-  
-    const [activeTab, setActiveTab] = useState("Workspace");
-    const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("Workspace");
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { projectName } = useParams();
   const [loading, setLoading] = useState(false);
   const [annots, setAnnots] = useState([]);
@@ -48,7 +49,8 @@ function Imagehome() {
   }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
-    axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
+    axios
+      .get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
       .then((response) => {
         const projects = response.data;
         const project = projects.find((p) => p.name === projectName);
@@ -91,6 +93,7 @@ function Imagehome() {
         );
 
         if (response.data.length > 0) {
+          console.log(response.data);
           const formattedImages = response.data.map((image) => ({
             src: `data:image/jpeg;base64,${image.src}`,
             rectangle_annotations: image.rectangle_annotations,
@@ -101,6 +104,7 @@ function Imagehome() {
             height_multiplier: image.height_multiplier,
             width: image.width,
             height: image.height,
+            auto_annotated: image.auto_anotated,
           }));
           setImageSrc(formattedImages);
         } else {
@@ -133,7 +137,7 @@ function Imagehome() {
     // Cleanup function will be called when either projectName or project_name changes
     // or when the component unmounts
     return () => {
-      console.log('Aborting previous request');
+      console.log("Aborting previous request");
       controller.abort();
     };
   }, [projectName, project_name, clear_classes, setImageSrc]);
@@ -150,12 +154,12 @@ function Imagehome() {
         {loading ? (
           <div className="h-screen flex flex-col">
             <TopBar />
-             <Sidebar
-                             activeTab={activeTab}
-                             setActiveTab={setActiveTab}
-                             isCollapsed={isCollapsed}
-                             setIsCollapsed={setIsCollapsed}
-                           />
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+            />
             <div className="h-[100vh] flex items-center justify-center pb-80">
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>

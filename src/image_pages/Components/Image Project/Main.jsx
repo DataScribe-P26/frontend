@@ -71,10 +71,9 @@ function Main({ set_analysis_page }) {
 
   useEffect(() => {
     if (imageSrc.length > 0) {
-      const savedCurrent = loadFromProjectLocalStorage("current", null);
       const savedIndex = loadFromProjectLocalStorage("currentIndex", 0);
 
-      if (savedCurrent && savedIndex) {
+      if (savedIndex) {
         const index = parseInt(savedIndex, 10);
         if (index >= 0 && index < imageSrc.length) {
           setCurrentIndex(index);
@@ -90,7 +89,6 @@ function Main({ set_analysis_page }) {
 
   useEffect(() => {
     if (current && currentIndex !== undefined) {
-      localStorage.setItem(`${projectName}_current`, JSON.stringify(current));
       localStorage.setItem(
         `${projectName}_currentIndex`,
         JSON.stringify(currentIndex)
@@ -269,7 +267,7 @@ function Main({ set_analysis_page }) {
       case "projects":
         return <ProjectsPage />;
       case "Workspace":
-        return;  
+        return;
       default:
         return <ProjectsPage />;
     }
@@ -287,13 +285,13 @@ function Main({ set_analysis_page }) {
           setIsCollapsed={setIsCollapsed}
         />
       </div>
-      
+
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <div className="h-16">
           <ImageNavbar />
         </div>
         {renderContent()}
-        
+
         <div
           className={`flex-1 flex justify-center items-center overflow-hidden ${
             isDarkMode ? "bg-black" : "bg-white"
@@ -475,6 +473,7 @@ function Main({ set_analysis_page }) {
                       setIsProcessing={setIsProcessing}
                       annotatedCount={annotatedCount}
                       setAnnotatedCount={setAnnotatedCount}
+                      istrainedd={istrainedd}
                     />
                     <div>
                       <Options
