@@ -11,8 +11,10 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-function Options({ action, setAction, submit }) {
-  const { projecttype,
+function Options({ action, setAction, submit, project_type }) {
+  const {
+    projecttype,
+    setprojectType,
     currentIndex,
     all_annotations,
     set_allAnnotations,
@@ -22,45 +24,46 @@ function Options({ action, setAction, submit }) {
     setCurrentIndex,
     imageSrc,
     setImageSrc,
-   } = useStore();
+  } = useStore();
   const { projectName } = useParams();
   // Delete image function
-const deleteImage = async () => {
-  const image_id = all_annotations[currentIndex].id;
-  const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-  try {
-    const response = await axios.delete(
-      `http://127.0.0.1:8000/images/${projectName}/${userType}/${image_id}`
-    );
 
-    // Filter out the deleted annotation
-    const updatedAnnotations = all_annotations.filter(
-      (annotation) => annotation.id !== image_id
-    );
-    set_allAnnotations(updatedAnnotations);
-    //setAnnotations((prev) => prev.filter((annotation) => annotation.id !== image_id));
-    const updatedImageSrc = imageSrc.filter((image) => image.id !== image_id);
-   
-    setImageSrc(updatedImageSrc);
-  } catch (error) {
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-      toast.error(error.message);
-    } else {
-      console.error("Network Error:", error.message);
-      toast.error("Image not deleted!");
+  const deleteImage = async () => {
+    const image_id = all_annotations[currentIndex].id;
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+    try {
+      const response = await axios.delete(
+        `http://127.0.0.1:8000/images/${projectName}/${userType}/${image_id}`
+      );
+
+      // Filter out the deleted annotation
+      const updatedAnnotations = all_annotations.filter(
+        (annotation) => annotation.id !== image_id
+      );
+      set_allAnnotations(updatedAnnotations);
+      //setAnnotations((prev) => prev.filter((annotation) => annotation.id !== image_id));
+      const updatedImageSrc = imageSrc.filter((image) => image.id !== image_id);
+
+      setImageSrc(updatedImageSrc);
+    } catch (error) {
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        toast.error(error.message);
+      } else {
+        console.error("Network Error:", error.message);
+        toast.error("Image not deleted!");
+      }
     }
-  }
-};
+  };
 
-// Effect to check imageSrc after update
-useEffect(() => {
-  console.log("Check imageSrc:", imageSrc);
-}, [imageSrc]);
+  // Effect to check imageSrc after update
+  useEffect(() => {
+    console.log("Check imageSrc:", imageSrc);
+  }, [imageSrc]);
   return (
     <div>
       <div className="w-[3.43rem] h-auto bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center gap-3 py-4 shadow-md">
-        {projecttype === "image" && (
+        {project_type === "image" && (
           <button
             className={`rounded-xl w-11 h-11 flex items-center justify-center transition-all duration-200
             ${
@@ -73,7 +76,7 @@ useEffect(() => {
             <RiRectangleLine style={{ width: "50%", height: "50%" }} />
           </button>
         )}
-        {projecttype === "instance-segmentation" && (
+        {project_type === "instance-segmentation" && (
           <>
             {" "}
             <button
@@ -127,10 +130,9 @@ useEffect(() => {
           className="rounded-xl w-11 h-11 flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-100 transition-all duration-200 shadow-sm"
           onClick={() => {
             deleteImage();
-           
           }}
         >
-          <RiDeleteBin5Fill  style={{ width: "45%", height: "45%" }} />
+          <RiDeleteBin5Fill style={{ width: "45%", height: "45%" }} />
         </button>
       </div>
     </div>

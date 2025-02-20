@@ -38,9 +38,8 @@ ChartJS.register(
   ChartDataLabels
 );
 
-function Analysis({ set_analysis_page }) {
+function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const [activeTab, setActiveTab] = useState("Workspace");
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const { projectName } = useParams();
@@ -299,7 +298,7 @@ function Analysis({ set_analysis_page }) {
       case "organizations":
         return <OrganizationsPage />;
       case "projects":
-        return <ProjectsPage />;
+        return <ProjectsPage setActiveTab={setActiveTab} />;
       case "Workspace":
         return;
       default:
@@ -561,7 +560,7 @@ function Analysis({ set_analysis_page }) {
                         </div>
                       ) : (
                         <div className="px-4 py-3 rounded-lg shadow-md dark:bg-purple-900/20 bg-purple-600">
-                          <label className="block text-sm font-medium text-gray-100 dark:text-gray-200 mb-2 text-center" >
+                          <label className="block text-sm font-medium text-gray-100 dark:text-gray-200 mb-2 text-center">
                             Set Threshold Value
                           </label>
                           <input
@@ -582,7 +581,10 @@ function Analysis({ set_analysis_page }) {
                         <div className="flex justify-center mt-6">
                           <button
                             className="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300 ease-in-out flex items-center gap-2"
-                            onClick={() => set_analysis_page(false)}
+                            onClick={() => {
+                              set_analysis_page(false);
+                              setIsCollapsed(true);
+                            }}
                           >
                             <span>Continue</span>
                             <svg

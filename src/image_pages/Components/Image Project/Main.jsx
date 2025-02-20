@@ -24,7 +24,7 @@ import ProjectsPage from "../../../pages/Projects.jsx";
 import OrganizationsPage from "../../../pages/Organisation.jsx";
 import { Profile } from "../../../pages/Profile.jsx";
 
-function Main({ set_analysis_page }) {
+function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const {
     imageSrc,
     setImageSrc,
@@ -38,10 +38,11 @@ function Main({ set_analysis_page }) {
     currentIndex,
     setCurrentIndex,
     project_name,
+    iscollap,
+    setprojectType,
   } = useStore();
 
   const [activeTab, setActiveTab] = useState("Workspace");
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const { isDarkMode } = useTheme();
   const { projectName } = useParams();
   const [cl, setcl] = useState("");
@@ -50,6 +51,14 @@ function Main({ set_analysis_page }) {
   const [exportModal, setExportModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [istrainedd, setIsTrainedd] = useState(false);
+  const [project_type, setproject_type] = useState(
+    localStorage.getItem("projectType")
+  );
+  useEffect(() => {
+    const project_tpe = localStorage.getItem("projectType");
+    setprojectType(project_tpe);
+    setproject_type(project_tpe);
+  }, [projectName, project_name]);
 
   const [annotatedCount, setAnnotatedCount] = useState(0);
 
@@ -265,7 +274,7 @@ function Main({ set_analysis_page }) {
       case "organizations":
         return <OrganizationsPage />;
       case "projects":
-        return <ProjectsPage />;
+        return <ProjectsPage setActiveTab={setActiveTab} />;
       case "Workspace":
         return;
       default:
@@ -480,6 +489,7 @@ function Main({ set_analysis_page }) {
                         setAction={setAction}
                         action={action}
                         submit={submit}
+                        project_type={project_type}
                       />
                     </div>
                   </div>

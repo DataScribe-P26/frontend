@@ -17,15 +17,16 @@ import toast from "react-hot-toast";
 import { use } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-const OrganizationCard = ({ name, role,createdOn }) => {
-    const navigate = useNavigate();
-  return(<div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
-    onClick={()=>{
-      localStorage.setItem("organizationName", name);
-      navigate("/Dashboard")
-    }}
-  >
+const OrganizationCard = ({ name, role, createdOn }) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
+      onClick={() => {
+        localStorage.setItem("organizationName", name);
+        navigate("/Dashboard");
+      }}
+    >
       <div className="flex items-center justify-between dark:bg-gray-700 dark:text-gray-100">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -34,14 +35,17 @@ const OrganizationCard = ({ name, role,createdOn }) => {
             </span>
           </div>
           <div>
-            <h3 className="font-semibold p-1 text-gray-900 dark:text-gray-100">{name}</h3>
-            <span className="px-2 py-1 p-1 text-sm rounded-full bg-purple-300 text-purple-800">{role}</span>
+            <h3 className="font-semibold p-1 text-gray-900 dark:text-gray-100">
+              {name}
+            </h3>
+            <span className="px-2 py-1 p-1 text-sm rounded-full bg-purple-300 text-purple-800">
+              {role}
+            </span>
             <p className="text-sm mt-2 text-gray-600  dark:text-gray-100">
-            Created on: {createdOn ? new Date(createdOn).toLocaleDateString() : "Unknown"}
-
-                </p>  
+              Created on:{" "}
+              {createdOn ? new Date(createdOn).toLocaleDateString() : "Unknown"}
+            </p>
           </div>
-
         </div>
         <div className="flex items-center space-x-2">
           <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
@@ -52,7 +56,8 @@ const OrganizationCard = ({ name, role,createdOn }) => {
           </button>
         </div>
       </div>
-    </div>);
+    </div>
+  );
 };
 
 const OrganizationIllustration = () => (
@@ -405,7 +410,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
         className={`bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 my-6 ${fadeInAnimation}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b dark:bg-gray-800 dark:text-gray-100" >
+        <div className="flex items-center justify-between p-5 border-b dark:bg-gray-800 dark:text-gray-100">
           <h2 className="text-xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-gray-100">
             {step === 1 ? "Create Organization" : "Add Team Members"}
           </h2>
@@ -418,7 +423,10 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="p-5 dark:bg-gray-800 dark:text-gray-100" style={{ minHeight: "400px" }}>
+        <div
+          className="p-5 dark:bg-gray-800 dark:text-gray-100"
+          style={{ minHeight: "400px" }}
+        >
           {step === 1 ? (
             <div className={`flex gap-8 ${slideUpAnimation}`}>
               {/* Left side - Illustration */}
@@ -503,11 +511,15 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                           <p className="font-medium text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                             {user.name}
                           </p>
-                          <p className="text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-100">{user.email}</p>
+                          <p className="text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-100">
+                            {user.email}
+                          </p>
                         </button>
                       ))}
                     {searchQuery && filteredUsers.length === 0 && (
-                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100">No users found</p>
+                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100">
+                        No users found
+                      </p>
                     )}
                     {!searchQuery && (
                       <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100">
@@ -672,7 +684,7 @@ const OrganizationsPage = () => {
   }, [showModal]);
 
   return (
-    <div className="px-8 py-4 h-screen dark:bg-gray-900 dark:text-gray-100">
+    <div className="px-8 py-8 h-screen dark:bg-gray-900 dark:text-gray-100 mb-4">
       <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -707,25 +719,45 @@ const OrganizationsPage = () => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {organizations.map((org) => {
-              let role = "Member"; // Default role
-              if (org.admin_id === user.email) {
-                role = "Admin";
-              } else {
-                const memberInfo = org.members.find(
-                  (member) => member.email === user.email
-                );
-                if (memberInfo) {
-                  role = memberInfo.role;
-                }
-              }
+          <>
+            {organizations.length == 0 ? (
+              <div className="w-full text-center py-12 text-gray-600 dark:bg-gray-900 dark:text-gray-100 flex flex-col items-center justify-center">
+                <p className="text-xl">No Organizations available</p>
+                <p className="mt-2">
+                  Click 'New Organization' to create your first Organization.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {organizations.length > 0 ? (
+                  organizations.map((org) => {
+                    let role = "Member"; // Default role
+                    if (org.admin_id === user.email) {
+                      role = "Admin";
+                    } else {
+                      const memberInfo = org.members.find(
+                        (member) => member.email === user.email
+                      );
+                      if (memberInfo) {
+                        role = memberInfo.role;
+                      }
+                    }
 
-              return (
-                <OrganizationCard key={org.id} name={org.name} role={role} createdOn={org.created_on}  />
-              );
-            })}
-          </div>
+                    return (
+                      <OrganizationCard
+                        key={org.id}
+                        name={org.name}
+                        role={role}
+                        createdOn={org.created_on}
+                      />
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+              </div>
+            )}
+          </>
         )}
       </>
 

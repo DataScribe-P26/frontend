@@ -173,7 +173,11 @@ function Imagehome() {
               isDarkMode ? "bg-gray-800" : "bg-gray-50"
             }`}
           >
-            <Analysis set_analysis_page={set_analysis_page} />
+            <Analysis
+              set_analysis_page={set_analysis_page}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+            />
           </div>
         ) : (
           <div
@@ -184,6 +188,8 @@ function Imagehome() {
             <Main
               projectName={projectName}
               set_analysis_page={set_analysis_page}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
             />
           </div>
         )}

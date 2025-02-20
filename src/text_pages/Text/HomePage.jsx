@@ -42,7 +42,8 @@ const HomePage = () => {
         setContent(null);
         setLabels([]);
         setAnnotations([]);
-        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        const userType =
+          localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         const response = await axios.get(
           `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
@@ -131,7 +132,11 @@ const HomePage = () => {
                     isDarkMode ? "border-green-400" : "border-indigo-600"
                   }`}
                 ></div>
-                <p className={`mt-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                <p
+                  className={`mt-4 ${
+                    isDarkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   Loading project...
                 </p>
               </div>
@@ -139,19 +144,25 @@ const HomePage = () => {
           ) : (
             <div className="flex-grow overflow-y-auto">
               <main className="flex flex-col p-8 h-full">
-                <div className={`flex flex-col items-center max-w-4xl mx-auto w-full transform transition-all duration-1000 ${
-                  isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-                }`}>
+                <div
+                  className={`flex flex-col items-center max-w-4xl mx-auto w-full transform transition-all duration-1000 ${
+                    isVisible
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-10 opacity-0"
+                  }`}
+                >
                   <h2
                     className={`text-4xl font-bold mb-6 text-center transform transition-all duration-700 delay-300 ${
-                      isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-4 opacity-0"
                     } ${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
-                  >
-                    Welcome to the {projectName} Project
-                  </h2>
+                  ></h2>
                   <p
                     className={`text-lg mb-8 text-center transform transition-all duration-700 delay-500 ${
-                      isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-4 opacity-0"
                     } ${isDarkMode ? "text-gray-400" : "text-gray-700"}`}
                   >
                     Use the options in the sidebar to manage datasets and labels
@@ -159,14 +170,20 @@ const HomePage = () => {
                   </p>
                   <p
                     className={`text-center mb-8 transform transition-all duration-700 delay-700 ${
-                      isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-4 opacity-0"
                     } ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
                   >
                     Get started by selecting a dataset or creating a label!
                   </p>
-                  <div className={`mt-4 transform transition-all duration-700 delay-1000 ${
-                    isVisible ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95"
-                  }`}>
+                  <div
+                    className={`mt-4 transform transition-all duration-700 delay-1000 ${
+                      isVisible
+                        ? "translate-y-0 opacity-100 scale-100"
+                        : "translate-y-4 opacity-0 scale-95"
+                    }`}
+                  >
                     <button
                       className={`${
                         isDarkMode
@@ -181,9 +198,11 @@ const HomePage = () => {
                 </div>
               </main>
 
-              <div className={`mt-auto transform transition-opacity duration-700 delay-1000 ${
-                isVisible ? "opacity-100" : "opacity-0"
-              }`}>
+              <div
+                className={`mt-auto transform transition-opacity duration-700 delay-1000 ${
+                  isVisible ? "opacity-100" : "opacity-0"
+                }`}
+              >
                 <Footer />
               </div>
             </div>
