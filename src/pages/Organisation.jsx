@@ -307,6 +307,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
   async function handleSubmit() {
     const organizationData = {
       name: orgData.name,
+      details: orgData.description,
       admin_id: user.email,
     };
     try {

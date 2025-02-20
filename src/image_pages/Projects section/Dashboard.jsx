@@ -11,6 +11,7 @@ import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings,FiTrash2  } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "./CreateOrgProject";
 import { HiAnnotation } from "react-icons/hi";
+import ProjectSettingsModal from "./ProjectSettingsModal";
 
 
 const Dashboard = () => {
@@ -28,6 +29,18 @@ const Dashboard = () => {
   var storedOrgName='';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+    const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false);
+    const openModal = (project) => {
+      setSelectedProject(project);
+      setIsProjectSettingsModalOpen(true);
+    };
+  
+    const closeModal = () => {
+      setSelectedProject(null);
+      setIsProjectSettingsModalOpen(false);
+    };
+  
   // Add new state for organization details
   const [orgDetails, setOrgDetails] = useState({
     name: '',
@@ -61,11 +74,13 @@ const Dashboard = () => {
   // Add handler for updating organization details
   const handleUpdateOrg = async () => {
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/organization-update`, {
-        org_name: storedOrgName,
+      const data =  {
+        org_name: organizationName,
         new_name: orgDetails.name,
-        description: orgDetails.description
-      });
+        description: orgDetails.details || ""
+      }
+
+      const response = await axios.put(`http://127.0.0.1:8000/organization-update`, data);
 
       if (response.status === 200) {
         toast.success("Organization details updated successfully");
@@ -79,6 +94,21 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteProject = async (name) => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/delete-org-project/${user.email}/${name}/${organizationName}`); 
+        alert("Project deleted successfully!");
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project.name !== name)
+        );
+
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        alert("Failed to delete the project. Please try again.");
+      }
+    }
+  };
 
   useEffect(() => {
     storedOrgName = localStorage.getItem("organizationName");
@@ -290,7 +320,8 @@ const dropdownStyles = {
                                       transition-colors duration-200"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/project-settings`);
+                              setSelectedProject(project);
+                              setIsProjectSettingsModalOpen(true);
                             }}
                           >
                             <FiSettings className="text-lg text-gray-500 hover:text-gray-700
@@ -329,6 +360,31 @@ const dropdownStyles = {
                   </div>
                 ))}
               </div>
+
+
+              {/* Modal */}
+              <ProjectSettingsModal
+                  isOpen={isProjectSettingsModalOpen}
+                  onClose={() => setIsProjectSettingsModalOpen(false)}
+                  project={selectedProject}
+                  organizationName={organizationName}
+                  onUpdateProject={(old_name,updatedProject) => { 
+                    console.log(old_name,updatedProject);   
+                        setProjects((prevProjects) =>
+                                  prevProjects.map((proj) =>
+                                    proj.name === old_name ? updatedProject : proj
+                                  )
+                                );
+                                toast.success("Project updated successfully");
+                              }}
+                  onDeleteProject={(deletedProjectId) => {
+                        setProjects((prevProjects) =>
+                                  prevProjects.filter((proj) => proj.name !== deletedProjectId)
+                                );
+                                toast.success("Project deleted successfully");
+                              }}            
+                            />
+
             </div>
           );
 
@@ -500,12 +556,12 @@ const dropdownStyles = {
                     {isEditing ? (
                       <input
                         type="text"
-                        value={storedOrgName}
+                        value={orgDetails.name}
                         onChange={(e) => setOrgDetails({ ...orgDetails, name: e.target.value })}
                         className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                       />
                     ) : (
-                      <p className="text-lg">{storedOrgName}</p>
+                      <p className="text-lg">{orgDetails.name}</p>
                     )}
                   </div>
 
@@ -515,13 +571,13 @@ const dropdownStyles = {
                     </label>
                     {isEditing ? (
                       <textarea
-                        value={orgDetails.description}
-                        onChange={(e) => setOrgDetails({ ...orgDetails, description: e.target.value })}
+                        value={orgDetails.details}
+                        onChange={(e) => setOrgDetails({ ...orgDetails, details: e.target.value })}
                         rows="4"
                         className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                       />
                     ) : (
-                      <p className="text-gray-600 dark:text-gray-400">{orgDetails.description}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{orgDetails.details}</p>
                     )}
                   </div>
 

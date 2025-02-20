@@ -513,6 +513,7 @@ const ObjectDetectionIllustration = () => (
                 navigate(`/user-project/ner_tagging/${projectData.name}`);
               }
               setProjectData({ name: "", description: "", type: "" });
+              
               onClose();
             })
             .catch((error) => {
@@ -682,6 +683,8 @@ const ProjectCard = ({ project, onProjectClick }) => {
                 <div className="flex items-center mt-1">
                   <span className="px-3 py-1 text-sm rounded-full bg-purple-300 text-purple-800">
                     {project.type}
+                  
+
                   </span>
                 </div>
                 <p className="text-sm mt-2 text-gray-600 dark:bg-gray-700 dark:text-gray-100">
@@ -720,6 +723,7 @@ const ProjectCard = ({ project, onProjectClick }) => {
         try {
           setLoading(true);
           localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
+        
           const response = await axios.get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`);
           setProjects(response.data);
           setLoading(false);
@@ -739,6 +743,8 @@ const ProjectCard = ({ project, onProjectClick }) => {
         reset();
         set_allAnnotations([]);
         setprojectType(project.type);
+         // Store project type in localStorage
+    localStorage.setItem("projectType", project.type);
         if (project.type === "image" || project.type === "instance-segmentation") {
           navigate(`/user-project/image/${project.name}`);
         } else {

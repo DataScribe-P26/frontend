@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../login/AuthContext.jsx";
+import { USER_TYPE } from "../../Main home/user-type.js";
 
-const ExportModal = ({ isOpen, onClose, projectName }) => {
+const ExportModal = ({ isOpen, onClose, projectName,projectType }) => {
   const [exportFormat, setExportFormat] = useState("json");
+  const { user } = useAuth();
+
+
 
   const handleExport = async () => {
     try {
-      let user_type='single';
+      const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
       const response = await axios.get(
-        `http://127.0.0.1:8000/projects/ner_tagging/${user_type}/${projectName}`
+        `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
       );
 
       const { text, entities } = response.data[0];
@@ -140,9 +145,17 @@ const ExportModal = ({ isOpen, onClose, projectName }) => {
             }}
           >
             <option value="json">JSON</option>
-            <option value="csv">CSV</option>
-            <option value="bio">BIO</option>
-            <option value="bilou">BILOU</option>
+            {userType === "ner_tagging" ? (
+              <>
+                <option value="csv">CSV</option>
+                <option value="bio">BIO</option>
+                <option value="bilou">BILOU</option>
+              </>
+            ) : userType === "sentiment_analysis" ? (
+              <>
+                {/* Add other formats for sentiment analysis if needed */}
+              </>
+            ) : null}
           </select>
         </label>
         <div className="flex justify-end mt-6">
