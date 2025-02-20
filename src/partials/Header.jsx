@@ -127,9 +127,14 @@ export const TopBar = ({ title }) => {
     <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Title Section */}
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-          {title || `Welcome ${displayName}`}
-        </h1>
+      <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+  {title || (
+    <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+      Welcome {displayName}
+    </span>
+  )}
+</h1>
+
       </div>
  
       {/* Right-Side Icons & User Profile */}

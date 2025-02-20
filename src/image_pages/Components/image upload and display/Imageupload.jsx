@@ -144,8 +144,8 @@ function ImageUpload({ projectName, loading, setloading }) {
   } else {
     return (
       <>
-        <div className="bg-white p-8 rounded-xl shadow-md  flex flex-col items-center mt-2 dark:bg-gray-700 dark:text-gray-100">
-          <div className="flex items-center text-lg mb-2 text-black dark:bg-gray-700 dark:text-gray-100">
+        <div className="  col-span-2 p-3 rounded-xl flex flex-col items-center mt-2 dark:text-gray-100 ">
+          <div className="p-1 flex items-center text-lg font-medium mb-2 text-black dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
             Upload More Images
           </div>
           <input
@@ -182,7 +182,7 @@ function ImageUpload({ projectName, loading, setloading }) {
             <span className="font-medium">Upload Folder</span>
           </label>
 
-          <p className="mt-2 text-sm text-gray-500 text-center dark:bg-gray-700 dark:text-gray-100">
+          <p className="mt-2 text-sm text-gray-500 text-center  dark:text-gray-100">
             Select images or folders to upload.
           </p>
         </div>

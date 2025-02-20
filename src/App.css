@@ -17,6 +17,12 @@
     -ms-overflow-style: none;
   }
 
+
+  html, body {
+    overflow: hidden;
+    height: 100%;
+  }
+  
 .custom-color-input {
   -webkit-appearance: none;
   border: none;

@@ -18,7 +18,7 @@ import { use } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-const OrganizationCard = ({ name, role }) => {
+const OrganizationCard = ({ name, role,createdOn }) => {
     const navigate = useNavigate();
   return(<div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:border-gray-100 dark:text-gray-100"
     onClick={()=>{
@@ -36,7 +36,13 @@ const OrganizationCard = ({ name, role }) => {
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-100">{role}</p>
+            <p className="text-sm mt-2 text-gray-600 dark:text-gray-100">
+            Created on: {createdOn ? new Date(createdOn).toLocaleDateString() : "Unknown"}
+
+                </p>
           </div>
+          
+          
         </div>
         <div className="flex items-center space-x-2">
           <button className="p-2 rounded-md hover:bg-gray-100">
@@ -394,7 +400,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 dark:bg-gray-700 dark:text-gray-100">
+    <div className="fixed inset-0 flex items-center overflow-hidden justify-center bg-black bg-opacity-50 z-50 dark:bg-gray-700 dark:text-gray-100">
       <div
         className={`bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 my-6 ${fadeInAnimation}`}
       >
@@ -562,7 +568,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
             <>
               <button
                 onClick={handleClose}
-                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-100"
+                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-red-800 dark:text-gray-100"
               >
                 Cancel
               </button>
@@ -574,8 +580,8 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                 disabled={!isFirstStepValid}
                 className={`flex items-center px-5 py-2 rounded-lg text-white dark:bg-gray-800 dark:text-gray-100 ${
                   isFirstStepValid
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-gray-300 cursor-not-allowed"
+                    ? "bg-purple-600 hover:bg-purple-700 dark:bg-purple-800"
+                    : "bg-gray-300 cursor-not-allowed "
                 } transition-colors`}
               >
                 Next
@@ -666,25 +672,28 @@ const OrganizationsPage = () => {
   }, [showModal]);
 
   return (
-    <div className="p-8 h-screen dark:bg-gray-900 dark:text-gray-100">
-      <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+    <div className="h-screen flex flex-col dark:bg-gray-900 dark:text-gray-100 overflow-hidden">
+      {/* Header - Fixed at the top */}
+      <div className="p-8 flex items-center  justify-between bg-white dark:bg-gray-900 dark:text-gray-100 shadow-md">
+        <div className="overflow-auto">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 overflow-auto">
             Organizations
           </h1>
-          <p className="text-gray-500 mt-1 dark:text-gray-100">
+          <p className="text-gray-500 mt-1 dark:text-gray-100 overflow-hidden">
             Manage your organization memberships and settings
           </p>
         </div>
         <button
-          className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors dark:text-gray-100"
+          className="flex items-center bg-purple-600 hover:bg-purple-700 overflow-hidden text-white px-4 py-2 rounded-md transition-colors dark:text-gray-100"
           onClick={() => setShowModal(true)}
         >
           <Plus size={18} className="mr-2" />
           New Organization
         </button>
       </div>
-      <>
+  
+      {/* Scrollable Organization Cards */}
+      <div className="flex-1 overflow-y-auto p-8">
         {loading ? (
           <div className="text-center py-8">
             <div
@@ -701,7 +710,7 @@ const OrganizationsPage = () => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="overflow-y-auto max-h-[500px] grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-2">
             {organizations.map((org) => {
               let role = "Member"; // Default role
               if (org.admin_id === user.email) {
@@ -714,21 +723,23 @@ const OrganizationsPage = () => {
                   role = memberInfo.role;
                 }
               }
-
-              return (
-                <OrganizationCard key={org.id} name={org.name} role={role}  />
+  
+              return ( 
+                <OrganizationCard key={org.id} name={org.name} role={role} createdOn={org.created_on} />
               );
             })}
           </div>
         )}
-      </>
-
+      </div>
+  
+      {/* Modal */}
       <CreateOrganizationModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
       />
     </div>
   );
-};
+  
+}  
 
 export default OrganizationsPage;
