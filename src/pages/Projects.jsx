@@ -575,7 +575,7 @@ const ObjectDetectionIllustration = () => (
             </div>
             <div className="flex justify-between mt-6"> <button
                 onClick={onClose}
-                className="ml-4 px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600-700 dark:bg-red-800 dark:text-gray-100"
+                className="ml-4 px-5 py-2 rounded-md bg-red-600 text-white hover:bg-gray-600-700 dark:bg-red-800 dark:text-gray-100"
               >
                 Cancel
               </button>
@@ -584,7 +584,7 @@ const ObjectDetectionIllustration = () => (
                 disabled={!isFormValid}
                 className={`px-5 py-2 rounded-md ${
                   isFormValid
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    ? "bg-purple-600 text-white hover:bg-purple-700"
                     : "bg-purple-600 text-gray-100 cursor-not-allowed"
                 }`}
               >
@@ -626,19 +626,15 @@ const ProjectCard = ({ project, onProjectClick }) => {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <button className="p-2 rounded-md hover:bg-gray-100">
+              <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
                 <Settings size={18} />
               </button>
-              <button className="p-2 rounded-md hover:bg-gray-100">
+              <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
                 <ExternalLink size={18} />
               </button>
             </div>
           </div>
-          <p className="mt-4 text-gray-600 dark:bg-gray-700 dark:text-gray-100">
-            {project.description?.length > 100
-              ? `${project.description.substring(0, 100)}...`
-              : project.description}
-          </p>
+          
         </div>
       );
     };
@@ -688,7 +684,7 @@ const ProjectCard = ({ project, onProjectClick }) => {
 
       return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
-          <div className="container mx-auto p-8 dark:bg-gray-900 dark:text-gray-100">
+          <div className="container mx-auto px-8 py-4 dark:bg-gray-900 dark:text-gray-100">
             <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
               <div>
                 <h1 className="text-2xl font-semibold text-gray-900 dark:bg-gray-900 dark:text-gray-100">

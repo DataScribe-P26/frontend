@@ -110,7 +110,7 @@ const OrganizationCreationPage = () => {
                       isDarkMode
                         ? "bg-gray-700 border-gray-600 text-white"
                         : "bg-gray-50 border-gray-300 text-gray-900"
-                    } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                    } focus:ring-2 focus:ring-blue-500 transition-all`}
                     placeholder="Enter organization name"
                   />
                   <Building2 className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />

@@ -452,7 +452,7 @@ function Analysis({ set_analysis_page }) {
               <div className="space-y-6">
                 {/* Image Statistics Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-                  <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+                  <div className="px-6 py-1 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center">
                       <h2 className="text-xl font-semibold">
                         Image Statistics
@@ -508,7 +508,7 @@ function Analysis({ set_analysis_page }) {
                 {/* Upload Section FIRST followed by Auto Annotation Section - Horizontal Layout */}
                 <div className="grid grid-cols-5 gap-6 ">
                   {/* Upload Section - FIRST (3 columns) */}
-                  <div className="col-span-3  bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden ">
+                  <div className="col-span-3  bg-white dark:bg-purple-900/20 rounded-xl shadow-md overflow-hidden ">
                     <div className="p-4">
                       {loading ? (
                         <div className="flex justify-center py-4">
@@ -528,7 +528,7 @@ function Analysis({ set_analysis_page }) {
                   </div>
 
                   {/* Auto Annotation - SECOND (2 columns) */}
-                  <div className="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                  <div className="col-span-2 bg-white dark:bg-purple-900/20 rounded-xl shadow-md overflow-hidden">
                     <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between">
                         <h2 className="text-lg font-medium">Auto Annotation</h2>
@@ -553,15 +553,15 @@ function Analysis({ set_analysis_page }) {
 
                     <div className="p-6">
                       {!autoAnnotation ? (
-                        <div className="text-sm text-purple-600 mb-2">
+                        <div className="text-sm text-purple-600 mb-2 dark:text-gray-100">
                           <p>
                             Want to kickstart auto annotation? Set the
                             threshold, and let the magic happen!
                           </p>
                         </div>
                       ) : (
-                        <div className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-sm">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                        <div className="px-4 py-3 rounded-lg shadow-md dark:bg-purple-900/20 bg-purple-600">
+                          <label className="block text-sm font-medium text-gray-100 dark:text-gray-200 mb-2 text-center" >
                             Set Threshold Value
                           </label>
                           <input
@@ -571,7 +571,7 @@ function Analysis({ set_analysis_page }) {
                             onChange={(e) =>
                               setThreshold(projectName, e.target.value)
                             }
-                            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-700 sm:text-sm"
+                            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-purple-600 sm:text-sm text-center"
                             placeholder="Adjust threshold"
                           />
                         </div>

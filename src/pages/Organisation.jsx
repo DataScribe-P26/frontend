@@ -18,15 +18,15 @@ import { use } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-const OrganizationCard = ({ name, role }) => {
+const OrganizationCard = ({ name, role,createdOn }) => {
     const navigate = useNavigate();
-  return(<div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:border-gray-100 dark:text-gray-100"
+  return(<div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
     onClick={()=>{
       localStorage.setItem("organizationName", name);
       navigate("/Dashboard")
     }}
   >
-      <div className="flex items-center justify-between dark:bg-gray-800 dark:text-gray-100">
+      <div className="flex items-center justify-between dark:bg-gray-700 dark:text-gray-100">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
             <span className="text-lg font-semibold text-purple-600 ">
@@ -34,15 +34,20 @@ const OrganizationCard = ({ name, role }) => {
             </span>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-100">{role}</p>
+            <h3 className="font-semibold p-1 text-gray-900 dark:text-gray-100">{name}</h3>
+            <span className="px-2 py-1 p-1 text-sm rounded-full bg-purple-300 text-purple-800">{role}</span>
+            <p className="text-sm mt-2 text-gray-600  dark:text-gray-100">
+            Created on: {createdOn ? new Date(createdOn).toLocaleDateString() : "Unknown"}
+
+                </p>  
           </div>
+
         </div>
         <div className="flex items-center space-x-2">
-          <button className="p-2 rounded-md hover:bg-gray-100">
+          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
             <Settings size={18} />
           </button>
-          <button className="p-2 rounded-md hover:bg-gray-100">
+          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
             <ExternalLink size={18} />
           </button>
         </div>
@@ -394,7 +399,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 dark:bg-gray-700 dark:text-gray-100">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  dark:text-gray-100">
       <div
         className={`bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 my-6 ${fadeInAnimation}`}
       >
@@ -537,7 +542,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                             </div>
                             <button
                               onClick={() => handleRemoveMember(member.id)}
-                              className="text-gray-400 hover:text-red-500 p-1 dark:bg-gray-800 dark:text-gray-100"
+                              className="text-gray-400 hover:text-red-500 p-1 dark:bg-red-800 dark:text-gray-100 rounded-lg"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -545,7 +550,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                         ))}
                       </div>
                     ) : (
-                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-gray-100 ">
+                      <p className="px-4 py-2 text-gray-500 dark:bg-gray-800 dark:text-red-500">
                         No members selected
                       </p>
                     )}
@@ -562,7 +567,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
             <>
               <button
                 onClick={handleClose}
-                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-100"
+                className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-red-800 dark:text-gray-100"
               >
                 Cancel
               </button>
@@ -574,7 +579,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                 disabled={!isFirstStepValid}
                 className={`flex items-center px-5 py-2 rounded-lg text-white dark:bg-gray-800 dark:text-gray-100 ${
                   isFirstStepValid
-                    ? "bg-purple-600 hover:bg-purple-700"
+                    ? "bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 "
                     : "bg-gray-300 cursor-not-allowed"
                 } transition-colors`}
               >
@@ -586,7 +591,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
             <>
               <button
                 onClick={() => setStep(1)}
-                className="flex items-center px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-100"
+                className="flex items-center px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors dark:bg-red-800 dark:text-gray-100"
               >
                 <ArrowLeft size={18} className="mr-2" />
                 Previous
@@ -666,7 +671,7 @@ const OrganizationsPage = () => {
   }, [showModal]);
 
   return (
-    <div className="p-8 h-screen dark:bg-gray-900 dark:text-gray-100">
+    <div className="px-8 py-4 h-screen dark:bg-gray-900 dark:text-gray-100">
       <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -716,7 +721,7 @@ const OrganizationsPage = () => {
               }
 
               return (
-                <OrganizationCard key={org.id} name={org.name} role={role}  />
+                <OrganizationCard key={org.id} name={org.name} role={role} createdOn={org.created_on}  />
               );
             })}
           </div>

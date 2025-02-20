@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
+import { Settings, ExternalLink, Plus, X, ArrowRight,Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../login/AuthContext";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
@@ -664,7 +664,7 @@ const ObjectDetectionIllustration = () => (
                   </div>
                 )}
               </div>
-              <div className="w-1/2">
+              <div className="w-1/2 p-4">
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-100" >
                     Project Name
@@ -693,7 +693,7 @@ const ObjectDetectionIllustration = () => (
                   <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-900 dark:text-gray-100">
                     Project Type
                   </label>
-                  <div className="grid grid-cols-1 gap-4 dark:bg-gray-900 dark:text-gray-100">
+                  <div className="grid grid-cols-1 gap-4 dark:bg-gray-900 dark:text-gray-100 py-4 w-100">
                     {projectTypes.map((type) => (
                       <button
                         key={type.id}
@@ -735,7 +735,7 @@ const ObjectDetectionIllustration = () => (
                       onClick={() => handleSelectMember(member.email)}
                     >
                       <span>{member.email}</span>
-                      <button className="text-blue-600 hover:text-blue-800 dark:bg-gray-900 dark:text-white">Add</button>
+                      <button className="bg-purple-600 text-white hover:bg-blue-900 dark:bg-red-700 rounded-lg px-2  dark:text-white dark:hover:bg-red-900 ">Add</button>
                     </div>
                   ))}
                 </div>
@@ -752,9 +752,9 @@ const ObjectDetectionIllustration = () => (
                       <span>{email}</span>
                       <button
                         onClick={() => handleRemoveMember(email)}
-                        className="text-red-600 hover:text-red-800"
+                        className="bg-red-600 hover:bg-red-900 rounded-lg px-2 py-1 text-white"
                       >
-                        Remove
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   ))}
@@ -766,17 +766,17 @@ const ObjectDetectionIllustration = () => (
           <div className="flex justify-between mt-6 dark:bg-gray-900 dark:text-gray-100">
             <button
               onClick={step === 1 ? handleClose : () => setStep(1)}
-              className="px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 dark:bg-gray-900 dark:text-gray-100"
+              className="px-5 py-2 rounded-md bg-red-600 text-white hover:bg-gray-600  dark:text-gray-100"
             >
               {step === 1 ? "Cancel" : "Back"}
             </button>
             <button
               onClick={step === 1 ? () => setStep(2) : handleSubmit}
               disabled={step === 1 && !isFormValid}
-              className={`px-5 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100${
+              className={`px-5 py-2 rounded-md bg-purple-600 text-gray-100 dark:text-gray-100 ${
                 step === 1 && !isFormValid
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowe dark:bg-gray-700 dark:text-gray-100"
-                  : "bg-blue-600 text-white hover:bg-blue-700 dark:bg-gray-700 dark:text-gray-100"
+                  ? "bg-gray-300  cursor-not-allowed dark:bg-purple-700 dark:text-gray-100"
+                  : " text-white hover:bg-purple-700 dark:bg-purple-600 dark:text-gray-100"
               }`}
             >
               {step === 1 ? "Next" : "Create Project"}

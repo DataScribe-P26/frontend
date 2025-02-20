@@ -382,10 +382,10 @@ function ImageUpload({
   };
 
   return (
-    <div className="bg-gray-100 p-8 rounded-xl shadow-md flex flex-col items-center mt-4 dark:bg-gray-700 dark:text-gray-100">
-      <div className="flex items-center text-lg mb-1 text-black dark:bg-gray-700 dark:text-gray-100">
-        Upload More Images
-      </div>
+    <div className=" p-6 rounded-xl shadow-md flex flex-col items-center  dark:text-gray-100">
+      
+        <span className="p-1 mb-2 font-medium border-b border-gray-200 dark:border-gray-700">Upload More Images</span>
+      
       <input
         type="file"
         accept="image/*"
@@ -419,7 +419,7 @@ function ImageUpload({
         <span className="font-medium">Upload Folder</span>
       </label>
 
-      <p className="mt-2 text-sm text-gray-500 text-center dark:bg-gray-700 dark:text-gray-100">
+      <p className="mt-2 text-sm text-gray-500 text-center  dark:text-gray-100">
         Select images or folders to upload.
       </p>
     </div>

@@ -15,7 +15,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
 
   return (
     <div
-      className={`fixed z-50 left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 ease-in-out ${
+      className={`fixed z-50 left-0 top-0 h-screen opacity-90 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
