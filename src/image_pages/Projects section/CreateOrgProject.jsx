@@ -735,7 +735,7 @@ const ObjectDetectionIllustration = () => (
                       onClick={() => handleSelectMember(member.email)}
                     >
                       <span>{member.email}</span>
-                      <button className="text-blue-600 hover:text-blue-800 dark:bg-gray-900 dark:text-white">Add</button>
+                      <button className="text-blue-600 hover:text-blue-800 dark:bg-green-900 rounded-md p-1 px-2 dark:text-white">Add</button>
                     </div>
                   ))}
                 </div>
@@ -752,7 +752,7 @@ const ObjectDetectionIllustration = () => (
                       <span>{email}</span>
                       <button
                         onClick={() => handleRemoveMember(email)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 dark:bg-red-800 rounded-md p-1 px-2 dark:text-white"
                       >
                         Remove
                       </button>
@@ -766,7 +766,7 @@ const ObjectDetectionIllustration = () => (
           <div className="flex justify-between mt-6 dark:bg-gray-900 dark:text-gray-100">
             <button
               onClick={step === 1 ? handleClose : () => setStep(1)}
-              className="px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 dark:bg-gray-900 dark:text-gray-100"
+              className="px-5 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 dark:bg-red-800 dark:text-gray-100"
             >
               {step === 1 ? "Cancel" : "Back"}
             </button>
@@ -775,8 +775,8 @@ const ObjectDetectionIllustration = () => (
               disabled={step === 1 && !isFormValid}
               className={`px-5 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100${
                 step === 1 && !isFormValid
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowe dark:bg-gray-700 dark:text-gray-100"
-                  : "bg-blue-600 text-white hover:bg-blue-700 dark:bg-gray-700 dark:text-gray-100"
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowe dark:bg-purple-700 dark:text-gray-100"
+                  : "bg-blue-600 text-white hover:bg-blue-700 dark:bg-purple-700 dark:text-gray-100"
               }`}
             >
               {step === 1 ? "Next" : "Create Project"}

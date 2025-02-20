@@ -584,7 +584,7 @@ const ObjectDetectionIllustration = () => (
                 disabled={!isFormValid}
                 className={`px-5 py-2 rounded-md ${
                   isFormValid
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    ? "bg-purple-600 text-white hover:bg-purple-800 dark:hover:bg-purple-800"
                     : "bg-purple-600 text-gray-100 cursor-not-allowed"
                 }`}
               >
@@ -634,11 +634,7 @@ const ProjectCard = ({ project, onProjectClick }) => {
               </button>
             </div>
           </div>
-          <p className="mt-4 text-gray-600 dark:bg-gray-700 dark:text-gray-100">
-            {project.description?.length > 100
-              ? `${project.description.substring(0, 100)}...`
-              : project.description}
-          </p>
+         
         </div>
       );
     };
@@ -689,7 +685,7 @@ const ProjectCard = ({ project, onProjectClick }) => {
       return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
           <div className="container mx-auto p-8 dark:bg-gray-900 dark:text-gray-100">
-            <div className="flex items-center justify-between mb-8 dark:bg-gray-900 dark:text-gray-100">
+            <div className="flex items-center p-8 justify-between mb-8 dark:bg-gray-900 dark:text-gray-100 shadow-md">
               <div>
                 <h1 className="text-2xl font-semibold text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                   Projects

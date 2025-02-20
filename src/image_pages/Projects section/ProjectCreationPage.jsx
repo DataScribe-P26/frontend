@@ -98,7 +98,7 @@ const ProjectCreationModal = ({ isOpen, onClose }) => {
         onChange={(e) => setName(e.target.value)}
         placeholder="Enter project name"
         className={`w-full p-3 rounded-md border focus:ring-2 focus:ring-green-500 outline-none ${
-          isDarkMode ? "bg-gray-600 text-white" : "bg-gray-200"
+          isDarkMode ? "bg-gray-600 text-gray-100" : "bg-gray-200"
         }`}
       />
     </div>
@@ -141,7 +141,7 @@ const ProjectCreationModal = ({ isOpen, onClose }) => {
                   ? "bg-green-600 text-white"
                   : isDarkMode
                   ? "bg-gray-600 text-white"
-                  : "bg-gray-200"
+                  : "bg-gray-200 border-b border-blue-500"
               }`}
             >
               <img
@@ -164,7 +164,9 @@ const ProjectCreationModal = ({ isOpen, onClose }) => {
       </button>
       <button
         onClick={onClose}
-        className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-semibold transition-all"
+        className={`px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-semibold transition-all ${
+          isDarkMode ? "bg-red-600" : "bg-red-600"
+        }`}
       >
         Cancel
       </button>
