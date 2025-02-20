@@ -146,6 +146,7 @@ const Sidebar = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         projectName={projectName}
+        projectType={textStore.getState().projectType}  // Pass project type
       />
     </div>
   );

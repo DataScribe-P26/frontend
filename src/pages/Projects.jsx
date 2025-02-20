@@ -284,6 +284,63 @@ const ObjectDetectionIllustration = () => (
     </svg>
   );
 
+  const SentimentAnalysisIllustration = () => (
+    <svg
+      viewBox="0 0 400 300"
+      className="w-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="400" height="300" fill=" #FFFCF2" rx="8" />
+  
+      <g transform="translate(50, 50)">
+        <rect
+          width="300"
+          height="200"
+          fill="white"
+          stroke="#DB2777"
+          strokeWidth="2"
+          rx="8"
+        />
+  
+        {/* Positive Sentiment */}
+        <g className="animate-[pulse_3s_ease-in-out_infinite]">
+          <rect x="20" y="20" width="260" height="40" fill="#D1FAE5" rx="4" />
+          <text x="30" y="45" fill="#10B981" className="text-sm">
+            "Amazing service! Highly recommend!"
+          </text>
+          <path d="M250 20 L280 20" stroke="#10B981" strokeWidth="2" />
+          <text x="255" y="15" fill="#10B981" fontSize="10">
+            [Positive]
+          </text>
+        </g>
+  
+        {/* Neutral Sentiment */}
+        <g className="animate-[pulse_3s_ease-in-out_infinite]">
+          <rect x="20" y="80" width="260" height="40" fill="#FEF3C7" rx="4" />
+          <text x="30" y="105" fill="#D97706" className="text-sm">
+            "The product was okay, nothing special."
+          </text>
+          <path d="M250 80 L280 80" stroke="#D97706" strokeWidth="2" />
+          <text x="255" y="75" fill="#D97706" fontSize="10">
+            [Neutral]
+          </text>
+        </g>
+  
+        {/* Negative Sentiment */}
+        <g className="animate-[pulse_3s_ease-in-out_infinite]">
+          <rect x="20" y="140" width="260" height="40" fill="#FECACA" rx="4" />
+          <text x="30" y="165" fill="#DC2626" className="text-sm">
+            "Terrible experience, very disappointed!"
+          </text>
+          <path d="M250 140 L280 140" stroke="#DC2626" strokeWidth="2" />
+          <text x="255" y="135" fill="#DC2626" fontSize="10">
+            [Negative]
+          </text>
+        </g>
+      </g>
+    </svg>
+  );
+
   const CombinedIllustration = () => (
     <svg
       viewBox="0 0 240 240"
@@ -404,6 +461,13 @@ const ObjectDetectionIllustration = () => (
         description: "Advanced text analysis and processing",
         illustration: NLPIllustration,
         color: "pink",
+      },
+      {
+        id: "sentiment_analysis",
+        title: "Sentiment Analysis",
+        description: "Detecting emotions and attitudes in text",
+        illustration: SentimentAnalysisIllustration ,
+        color: "purple",
       },
     ];
 

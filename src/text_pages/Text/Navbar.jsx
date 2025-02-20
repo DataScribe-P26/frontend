@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../Text/ThemeContext";
 import HelpModalImg from "../Text/HelpModalImg";
 import { useAuth } from '../../login/AuthContext';
+import axios from "axios";
 
 const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);
@@ -12,6 +13,10 @@ const Navbar = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false); // For notifications
+  const [notifications, setNotifications] = useState([]); // Store notifications (invitations)
+  
+
 
   const getDisplayName = () => {
     if (!user) return '';
@@ -33,6 +38,62 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showProfile]);
+
+   // Handle Notifications Toggle
+   const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+ 
+  // Fetch Pending Invitations for the User
+  const fetchNotifications = async () => {
+    try {
+      console.log('tututututu')
+      const response = await axios.get(`http://127.0.0.1:8000/notification`, {
+        params: { email: user?.email },
+        headers: {
+          'Authorization': `Bearer ${user?.token}`, // Pass token if required
+        }
+      });
+      console.log(response.data);
+      // Ensure the response is an array
+      const notificationsArray = response.data.notifications || []; // Default to an empty array if notifications is undefined
+      setNotifications(notificationsArray);
+      console.log(notificationsArray);
+    } catch (error) {
+      console.error('Error fetching invitations:', error);
+      setNotifications([]); // Fallback to empty array in case of error
+    }
+  };
+  // Handle responding to an invitation
+  const respondToInvitation = async (notificationId, action) => {
+    try {
+      console.log(notificationId," ",action)
+      const response = await axios.post(
+        `http://127.0.0.1:8000/notifications/respond`,
+        { notification_id: notificationId, action },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`, // Pass token if required
+          },
+        }
+      );
+
+      console.log(response.data.message);
+
+      // Update the notifications list after responding
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notif) => notif._id !== notificationId)
+      );
+    } catch (error) {
+      console.error("Error responding to invitation:", error);
+    }
+  };
+ 
+  // Call fetchNotifications
+  useEffect(() => {
+      fetchNotifications();
+  }, [showNotifications]);
+
 
   return (
     <div className="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -87,7 +148,59 @@ const Navbar = () => {
 
         {/* Other Icons */}
         <Search className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
-        <Bell className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer" size={20} />
+       {/* Notification Icon */}
+       <div className="relative">
+                          <Bell
+                            className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer"
+                            size={20}
+                            onClick={toggleNotifications}
+                          />
+                          {/* Badge for notification count */}
+                          {notifications.length > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full h-3 w-3 flex items-center justify-center">
+                              {notifications.length}
+                            </span>
+                          )}
+                          {/* Notifications Dropdown */}
+                          {showNotifications && (
+                            <div className="absolute top-[120%] right-0 z-50 bg-white dark:bg-gray-800 text-sm rounded-lg shadow-lg p-4 w-72">
+                              <h3 className="font-semibold text-lg mb-2 text-purple-400">Invitations</h3>
+                              {notifications.length > 0 ? (
+                                <ul className="list-none space-y-4">
+                                  {notifications.map((notif, index) => (
+                                    <React.Fragment key={notif._id}>
+                                      <li className="flex flex-col text-gray-700 dark:text-gray-300">
+                                        <p>
+                                          {`You have an invitation to join organization "${notif.org_name}" as a ${notif.role}`}
+                                        </p>
+                                        <div className="mt-2 flex justify-end gap-2">
+                                          <button
+                                            className="px-2 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                                            onClick={() => respondToInvitation(notif._id, "Accept")}
+                                          >
+                                            Accept
+                                          </button>
+                                          <button
+                                            className="px-2 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+                                            onClick={() => respondToInvitation(notif._id, "Reject")}
+                                          >
+                                            Reject
+                                          </button>
+                                        </div>
+                                      </li>
+                                      {index < notifications.length - 1 && (
+                                        <hr className="border-t border-gray-300 dark:border-gray-600 my-2" />
+                                      )}
+                                    </React.Fragment>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-gray-500 dark:text-gray-400">No new invitations.</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                 
 
         {/* User Profile Section */}
         <div className="relative profile-container">

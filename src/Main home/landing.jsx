@@ -220,7 +220,7 @@ const LandingPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen overflow-auto bg-white">
       <style>
         {`
           @keyframes float {

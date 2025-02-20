@@ -17,10 +17,10 @@
     -ms-overflow-style: none;
   }
 
-  html,body{
+  /* html,body{
     overflow: hidden;
     height: 100%;
-  }
+  } */
 
 .custom-color-input {
   -webkit-appearance: none;
