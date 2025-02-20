@@ -101,6 +101,7 @@ const useStore = create((set) => ({
           height_multiplier: i.height_multiplier,
           width: i.width,
           height: i.height,
+          auto_annotated: i.auto_annotated,
         };
       });
 
@@ -113,6 +114,79 @@ const useStore = create((set) => ({
         imageSrc: src,
         all_annotations: newAnnotations,
         current: firstImageSrc,
+      };
+    });
+  },
+  addSetImageSrc: (newSrc) => {
+    if (!Array.isArray(newSrc)) {
+      console.error("addSetImageSrc expects an array, but received:", newSrc);
+      return;
+    }
+
+    set((state) => {
+      // Process new images with annotations
+      const newAnnotations = newSrc.map((i) => {
+        const scale = i.width_multiplier;
+        const scaledWidth = i.width * scale;
+        const scaledHeight = i.height * scale;
+
+        const offsetX = (800 - scaledWidth) / 2;
+        const offsetY = (450 - scaledHeight) / 2;
+
+        // Process rectangle annotations
+        const new_rectangles = i.rectangle_annotations.map((rect) => ({
+          ...rect,
+          x: rect.x * i.width_multiplier + offsetX,
+          y: rect.y * i.height_multiplier + offsetY,
+          width: rect.width * i.width_multiplier,
+          height: rect.height * i.height_multiplier,
+        }));
+
+        // Process polygon annotations
+        const new_polygons = i.polygon_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * scale + offsetX,
+            y: point.y * scale + offsetY,
+          })),
+        }));
+
+        // Process segmentation annotations
+        const new_segmentation = i.segmentation_annotations.map((polygon) => ({
+          ...polygon,
+          points: polygon.points.map((point) => ({
+            x: point.x * scale + offsetX,
+            y: point.y * scale + offsetY,
+          })),
+        }));
+
+        return {
+          image_id: i.src,
+          annotations: [
+            ...new_rectangles,
+            ...new_polygons,
+            ...new_segmentation,
+          ],
+          id: i.id,
+          width_multiplier: i.width_multiplier,
+          height_multiplier: i.height_multiplier,
+          width: i.width,
+          height: i.height,
+        };
+      });
+
+      // Combine existing and new data
+      const updatedImageSrc = [...state.imageSrc, ...newSrc];
+      const updatedAnnotations = [...state.all_annotations, ...newAnnotations];
+
+      // Maintain current image if it exists, otherwise use first new image
+      const current =
+        state.current || (newSrc.length > 0 ? newSrc[0].src : null);
+
+      return {
+        imageSrc: updatedImageSrc,
+        all_annotations: updatedAnnotations,
+        current: current,
       };
     });
   },
@@ -307,7 +381,7 @@ const useStore = create((set) => ({
     set({ trained: savedTrained ?? false });
   },
   projecttype: "",
-  setprojectType: (projecttype) => set({ projecttype }),
+  setprojectType: (projecttype) => set({ projecttype }),
 }));
 
 export default useStore;

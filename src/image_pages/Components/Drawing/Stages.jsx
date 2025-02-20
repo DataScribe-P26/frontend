@@ -44,7 +44,6 @@ function Stages({
     currentIndex,
     setLast,
     last,
-    trained,
     setTrained,
     loadTrained,
   } = useStore();
@@ -55,15 +54,18 @@ function Stages({
   const [isHovering, setIsHovering] = React.useState(false);
 
   const { projectName } = useParams();
+
   const triggerTrainingAndInference = async () => {
-    console.log("Model Training");
     if (isProcessing) return;
+    const trained = JSON.parse(localStorage.getItem(`${projectName}_trained`));
     if (trained == true) return;
+    console.log("Model Training");
     try {
       setIsProcessing(true);
       const user_type = localStorage.getItem("userType");
       const email = user.email;
       console.log(email);
+      if (trained == true) return;
       const response = await axios.post(
         `http://127.0.0.1:8000/api/train-and-infer/${projectName}?user_type=${user_type}&email=${email}` // Use & instead of ?
       );
@@ -112,6 +114,7 @@ function Stages({
   useEffect(() => {
     loadTrained(projectName);
   }, [projectName]);
+
   useEffect(() => {
     const performInference = async (imageIds) => {
       try {
@@ -151,9 +154,8 @@ function Stages({
                   : responseAnnotations,
             };
           });
-
+          updatedAnnotations[currentIndex].auto_annotated = true;
           set_allAnnotations(updatedAnnotations);
-
           if (response.data.count > 0) {
             toast.success("Auto Annotation Complete");
           }
@@ -163,13 +165,17 @@ function Stages({
         toast.error("Inference failed");
       }
     };
-
+    console.log(all_annotations);
+    const trained = JSON.parse(localStorage.getItem(`${projectName}_trained`));
     if (
       annotatedCount >= Number(threshold) &&
       trained === true &&
       isProcessing === false
     ) {
       const currentImage = all_annotations?.[currentIndex];
+      if (currentImage?.auto_annotated == true) {
+        return;
+      }
       const hasNoAnnotations = !currentImage?.annotations?.length;
 
       if (hasNoAnnotations) {
@@ -211,15 +217,17 @@ function Stages({
     });
 
     setAnnotatedCount(imagesAnnotated);
-
     if (
       imagesAnnotated > 0 &&
       annotatedCount >= Number(threshold) &&
-      imagesAnnotated % Number(threshold) === 0 &&
       !isProcessing
     ) {
+      const trained = JSON.parse(
+        localStorage.getItem(`${projectName}_trained`)
+      );
       const processAnnotations = async () => {
-        // await submit();
+        await submit();
+        console.log("trained", trained);
         if (trained == true) return;
         triggerTrainingAndInference();
       };
