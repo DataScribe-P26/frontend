@@ -13,6 +13,7 @@ const Sidebar = () => {
   const { isUploaded, content } = textStore();
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
 
   const shouldShowImport = !isUploaded && !content;
 
@@ -21,6 +22,15 @@ const Sidebar = () => {
       className={`fixed z-50 left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-20" : "w-64"
       }`}
+
+
+
+
+
+
+
+
+      
     >
       {/* Logo and Toggle Button */}
       <div className={`flex items-center mb-6 ${isCollapsed ? "flex-col" : "justify-between"}`}>
@@ -39,14 +49,14 @@ const Sidebar = () => {
           </div>
         </Link>
 
-        {/* <button
+        <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
             isCollapsed ? "mt-2" : ""
           }`}
         >
           <Menu size={22} />
-        </button> */}
+        </button>
       </div>
 
       {/* Sidebar Items */}
@@ -106,21 +116,23 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* Label Section */}
-        <div>
-          {!isCollapsed && (
-            <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
-              LABELING
-            </h3>
-          )}
-          <Link
-            to={`/text/${projectName}/labelManager`}
-            className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
-          >
-            <Tag size={18} className="shrink-0" />
-            {!isCollapsed && <span>Label</span>}
-          </Link>
-        </div>
+        {/* Label Section (Show only if projectType is "ner_tagging") */}
+        {projectType === "ner_tagging" && (
+          <div>
+            {!isCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+                LABELING
+              </h3>
+            )}
+            <Link
+              to={`/text/${projectName}/labelManager`}
+              className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <Tag size={18} className="shrink-0" />
+              {!isCollapsed && <span>Label</span>}
+            </Link>
+          </div>
+        )}
 
         {/* Workspace Section */}
         {content && (
@@ -146,8 +158,8 @@ const Sidebar = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         projectName={projectName}
-        projectType={textStore.getState().projectType}  // Pass project type
-      />
+        projectType={localStorage.getItem("projectType")}  // Get from localStorage
+      />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { USER_TYPE } from "../Main home/user-type";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ProjectSettingsModal from "../image_pages/Projects section/ProjectSettingsModal";
 
 const ObjectDetectionIllustration = () => (
   <svg
@@ -511,11 +512,14 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
           setprojectname(projectData.name);
           setprojectType(projectData.type);
           localStorage.setItem("projectType", projectData.type);
+          console.log(projectData.type);
           if (
             projectData.type === "image" ||
             projectData.type === "instance-segmentation"
           ) {
             navigate(`/user-project/image/${projectData.name}`);
+          } else if (projectData.type === "sentiment_analysis") {
+            navigate(`/user-project/sentiment_analysis/${projectData.name}`);
           } else {
             navigate(`/user-project/ner_tagging/${projectData.name}`);
           }
@@ -672,17 +676,28 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
   );
 };
 
-const ProjectCard = ({ project, onProjectClick }) => {
+const ProjectCard = ({ project, onProjectClick,onUpdateProjectC,onDeleteC }) => {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
+      useState(false);
+  const openModal = (project) => {
+    setSelectedProject(project);
+    setIsProjectSettingsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsProjectSettingsModalOpen(false);
+  };
   return (
     <div
-      onClick={() => onProjectClick(project)}
+   
       className="bg-white text-gray-900 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer dark:bg-gray-700 dark:text-gray-100"
     >
       <div className="flex items-center justify-between dark:bg-gray-700 dark:text-gray-100">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
             <span className="text-lg font-semibold text-blue-600 ">
-              {project.name.charAt(0)}
+              {project?.name?.charAt(0) || "NA"}
             </span>
           </div>
           <div>
@@ -698,7 +713,15 @@ const ProjectCard = ({ project, onProjectClick }) => {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
+          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 "
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log(project);
+            //setSelectedProject(project); 
+            openModal(project); // Open the modal
+          }}
+          
+          >
             <Settings size={18} />
           </button>
           <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
@@ -706,6 +729,30 @@ const ProjectCard = ({ project, onProjectClick }) => {
           </button>
         </div>
       </div>
+      <ProjectSettingsModal
+              isOpen={isProjectSettingsModalOpen}
+              onClose={(e) => {
+                if (e && e.stopPropagation) {
+                  e.stopPropagation();
+                }
+                closeModal();
+              }}
+              
+              project={selectedProject}
+              organizationName={""}
+              onUpdateProject={(old_name, updatedProject) => {
+                console.log(old_name, updatedProject);
+                console.log(project);
+                project=updatedProject;
+                console.log(project);
+                onUpdateProjectC(old_name, updatedProject);
+                toast.success("Project updated successfully");
+              }}
+              onDeleteProject={(deletedProjectId) => {
+                onDeleteC(deletedProjectId)
+                toast.success("Project deleted successfully");
+              }}
+            />
     </div>
   );
 };
@@ -760,9 +807,23 @@ const ProjectsPage = ({ setActiveTab }) => {
     localStorage.setItem("projectType", project.type);
     if (project.type === "image" || project.type === "instance-segmentation") {
       navigate(`/user-project/image/${project.name}`);
-    } else {
+    } else if(project.type === "ner_tagging" ) {
       navigate(`/user-project/ner_tagging/${project.name}`);
     }
+    else{
+      navigate(`/user-project/sentiment_analysis/${project.name}`);
+    }
+  };
+
+  const handleUpdateProjectC = (oldName, updatedProject) => {
+    setProjects((prevProjects) =>
+      prevProjects.map((proj) =>
+        proj.name === oldName ? { ...proj, ...updatedProject } : proj
+      )
+    );
+  };
+  const handleDeleteProjectC = (deletedProjectId) => {
+    setProjects((prevProjects) => prevProjects.filter(p => p.name !== deletedProjectId));
   };
 
   return (
@@ -804,6 +865,8 @@ const ProjectsPage = ({ setActiveTab }) => {
                 key={project._id}
                 project={project}
                 onProjectClick={handleProjectClick}
+                onUpdateProjectC={handleUpdateProjectC} 
+                onDeleteC={handleDeleteProjectC}
               />
             ))}
           </div>

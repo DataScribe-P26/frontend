@@ -682,8 +682,11 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
             projectData.type === "instance-segmentation"
           ) {
             navigate(`/user-project/image/${projectData.name}`);
-          } else {
+          } else if ( projectData.type === "ner-tagging" ) {
             navigate(`/user-project/ner_tagging/${projectData.name}`);
+          }
+          else{
+            navigate(`/user-project/sentiment_analysis/${projectData.name}`);
           }
           setProjectData({ name: "", description: "", type: "" });
           onClose();

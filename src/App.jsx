@@ -83,6 +83,15 @@ function App() {
           />
 
           <Route
+            path="/user-project/sentiment_analysis/:projectName"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/text/:projectName/content"
             element={
               <ProtectedRoute>

@@ -11,12 +11,17 @@ const ExportModal = ({ isOpen, onClose, projectName,projectType }) => {
 
   const handleExport = async () => {
     try {
+      const projectType = localStorage.getItem("projectType");
       const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
       const response = await axios.get(
         `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
       );
+    
 
       const { text, entities } = response.data[0];
+      console.log("API Response:", response.data);
+
+      console.log("Requesting data with:", user.email, projectName);
 
       if (!text || !entities || entities.length === 0) {
         throw new Error("Incomplete data: text or entities are missing.");
@@ -145,13 +150,14 @@ const ExportModal = ({ isOpen, onClose, projectName,projectType }) => {
             }}
           >
             <option value="json">JSON</option>
-            {userType === "ner_tagging" ? (
+            <option value="csv">CSV</option>
+            {projectType === "ner_tagging" ? (
               <>
-                <option value="csv">CSV</option>
+                
                 <option value="bio">BIO</option>
                 <option value="bilou">BILOU</option>
               </>
-            ) : userType === "sentiment_analysis" ? (
+            ) : projectType === "sentiment_analysis" ? (
               <>
                 {/* Add other formats for sentiment analysis if needed */}
               </>

@@ -63,6 +63,42 @@ const CombinedFileContent = () => {
     reader.readAsText(file);
   };
 
+  const handleSentimentFileUpload = async () => {
+    if (!file) {
+      alert("Please select a file to upload.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("project_type", "sentiment_analysis"); // Specify project type
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/upload/", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await response.json();
+      console.log("Sentiment Analysis Response:", data);
+  
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+  
+      // Log or display the sentiment analysis result
+      console.log("Predicted Sentiment:", data.predicted_sentiment);
+  
+      setIsUploaded(true);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Error uploading file.");
+    }
+  };
+  
+  const projectType = localStorage.getItem("projectType");
+
   const handleGoToWorkspace = () => {
     navigate(`/text/${projectName}/filecontentdisplay`);
   };
@@ -104,12 +140,13 @@ const CombinedFileContent = () => {
         />
 
         <div className="flex flex-col items-center mb-80 flex-grow">
-          <button
-            onClick={handleFileUpload}
-            className={`bg-purple-700 text-white px-6 py-2 rounded-lg mb-60 hover:bg-purple-600 transition-shadow shadow-lg ${isDarkMode ? 'hover:bg-purple-500' : ''}`}
-          >
-            Upload
-          </button>
+        <button
+  onClick={projectType === "ner_tagging" ? handleFileUpload : handleSentimentFileUpload}
+  className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg"
+>
+  Upload
+</button>
+
           <Footer />
         </div>
       </div>

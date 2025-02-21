@@ -561,6 +561,9 @@ const FileContentDisplay = () => {
     }
   };
 
+  const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
+
+
   // Add a button or trigger this function when navigating back to the project selection
   const handleNavigateBack = () => {
     handleExitProject();
@@ -598,7 +601,7 @@ const FileContentDisplay = () => {
                   {renderContent()}
                 </div>
 
-                {selectedText && (
+                {selectedText && projectType === "ner_tagging" &&(
                   <div className="mt-4">
                     <select
                       onChange={handleLabelChange}

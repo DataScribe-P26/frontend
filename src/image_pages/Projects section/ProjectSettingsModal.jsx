@@ -4,6 +4,8 @@ import TeamMemberModal from './TeamMemberModal.jsx';
 import { useAuth } from '../../login/AuthContext.jsx';
 import axios from 'axios';
 
+import { USER_TYPE } from '../../Main home/user-type.js';
+
 const ProjectSettingsModal = ({ 
   isOpen, 
   onClose, 
@@ -17,11 +19,18 @@ const ProjectSettingsModal = ({
   const [editedProject, setEditedProject] = useState(project);
   const modalRef = useRef(null);
   const { user } = useAuth();
+  const [userType, setUserType] = useState(USER_TYPE.INDIVIDUAL);
+
   useEffect(() => {
+    const storedUserType = localStorage.getItem('userType') || USER_TYPE.INDIVIDUAL;
+    setUserType(storedUserType);
     console.log(project);
     setEditedProject(project);
     console.log(editedProject);
   }, [project]);
+    useEffect(() => {
+    console.log("isEditing updated:", isEditing);
+  }, [isEditing]);
 
 //   useEffect(() => {
 //     const handleClickOutside = (event) => {
@@ -40,19 +49,22 @@ const ProjectSettingsModal = ({
 //   }, [isOpen, onClose]);
 
 const handleDeleteProject = async () => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-      try {
-        await axios.delete(`http://127.0.0.1:8000/delete-org-project/${user.email}/${editedProject.name}/${organizationName}`); 
-        alert("Project deleted successfully!");
-        onDeleteProject(editedProject.name);
-
-      } catch (error) {
-        console.error("Error deleting project:", error);
-        alert("Failed to delete the project. Please try again.");
-      }
+  if (window.confirm('Are you sure you want to delete this project?')) {
+    try {
+      const endpoint =
+        userType === USER_TYPE.INDIVIDUAL
+          ? `http://127.0.0.1:8000/delete-project/${user.email}/${editedProject.name}`
+          : `http://127.0.0.1:8000/delete-org-project/${user.email}/${editedProject.name}/${organizationName}`;
+      await axios.delete(endpoint);
+      alert('Project deleted successfully!');
+      onDeleteProject(editedProject.name);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('Failed to delete the project. Please try again.');
     }
     onClose();
-  };
+  }
+};
   
 
   const handleInputChange = (e) => {
@@ -97,23 +109,32 @@ const handleDeleteProject = async () => {
 
   const handleSave = async () => {
     try {
-      // API call to update project details
-      const response = await fetch('http://127.0.0.1:8000/projects/update', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          org_name: organizationName,
-          old_name: project.name,
-          new_name: editedProject.name,
-          description: editedProject.description,
-          team_members: editedProject.team_members
-        }),
-      });
+      const endpoint =
+        userType === USER_TYPE.INDIVIDUAL
+          ? 'http://127.0.0.1:8000/user-projects/update'
+          : 'http://127.0.0.1:8000/projects/update';
+      const payload =
+        userType === USER_TYPE.INDIVIDUAL
+          ? {
+              old_name: project.name,
+              new_name: editedProject.name,
+              description: editedProject.description,
+              user_email: user.email,
+            }
+          : {
+              org_name: organizationName,
+              old_name: project.name,
+              new_name: editedProject.name,
+              description: editedProject.description,
+              team_members: editedProject.team_members,
+            };
+            console.log(payload);
+        const response = await axios.put(endpoint, payload, {
+              headers: { "Content-Type": "application/json" },
+            });
 
-      if (response.ok) {
-        onUpdateProject(project.name,editedProject);
+      if (response.status === 200) {
+        onUpdateProject(project.name, editedProject);
         setIsEditing(false);
         onClose();
       }
@@ -176,7 +197,7 @@ const handleDeleteProject = async () => {
               <p className="text-gray-900 dark:text-white">{project.description}</p>
             )}
           </div>
-
+          {userType !== USER_TYPE.INDIVIDUAL && (
           <div>
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Team Members</h3>
@@ -201,6 +222,7 @@ const handleDeleteProject = async () => {
               <p className="text-gray-500 dark:text-gray-400">No team members added yet.</p>
             )}  
           </div>
+          )}
         </div>
 
         <div className="mt-6 flex justify-end space-x-2">
@@ -225,7 +247,11 @@ const handleDeleteProject = async () => {
           ) : (
             <div className="flex gap-4">
                 <button
-                    onClick={() => setIsEditing(true)}
+                    onClick={() =>{
+                      setIsEditing(true)
+                      console.log(userType);
+                      console.log(isEditing);
+                    }} 
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
                     Edit Project

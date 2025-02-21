@@ -94,7 +94,7 @@ const Dashboard = () => {
       const data = {
         org_name: organizationName,
         new_name: orgDetails.name,
-        description: orgDetails.details || "",
+        details: orgDetails.details || "",
       };
 
       const response = await axios.put(
