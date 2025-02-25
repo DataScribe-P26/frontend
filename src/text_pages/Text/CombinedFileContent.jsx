@@ -11,7 +11,7 @@ const CombinedFileContent = () => {
   const { projectName } = useParams();
   const navigate = useNavigate();
   const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
-
+const [sentimentResult, setSentimentResult] = useState(null);
   const handleFileChange = (event) => {
     const fileInput = event.target; // Get the file input element
     const selectedFile = fileInput.files[0];
@@ -62,40 +62,56 @@ const CombinedFileContent = () => {
 
     reader.readAsText(file);
   };
-
+  
   const handleSentimentFileUpload = async () => {
     if (!file) {
       alert("Please select a file to upload.");
       return;
     }
   
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("project_type", "sentiment_analysis"); // Specify project type
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const fileContent = e.target.result; // Get text content from the file
+      setContent(fileContent); // Store file content in state
   
-    try {
-      const response = await fetch("http://127.0.0.1:8000/upload/", {
-        method: "POST",
-        body: formData,
-      });
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("project_type", "sentiment_analysis"); // Specify project type
   
-      const data = await response.json();
-      console.log("Sentiment Analysis Response:", data);
+      try {
+        const response = await fetch("http://127.0.0.1:8000/analyze-sentiment/", {
+          method: "POST",
+          body: formData,
+        });
   
-      if (data.error) {
-        alert(data.error);
-        return;
+        const data = await response.json();
+        console.log("Full Response:", data);
+  
+        if (!data || data.status === "error") {
+          console.error("Error Message:", data.message);
+          alert(data.message || "Error processing sentiment analysis.");
+          return;
+        }
+  
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+         // Store the result in state and localStorage
+    setSentimentResult(data);
+    localStorage.setItem("sentimentResult", JSON.stringify(data));
+        setIsUploaded(true); // Mark file as uploaded
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("Error uploading file.");
       }
+    };
   
-      // Log or display the sentiment analysis result
-      console.log("Predicted Sentiment:", data.predicted_sentiment);
-  
-      setIsUploaded(true);
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Error uploading file.");
-    }
+    reader.readAsText(file); // Read the file content as text
   };
+  
+  
   
   const projectType = localStorage.getItem("projectType");
 
@@ -104,6 +120,8 @@ const CombinedFileContent = () => {
   };
 
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+
 
   const renderUploadPage = () => (
     <div className={`flex-grow p-8 ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gradient-to-r from-gray-50 to-gray-100'} flex flex-col justify-between`}>
@@ -112,24 +130,24 @@ const CombinedFileContent = () => {
         <p className={`mb-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Please select the type of file you want to upload.</p>
 
         <div className="mb-4">
-  <label className={`block mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-    Select File Type:
-  </label>
-  <select
-    value={fileType}
-    onChange={(e) => setFileType(e.target.value)}
-    className={`${
-      isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'
-    } p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-purple-500`}
-  >
-    <option value="text" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
-      Text File (.txt)
-    </option>
-    <option value="json" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
-      JSON File (.json)
-    </option>
-  </select>
-</div>
+          <label className={`block mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+            Select File Type:
+          </label>
+          <select
+            value={fileType}
+            onChange={(e) => setFileType(e.target.value)}
+            className={`${
+              isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'
+            } p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-purple-500`}
+          >
+            <option value="text" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
+              Text File (.txt)
+            </option>
+            <option value="json" className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}>
+              JSON File (.json)
+            </option>
+          </select>
+        </div>
 
 
         <input
@@ -141,11 +159,11 @@ const CombinedFileContent = () => {
 
         <div className="flex flex-col items-center mb-80 flex-grow">
         <button
-  onClick={projectType === "ner_tagging" ? handleFileUpload : handleSentimentFileUpload}
-  className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg"
->
-  Upload
-</button>
+          onClick={projectType === "ner_tagging" ? handleFileUpload : handleSentimentFileUpload}
+          className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-lg"
+        >
+          Upload
+        </button>
 
           <Footer />
         </div>

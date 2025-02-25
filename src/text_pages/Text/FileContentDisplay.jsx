@@ -37,6 +37,14 @@ const FileContentDisplay = () => {
 
   const [fetchedLabels, setFetchedLabels] = useState(false);
   const [autoAnnotationEnabled, setAutoAnnotationEnabled] = useState(false);
+
+  const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
+  // useEffect(() => {
+  //   localStorage.removeItem("sentimentResult"); // Clear the stored sentiment data 
+  //_id:ObjectId('67bd923af3116dc3d253524d')
+
+  // }, []);
+
   useEffect(() => {
     // Activate auto-annotation button if more than one annotation exists
     setAutoAnnotationEnabled(annotations.length > 1);
@@ -379,19 +387,20 @@ const FileContentDisplay = () => {
   };
 
   const renderAnnotations = () => {
+    if (projectType !== "ner_tagging") return null; 
+  
     // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
-
       if (!unique.some((annotation) => annotation.text === current.text)) {
-        unique.push(current); 
+        unique.push(current);
       }
       return unique;
     }, []);
-
+  
     const filteredAnnotations = uniqueAnnotations.filter(
       (annotation) => fileType === "text" || annotation.index === currentIndex
     );
-
+  
     return (
       <div
         className={`mt-4 p-4 bg-white rounded-lg shadow ${
@@ -404,10 +413,7 @@ const FileContentDisplay = () => {
         ) : (
           <div className="flex flex-col gap-2">
             {filteredAnnotations.map((annotation, index) => (
-              <div
-                key={index}
-                className="flex items-center p-3 bg-gray-100 rounded"
-              >
+              <div key={index} className="flex items-center p-3 bg-gray-100 rounded">
                 <span className="text-sm font-medium">
                   <div
                     className="px-2 py-1 rounded-md text-white"
@@ -438,6 +444,7 @@ const FileContentDisplay = () => {
       </div>
     );
   };
+  
 
   const renderNavigation = () => {
     if (fileType === "json" && Array.isArray(content)) {
@@ -483,15 +490,16 @@ const FileContentDisplay = () => {
 
     console.log("Submitting data:", JSON.stringify(dataToSend, null, 2));
     const user_type='single';
-    const type='ner_tagging';
+    
     let image=null;
     let data={image,dataToSend};
     console.log(data);
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     console.log('current user is',userType);
+    const type=projectType;
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
+          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
           {
             headers: {
               "Content-Type": "application/json",
@@ -524,7 +532,7 @@ const FileContentDisplay = () => {
       })),
     };
     const user_type='single';
-    const type='ner_tagging';
+    const type=projectType;
     // Display confirmation popup
     if (
       window.confirm(
@@ -561,7 +569,7 @@ const FileContentDisplay = () => {
     }
   };
 
-  const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
+
 
 
   // Add a button or trigger this function when navigating back to the project selection
@@ -629,6 +637,8 @@ const FileContentDisplay = () => {
                     </button>
                   </div>
                 )}
+                
+
               </div>
 
               {renderNavigation()}
@@ -654,13 +664,51 @@ const FileContentDisplay = () => {
                 >
                   Exit Project
                 </button>
-                <button
-              className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg"
-              onClick={handleAutoAnnotation}
-            >
-              Auto Annotate
-            </button>
+                {projectType === "ner_tagging" && (
+                  <button
+                    className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                    onClick={handleAutoAnnotation}
+                  >
+                    Auto Annotate
+                  </button>
+                )}
+
               </div>
+
+              
+              {projectType === "sentiment_analysis" && (
+                  <div
+                    className={`mt-6 p-6 rounded-lg shadow-lg transition-all duration-300 ${
+                      isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+                    }`}
+                  >
+                    <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+                      Sentiment Analysis Result
+                    </h2>
+                    {localStorage.getItem("sentimentResult") ? (
+                      <div>
+                        <p className="text-lg font-medium mb-2">Predicted Sentiments:</p>
+                        <div className="flex flex-wrap gap-3">
+                          {JSON.parse(localStorage.getItem("sentimentResult")).results.predicted_emotions.map(
+                            (emotion, index) => (
+                              <span
+                                key={index}
+                                className="px-4 py-2 rounded-md shadow-md transition-all duration-300 
+                                bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold text-sm"
+                              >
+                                {emotion}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-lg">No result found</p>
+                    )}
+                  </div>
+                )}
+
+
               {renderAnnotations()}
 
               <div className="mb-8 flex justify-center">

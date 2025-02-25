@@ -677,6 +677,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
 };
 
 const ProjectCard = ({ project, onProjectClick,onUpdateProjectC,onDeleteC }) => {
+  const navigate=useNavigate();
   const [selectedProject, setSelectedProject] = useState(null);
   const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
       useState(false);
@@ -724,7 +725,17 @@ const ProjectCard = ({ project, onProjectClick,onUpdateProjectC,onDeleteC }) => 
           >
             <Settings size={18} />
           </button>
-          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 ">
+          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 "
+           onClick={() => {
+            localStorage.setItem("projectType", project.type);
+            if (project.type === "image" || project.type === "instance-segmentation") {
+              navigate(`/user-project/image/${project.name}`);
+            } else if (project.type === "ner_tagging") {
+              navigate(`/user-project/ner_tagging/${project.name}`);
+            } else {
+              navigate(`/user-project/sentiment_analysis/${project.name}`);
+            }
+          }}>
             <ExternalLink size={18} />
           </button>
         </div>
