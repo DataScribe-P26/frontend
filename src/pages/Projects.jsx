@@ -498,6 +498,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     projectData.type !== "";
 
   const handleSubmit = () => {
+    console.log(projectData.type);
     if (isFormValid) {
       axios
         .post("http://127.0.0.1:8000/user-projects/", {

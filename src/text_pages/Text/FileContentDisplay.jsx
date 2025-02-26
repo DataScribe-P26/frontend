@@ -387,8 +387,7 @@ const FileContentDisplay = () => {
   };
 
   const renderAnnotations = () => {
-    if (projectType !== "ner_tagging") return null; 
-  
+
     // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
       if (!unique.some((annotation) => annotation.text === current.text)) {
@@ -609,7 +608,7 @@ const FileContentDisplay = () => {
                   {renderContent()}
                 </div>
 
-                {selectedText && projectType === "ner_tagging" &&(
+                {selectedText &&(
                   <div className="mt-4">
                     <select
                       onChange={handleLabelChange}
