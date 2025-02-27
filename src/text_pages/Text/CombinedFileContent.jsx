@@ -12,7 +12,8 @@ const CombinedFileContent = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
 const [sentimentResult, setSentimentResult] = useState(null);
-
+  const projectType = localStorage.getItem("projectType");
+ 
 const handleFileChange = (event) => {
   const fileInput = event.target;
   const selectedFile = fileInput.files[0];
@@ -36,7 +37,7 @@ const handleFileChange = (event) => {
 };
 
 
-const handleFileUpload = () => {
+const handleFileUpload = async() => {
   if (!file) {
     alert("Please select a file to upload.");
     return;
@@ -84,8 +85,25 @@ const handleFileUpload = () => {
 
     setContent(processedContent);
     setIsUploaded(true);
+    
   };
+  if (projectType === "sentiment_analysis") {
+    const formData = new FormData();
+    formData.append("file", file);
 
+    try {
+      const response = await fetch(`http://localhost:8000/upload/${projectName}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("File upload failed.");
+    }
+  }
   reader.readAsText(file);
 };
 
@@ -141,7 +159,7 @@ const handleFileUpload = () => {
   
   
   
-  const projectType = localStorage.getItem("projectType");
+  
 
   const handleGoToWorkspace = () => {
     navigate(`/text/${projectName}/filecontentdisplay`);

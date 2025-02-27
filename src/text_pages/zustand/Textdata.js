@@ -99,6 +99,12 @@ const textStore = create((set) => ({
       ),
     })),
 
+    emotions: [],  
+    setEmotions: (newEmotions) => set({ emotions: newEmotions }),  
+
+    sentimentLabels: [],
+    setSentimentLabels: (newSentimentLabels) => set({ sentimentLabels: newSentimentLabels }),
+
   //file
   fileType: "text",
   file: null,

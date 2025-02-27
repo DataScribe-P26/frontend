@@ -16,18 +16,26 @@ const HomePage = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const projectType = localStorage.getItem("projectType");
 
   const {
     content,
     setContent,
     fileType,
     labels,
+    emotions,
     setLabels,
+    setEmotions,
     annotations,
+    sentimentLabels,
     setAnnotations,
+    setSentimentLabels,
     addAnnotation,
+    addSentimentLabel,
     deleteAnnotation,
+    deleteSentimentLabel,
     addLabel,
+    addEmotion,
   } = textStore();
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
@@ -40,54 +48,125 @@ const HomePage = () => {
       try {
         setLoading(true);
         setContent(null);
-        setLabels([]);
-        setAnnotations([]);
-        const userType =
-          localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
-        );
+        if (projectType === "ner_tagging") {
+          setLabels([]);  // ✅ Use setLabels for NER
+          setAnnotations([]);
+        } else if (projectType === "sentiment_analysis") {
+          setEmotions([]);  // ✅ Use setEmotions for Sentiment Analysis
+          setSentimentLabels([]);
+        }
+        const userType =localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+          let response;
+          if (projectType === "ner_tagging") {  
+            response = await axios.get(
+              `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+            );
 
-        if (response.data?.[0]) {
-          setContent(response.data[0].text || null);
+            if (response.data?.[0]) {
+              setContent(response.data[0].text || null);
 
-          if (response.data[0].entities?.length) {
-            const labelMap = new Map();
-            response.data[0].entities.forEach((entity) => {
-              if (!labelMap.has(entity.label)) {
-                labelMap.set(entity.label, {
-                  name: entity.label,
-                  color: entity.color,
-                  bgColor: entity.bColor,
-                  textColor: entity.textColor,
-                });
-              }
-            });
-
-            setLabels(Array.from(labelMap.values()));
-
-            const uniqueAnnotations = Array.from(
-              new Set(
-                response.data[0].entities.map((entity) =>
-                  JSON.stringify({
-                    text: entity.entity,
-                    label: {
+              if (response.data[0].entities?.length) {
+                const labelMap = new Map();
+                response.data[0].entities.forEach((entity) => {
+                  if (!labelMap.has(entity.label)) {
+                    labelMap.set(entity.label, {
                       name: entity.label,
                       color: entity.color,
                       bgColor: entity.bColor,
                       textColor: entity.textColor,
-                    },
-                    start: entity.start,
-                    end: entity.end,
-                    index: -1,
-                  })
-                )
-              )
-            ).map((str) => JSON.parse(str));
+                    });
+                  }
+                });
 
-            setAnnotations(uniqueAnnotations);
+                setLabels(Array.from(labelMap.values()));
+
+                const uniqueAnnotations = Array.from(
+                  new Set(
+                    response.data[0].entities.map((entity) =>
+                      JSON.stringify({
+                        text: entity.entity,
+                        label: {
+                          name: entity.label,
+                          color: entity.color,
+                          bgColor: entity.bColor,
+                          textColor: entity.textColor,
+                        },
+                        start: entity.start,
+                        end: entity.end,
+                        index: -1,
+                      })
+                    )
+                  )
+                ).map((str) => JSON.parse(str));
+
+                setAnnotations(uniqueAnnotations);
+              }
+            }
           }
-        }
+          else if (projectType === "sentiment_analysis") {
+            // response = await axios.get(
+            //   `http://127.0.0.1:8000/projects/sentiment_analysis/${userType}/${projectName}/${user.email}`
+            // );
+            response = await axios.get(
+               `http://127.0.0.1:8000/get-annotations/${projectName}`);
+      
+            if (response.data && response.data.annotations) 
+              {
+              const here = response.data.annotations[0].annotations;
+              
+              let processedContent = Array.isArray(here) ? here : Object.values(here);
+
+              setContent(processedContent); 
+              // if (response.data[0].annotations) {
+              //   if (fileType === "csv" || fileType === "jsonl") {
+              //     try {
+              //       const parsedContent =
+              //         typeof response.data[0].text === "string"
+              //           ? JSON.parse(response.data.annotations[0].annotations)
+              //           : response.data.annotations[0].annotations;
+              //       console.log("lol",parsedContent);
+              //       setContent(parsedContent);
+              //       console.log(content);
+              //     } catch (e) {
+              //       console.error("Error parsing content:", e);
+              //       setContent([response.data[0].text]);
+              //     }
+              //   } else {
+              //     setContent([response.data[0]]);
+              //     console.log("here");
+              //   }
+              // }
+      
+              // if (response.data[0].sentiments?.length) {
+              //   const emotionMap = new Map();
+              //   response.data[0].sentiments.forEach((sentiment) => {
+              //     if (!emotionMap.has(sentiment.emotion)) {
+              //       emotionMap.set(sentiment.emotion, {
+              //         name: sentiment.emotion,
+              //       });
+              //     }
+              //   });
+      
+              //   setEmotions(Array.from(emotionMap.values()));
+      
+              //   const uniqueSentiments = Array.from(
+              //     new Set(
+              //       response.data[0].sentiments.map((sentiment) =>
+              //         JSON.stringify({
+              //           text: sentiment.text,
+              //           label: {
+              //             name: sentiment.emotion,
+              //           },
+              //           index: sentiment.index || currentIndex,
+              //         })
+              //       )
+              //     )
+              //   ).map((str) => JSON.parse(str));
+      
+              //   setSentimentLabels(uniqueSentiments);
+              // }
+            }
+          }
       } catch (error) {
         console.error("Error fetching annotations:", error);
       } finally {
@@ -100,7 +179,14 @@ const HomePage = () => {
 
   const handleStartAnnotation = () => {
     if (content) {
-      navigate(`/text/${projectName}/filecontentdisplay`);
+      if(projectType=="sentiment_analysis")
+      {
+        navigate(`/text/${projectName}/contentdisplay`);
+      }
+      else{
+        navigate(`/text/${projectName}/filecontentdisplay`);
+      }
+      
     } else {
       navigate(`/combined-file-content/${projectName}`);
     }

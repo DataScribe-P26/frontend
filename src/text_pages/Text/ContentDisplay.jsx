@@ -36,9 +36,10 @@ const ContentDisplay = () => {
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const { user } = useAuth();
   const [fetchedEmotions, setFetchedEmotions] = useState(false);
-
-  const projectType = "sentiment_analysis"; // Hardcoded for this specific component
-
+// useEffect(()=>{
+//   console.log(content);
+// })
+  const projectType = "sentiment_analysis";
   useEffect(() => {
     const fetchSentimentsAndEmotions = async () => {
       try {
@@ -48,68 +49,48 @@ const ContentDisplay = () => {
         setSentimentLabels([]);
         
         const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-        console.log('current user is', userType);
-        
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/sentiment_analysis/${userType}/${projectName}/${user.email}`
-        );
-        
-        console.log('sentiment data:', response.data[0]);
-        
-        if (response.data?.[0]) {
-          // Handle content differently based on file type
-          if (response.data[0].text) {
-            if (fileType === "csv" || fileType === "jsonl") {
-              // For CSV or JSONL, expect an array of sentences
-              try {
-                const parsedContent = typeof response.data[0].text === 'string' 
-                  ? JSON.parse(response.data[0].text) 
-                  : response.data[0].text;
-                setContent(parsedContent);
-              } catch (e) {
-                console.error("Error parsing content:", e);
-                // Fallback: treat as single text if parsing fails
-                setContent([response.data[0].text]);
-              }
-            } else {
-              // Default: treat as single text
-              setContent([response.data[0].text]);
-            }
-          }
-
-          // Process emotions and sentiment labels
-          if (response.data[0].sentiments?.length) {
-            // Create unique emotions
-            const emotionMap = new Map();
-            response.data[0].sentiments.forEach((sentiment) => {
-              if (!emotionMap.has(sentiment.emotion)) {
-                emotionMap.set(sentiment.emotion, {
-                  name: sentiment.emotion,
-                });
-              }
-            });
-
-            setEmotions(Array.from(emotionMap.values()));
-
-            // Create sentiment labels
-            const uniqueSentiments = Array.from(
-              new Set(
-                response.data[0].sentiments.map((sentiment) =>
-                  JSON.stringify({
-                    text: sentiment.text,
-                    label: {
-                      name: sentiment.emotion,
-                    },
-                    index: sentiment.index || currentIndex,
-                  })
-                )
-              )
-            ).map((str) => JSON.parse(str));
-
-            setSentimentLabels(uniqueSentiments);
-          }
-        }
-      } catch (error) {
+                 
+                 const response = await axios.get(
+                   `http://127.0.0.1:8000/get-annotations/${projectName}`);
+                 
+                 if (response.data && response.data.annotations) {         
+                    // Ensure it's an array before setting state
+                    const annotationsData = response.data.annotations[0].annotations;
+                    
+                    let processedContent = Array.isArray(annotationsData) ? annotationsData : Object.values(annotationsData);
+                    
+                    // Extract unique emotions from the content
+                    const uniqueEmotions = new Set();
+                    processedContent.forEach(item => {
+                      if (item.emotion) {
+                        uniqueEmotions.add(item.emotion);
+                      }
+                    });
+                    
+                    // Add existing emotions to the emotions list
+                    uniqueEmotions.forEach(emotionName => {
+                      if (emotionName && !emotions.some(e => e.name === emotionName)) {
+                        addEmotion(emotionName);
+                      }
+                    });
+                    
+                    // Create sentiment labels for items that already have emotions
+                    const labels = [];
+                    processedContent.forEach((item, index) => {
+                      if (item.emotion) {
+                        const emotionObj = { name: item.emotion };
+                        labels.push({
+                          text: item.text,
+                          label: emotionObj,
+                          index: index
+                        });
+                      }
+                    });
+                    
+                    setSentimentLabels(labels);
+                    setContent(processedContent);
+                  }     
+                } catch (error) {
         console.error("Error fetching sentiments:", error);
       }
     };
@@ -155,11 +136,20 @@ const ContentDisplay = () => {
 
   const handleEmotionChange = async (event) => {
     const emotionName = event.target.value;
+    console.log(emotionName);
     setSelectedEmotion(emotionName);
-    const emotion = emotions.find((emotion) => emotion.name === emotionName);
-
-    if (emotion && content && content[currentIndex]) {
-      const currentText = content[currentIndex];
+    
+    if (emotionName && content && content[currentIndex]) {
+      // Find the emotion object
+      const emotion = emotions.find((e) => e.name === emotionName) || { name: emotionName };
+      
+      // Update the content with the selected emotion
+      const updatedContent = [...content];
+      updatedContent[currentIndex] = {
+        ...updatedContent[currentIndex],
+        emotion: emotionName
+      };
+      setContent(updatedContent);
       
       // Check if this sentence already has a sentiment label
       const existingLabelIndex = sentimentLabels.findIndex(
@@ -177,15 +167,14 @@ const ContentDisplay = () => {
       } else {
         // Add new sentiment label
         const newSentimentLabel = {
-          text: currentText,
+          text: updatedContent[currentIndex].text,
           label: emotion,
           index: currentIndex,
         };
         
         try {
           addSentimentLabel(newSentimentLabel);
-          await handleSubmit();
-          
+          await handleSubmit(updatedContent);
         } catch (error) {
           console.error("Error submitting sentiment label:", error);
         }
@@ -194,6 +183,12 @@ const ContentDisplay = () => {
   };
 
   const getCurrentSentimentEmotion = () => {
+    // First check the content array
+    if (content && content[currentIndex] && content[currentIndex].emotion) {
+      return content[currentIndex].emotion;
+    }
+    
+    // Then check sentiment labels
     const currentSentiment = sentimentLabels.find(label => label.index === currentIndex);
     return currentSentiment ? currentSentiment.label.name : "";
   };
@@ -208,7 +203,7 @@ const ContentDisplay = () => {
     // For sentiment analysis, display the current sentence
     return (
       <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-600 dark:text-gray-100">
-        <p className="text-lg">{content[currentIndex]}</p>
+        <p className="text-lg">{content[currentIndex]?.text || 'No text available'}</p>
       </div>
     );
   };
@@ -241,51 +236,52 @@ const ContentDisplay = () => {
     );
   };
 
-  const handleSubmit = async () => {
-    const dataToSend = {
-      text: content,
-      sentiments: sentimentLabels.map((sentiment) => ({
-        text: sentiment.text,
-        emotion: sentiment.label.name,
-        index: sentiment.index,
-      })),
-    };
-
-    console.log("Submitting sentiment data:", JSON.stringify(dataToSend, null, 2));
-    const user_type = 'single';
-    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-    
-    try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/projects/${projectType}/${user_type}/${projectName}/upload/`,
-        {data2: dataToSend},
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response);
-      toast.success("Sentiment labels saved successfully");
-    } catch (error) {
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        toast.error(error.message);
-      } else {
-        console.error("Network Error:", error.message);
+  const handleSubmit = async (contentToSave = content) => {
+    if (!contentToSave) return;
+  
+    for (const item of contentToSave) {
+      const sentimentLabel = sentimentLabels.find(label => label.text === item.text);
+      const emotion = sentimentLabel ? sentimentLabel.label.name : item.emotion;
+  
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/annotate/`, 
+          null,  
+          {
+            params: {
+              project_name: projectName,
+              text: item.text,
+              emotion: emotion
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        console.log("Annotation saved:", response.data);
+        toast.success(`Emotion updated for: "${item.text}"`);
+        
+      } catch (error) {
+        console.error("Error submitting annotation:", error.response?.data || error.message);
         toast.error("Changes not saved");
       }
     }
   };
+  
 
   const handleExitProject = async () => {
+    // Same structure as handleSubmit but with confirmation
     const dataToSend = {
-      text: content,
-      sentiments: sentimentLabels.map((sentiment) => ({
-        text: sentiment.text,
-        emotion: sentiment.label.name,
-        index: sentiment.index,
-      })),
+      text: content ? content.map((item, index) => {
+        const sentimentLabel = sentimentLabels.find(label => label.index === index);
+        const emotion = sentimentLabel ? sentimentLabel.label.name : item.emotion;
+        
+        return {
+          text: item.text,
+          emotion: emotion
+        };
+      }) : [],
     };
     
     const user_type = 'single';
@@ -328,14 +324,28 @@ const ContentDisplay = () => {
   };
 
   const renderSummary = () => {
-    if (!sentimentLabels || sentimentLabels.length === 0) return null;
+    if (!content || content.length === 0) return null;
     
-    // Count occurrences of each emotion
+    // Count occurrences of each emotion from both content and sentimentLabels
     const emotionCounts = {};
+    
+    // First count from sentimentLabels
     sentimentLabels.forEach(label => {
       const emotion = label.label.name;
-      emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+      if (emotion) {
+        emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+      }
     });
+    
+    // Then count from content (for items not in sentimentLabels)
+    content.forEach((item, index) => {
+      if (!sentimentLabels.some(label => label.index === index) && item.emotion) {
+        emotionCounts[item.emotion] = (emotionCounts[item.emotion] || 0) + 1;
+      }
+    });
+    const labeledCount = content.filter((item, index) => {
+      return item.emotion || sentimentLabels.some(label => label.index === index);
+    }).length;
     
     return (
       <div className="mt-4 p-4 bg-white rounded-lg shadow dark:bg-gray-700 dark:text-gray-100">
@@ -350,8 +360,8 @@ const ContentDisplay = () => {
         </div>
         <div className="mt-4">
           <p className="text-sm text-gray-600 dark:text-gray-100">
-            Progress: {sentimentLabels.length} of {content?.length || 0} sentences labeled 
-            ({content?.length ? Math.round((sentimentLabels.length / content.length) * 100) : 0}%)
+            Progress: {labeledCount} of {content.length} sentences labeled 
+            ({Math.round((labeledCount / content.length) * 100)}%)
           </p>
         </div>
       </div>
@@ -434,7 +444,7 @@ const ContentDisplay = () => {
               {/* Action buttons */}
               <div className="flex justify-center space-x-4">
                 <button
-                  onClick={handleSubmit}
+                  onClick={() => handleSubmit()}
                   className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition-colors"
                 >
                   Save Sentiment Labels
