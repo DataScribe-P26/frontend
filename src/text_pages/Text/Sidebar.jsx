@@ -116,24 +116,23 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* Label Section */}
-               {/* Label Section */}
-               <div>
-          {!isCollapsed && (
-            <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
-              LABELING
-            </h3>
-          )}
-          <Link
-            to={`/text/${projectName}/labelManager`}
-            className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
-          >
-            <Tag size={18} className="shrink-0" />
-            {!isCollapsed && <span>Label</span>}
-          </Link>
-        </div>
-
-
+        {/* Label Section (Show only if projectType is "ner_tagging") */}
+        {projectType === "ner_tagging" && (
+          <div>
+            {!isCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
+                LABELING
+              </h3>
+            )}
+            <Link
+              to={`/text/${projectName}/labelManager`}
+              className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <Tag size={18} className="shrink-0" />
+              {!isCollapsed && <span>Label</span>}
+            </Link>
+          </div>
+        )}
 
         {/* Workspace Section */}
         {content && (
@@ -144,12 +143,13 @@ const Sidebar = () => {
               </h3>
             )}
             <Link
-              to={`/text/${projectName}/filecontentdisplay`}
+              to={`/text/${projectName}/${projectType === "ner_tagging" ? "filecontentdisplay" : "contentdisplay"}`}
               className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
             >
               <Grid size={18} className="shrink-0" />
               {!isCollapsed && <span>Workspace</span>}
             </Link>
+
           </div>
         )}
       </div>

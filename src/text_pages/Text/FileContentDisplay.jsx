@@ -387,7 +387,8 @@ const FileContentDisplay = () => {
   };
 
   const renderAnnotations = () => {
-
+    if (projectType !== "ner_tagging") return null; 
+  
     // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
       if (!unique.some((annotation) => annotation.text === current.text)) {
@@ -608,7 +609,7 @@ const FileContentDisplay = () => {
                   {renderContent()}
                 </div>
 
-                {selectedText &&(
+                {selectedText && projectType === "ner_tagging" &&(
                   <div className="mt-4">
                     <select
                       onChange={handleLabelChange}
@@ -675,7 +676,7 @@ const FileContentDisplay = () => {
               </div>
 
               
-              {projectType === "sentiment_analysis" && (
+              {/* {projectType === "sentiment_analysis" && (
                   <div
                     className={`mt-6 p-6 rounded-lg shadow-lg transition-all duration-300 ${
                       isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
@@ -705,7 +706,7 @@ const FileContentDisplay = () => {
                       <p className="text-gray-500 text-lg">No result found</p>
                     )}
                   </div>
-                )}
+                )} */}
 
 
               {renderAnnotations()}

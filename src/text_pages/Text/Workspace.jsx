@@ -5,12 +5,13 @@ import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata"; // Assuming your store is set up to manage text and files
 import FileContentDisplay from "./FileContentDisplay";
 import CombinedFileContent from "./CombinedFileContent";
+import ContentDisplay from "./ContentDisplay";
 
 const Workspace = () => {
   const { projectName } = useParams(); // Get the project name from the URL
   const { content } = textStore(); // Access the content from Zustand
   const [isAnnotationStarted, setIsAnnotationStarted] = useState(false); // State to track annotation start
-
+  const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
   const handleStartAnnotation = () => {
     setIsAnnotationStarted(true); // Hide Navbar and Sidebar when annotation starts
   };
@@ -26,10 +27,11 @@ const Workspace = () => {
           </h2>
           {/* Conditionally render content */}
           {content ? (
-            <FileContentDisplay />
-          ) : (
-            <CombinedFileContent onStartAnnotation={handleStartAnnotation} />
-          )}
+              projectType === "ner_tagging" ? <FileContentDisplay /> : <ContentDisplay />
+            ) : (
+              <CombinedFileContent onStartAnnotation={handleStartAnnotation} />
+            )}
+
         </div>
       </div>
     </div>
