@@ -27,7 +27,6 @@ const ContentDisplay = () => {
   } = textStore();
   
   const { isDarkMode } = useTheme();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { projectName } = useParams();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -36,9 +35,20 @@ const ContentDisplay = () => {
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const { user } = useAuth();
   const [fetchedEmotions, setFetchedEmotions] = useState(false);
-// useEffect(()=>{
-//   console.log(content);
-// })
+
+
+const [currentIndex, setCurrentIndex] = useState(() => {
+  // Try to get saved index from localStorage on initial load
+  const savedIndex = localStorage.getItem(`${projectName}-currentIndex`);
+  return savedIndex ? parseInt(savedIndex, 0) : 0;
+});
+
+useEffect(() => {
+  if (projectName) {
+    localStorage.setItem(`${projectName}-currentIndex`, currentIndex.toString());
+  }
+}, [currentIndex, projectName]);
+
   const projectType = "sentiment_analysis";
   useEffect(() => {
     const fetchSentimentsAndEmotions = async () => {
@@ -53,27 +63,25 @@ const ContentDisplay = () => {
                  const response = await axios.get(
                    `http://127.0.0.1:8000/get-annotations/${projectName}`);
                  
-                 if (response.data && response.data.annotations) {         
+                   if (response.data && response.data.annotations) {         
                     // Ensure it's an array before setting state
                     const annotationsData = response.data.annotations[0].annotations;
-                    
+                              
                     let processedContent = Array.isArray(annotationsData) ? annotationsData : Object.values(annotationsData);
-                    
-                    // Extract unique emotions from the content
+                              
+                    // Extract unique emotions from the content using a Set to prevent duplicates
                     const uniqueEmotions = new Set();
                     processedContent.forEach(item => {
                       if (item.emotion) {
                         uniqueEmotions.add(item.emotion);
                       }
                     });
-                    
-                    // Add existing emotions to the emotions list
-                    uniqueEmotions.forEach(emotionName => {
-                      if (emotionName && !emotions.some(e => e.name === emotionName)) {
-                        addEmotion(emotionName);
-                      }
-                    });
-                    
+                              
+                    // Add unique emotions to the emotions list - convert Set to Array
+                    const emotionsArray = Array.from(uniqueEmotions);
+                    const formattedEmotions = emotionsArray.map(emotionName => ({ name: emotionName }));
+                    setEmotions(formattedEmotions);
+                              
                     // Create sentiment labels for items that already have emotions
                     const labels = [];
                     processedContent.forEach((item, index) => {
@@ -86,10 +94,10 @@ const ContentDisplay = () => {
                         });
                       }
                     });
-                    
+                              
                     setSentimentLabels(labels);
                     setContent(processedContent);
-                  }     
+                  }   
                 } catch (error) {
         console.error("Error fetching sentiments:", error);
       }
@@ -224,9 +232,11 @@ const ContentDisplay = () => {
           Sentence {currentIndex + 1} of {content.length}
         </span>
         <button
-          onClick={() =>
-            setCurrentIndex(Math.min(content.length - 1, currentIndex + 1))
-          }
+          onClick={() => {
+            setCurrentIndex(Math.min(content.length - 1, currentIndex + 1));
+            handleSubmit();
+        }}
+        
           disabled={currentIndex === content.length - 1}
           className="bg-purple-700 text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -239,13 +249,20 @@ const ContentDisplay = () => {
   const handleSubmit = async (contentToSave = content) => {
     if (!contentToSave) return;
   
-    for (const item of contentToSave) {
+    let hasSuccess = false;
+    let hasError = false;
+  
+    const requests = contentToSave.map(async (item) => {
+      // Find emotion from sentimentLabels if it exists
       const sentimentLabel = sentimentLabels.find(label => label.text === item.text);
       const emotion = sentimentLabel ? sentimentLabel.label.name : item.emotion;
   
+      // Skip API call if emotion is null or empty
+      if (!emotion) return;
+  
       try {
-        const response = await axios.post(
-          `http://127.0.0.1:8000/annotate/`, 
+        await axios.post(
+          `http://127.0.0.1:8000/annotate/`,
           null,  
           {
             params: {
@@ -258,17 +275,120 @@ const ContentDisplay = () => {
             },
           }
         );
-  
-        console.log("Annotation saved:", response.data);
-        toast.success(`Emotion updated for: "${item.text}"`);
-        
+        hasSuccess = true;
       } catch (error) {
         console.error("Error submitting annotation:", error.response?.data || error.message);
-        toast.error("Changes not saved");
+        hasError = true;
       }
-    }
-  };
+    });
   
+    await Promise.all(requests); // Ensure all API calls are completed
+  
+    // Show only one toast message
+    if (hasSuccess) toast.success("Sentiment labels saved successfully");
+    if (hasError) toast.error("Some annotations failed to save");
+  };
+
+  // Add this helper function to calculate current progress percentage
+const calculateProgress = () => {
+  if (!content || content.length === 0) return 0;
+  
+  const labeledCount = content.filter((item, index) => {
+    return item.emotion || sentimentLabels.some(label => label.index === index);
+  }).length;
+  
+  return Math.round((labeledCount / content.length) * 100);
+};
+
+// Add this function to handle auto-annotation
+const handleAutoAnnotation = async () => {
+  if (calculateProgress() < 10) {
+    toast.error("Please annotate at least 10% of sentences manually first");
+    return;
+  }
+  
+  // Show loading toast
+  toast.loading("Auto-annotating remaining sentences...");
+  
+  try {
+    // Get all sentences that have been labeled so far
+    const labeledSentences = content.filter((item, index) => {
+      return item.emotion || sentimentLabels.some(label => label.index === index);
+    });
+    
+    // Create a map of emotions used and their frequency
+    const emotionCounts = {};
+    labeledSentences.forEach(item => {
+      const emotion = item.emotion || sentimentLabels.find(label => label.text === item.text)?.label?.name;
+      if (emotion) {
+        emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+      }
+    });
+    
+    // Find the most used emotion
+    let mostUsedEmotion = null;
+    let highestCount = 0;
+    
+    Object.entries(emotionCounts).forEach(([emotion, count]) => {
+      if (count > highestCount) {
+        mostUsedEmotion = emotion;
+        highestCount = count;
+      }
+    });
+    
+    if (!mostUsedEmotion && emotions.length > 0) {
+      // Fallback to the first emotion if no most used emotion is found
+      mostUsedEmotion = emotions[0].name;
+    }
+    
+    if (!mostUsedEmotion) {
+      toast.dismiss();
+      toast.error("No emotions available for auto-annotation");
+      return;
+    }
+    
+    // Apply the most used emotion to all unlabeled sentences
+    const updatedContent = [...content];
+    const newSentimentLabels = [...sentimentLabels];
+    const emotionObj = emotions.find(e => e.name === mostUsedEmotion) || { name: mostUsedEmotion };
+    
+    for (let i = 0; i < updatedContent.length; i++) {
+      // Skip if already labeled
+      if (updatedContent[i].emotion || newSentimentLabels.some(label => label.index === i)) {
+        continue;
+      }
+      
+      // Update content
+      updatedContent[i] = {
+        ...updatedContent[i],
+        emotion: mostUsedEmotion
+      };
+      
+      // Add sentiment label
+      const newSentimentLabel = {
+        text: updatedContent[i].text,
+        label: emotionObj,
+        index: i
+      };
+      
+      newSentimentLabels.push(newSentimentLabel);
+    }
+    
+    // Update state
+    setContent(updatedContent);
+    setSentimentLabels(newSentimentLabels);
+    
+    // Save to the server
+    await handleSubmit(updatedContent);
+    
+    toast.dismiss();
+    toast.success("Auto-annotation completed successfully");
+  } catch (error) {
+    toast.dismiss();
+    console.error("Error during auto-annotation:", error);
+    toast.error("Auto-annotation failed: " + (error.message || "Unknown error"));
+  }
+};
 
   const handleExitProject = async () => {
     // Same structure as handleSubmit but with confirmation
@@ -418,12 +538,12 @@ const ContentDisplay = () => {
                     >
                       <option value="">Select an emotion</option>
                       {emotions.map((emotion) => (
-                        <option key={emotion.name} value={emotion.name} className="bg-purple-400 hover:bg-purple-500">
+                        <option key={emotion.name} value={emotion.name} >
                           {emotion.name}
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div>
                   
                   <button
                     className="mt-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -448,6 +568,19 @@ const ContentDisplay = () => {
                   className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition-colors"
                 >
                   Save Sentiment Labels
+                </button>
+
+                <button
+                  onClick={handleAutoAnnotation}
+                  disabled={calculateProgress() < 10}
+                  className={`mt-6 px-6 py-3 rounded-lg transition-colors ${
+                    calculateProgress() >= 10
+                      ? "bg-blue-700 text-white hover:bg-blue-800" 
+                      : "bg-blue-300 text-gray-100 cursor-not-allowed opacity-50"
+                  }`}
+                  title={calculateProgress() < 10 ? "Complete at least 10% annotations to unlock" : "Auto-annotate remaining sentences"}
+                >
+                  Auto Annotation
                 </button>
                 
                 <CreateEmotion

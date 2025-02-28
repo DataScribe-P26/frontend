@@ -677,11 +677,11 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
   );
 };
 
-const ProjectCard = ({ project, onProjectClick,onUpdateProjectC,onDeleteC }) => {
-  const navigate=useNavigate();
+const ProjectCard = ({ project, onProjectClick, onUpdateProjectC, onDeleteC }) => {
+  const navigate = useNavigate();
   const [selectedProject, setSelectedProject] = useState(null);
-  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
-      useState(false);
+  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false);
+
   const openModal = (project) => {
     setSelectedProject(project);
     setIsProjectSettingsModalOpen(true);
@@ -690,81 +690,89 @@ const ProjectCard = ({ project, onProjectClick,onUpdateProjectC,onDeleteC }) => 
   const closeModal = () => {
     setIsProjectSettingsModalOpen(false);
   };
+
   return (
-    <div
-   
-      className="bg-white text-gray-900 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer dark:bg-gray-700 dark:text-gray-100"
-    >
-      <div className="flex items-center justify-between dark:bg-gray-700 dark:text-gray-100">
-        <div className="flex items-center space-x-4">
+    <div className="bg-white text-gray-900 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer dark:bg-gray-700 dark:text-gray-100">
+      {/* Flex container to ensure responsiveness */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full space-y-2 sm:space-y-0">
+        
+        {/* Left Section - Project Info */}
+        <div className="flex items-center space-x-4 min-w-0">
+          {/* Project Icon */}
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <span className="text-lg font-semibold text-blue-600 ">
+            <span className="text-lg font-semibold text-blue-600">
               {project?.name?.charAt(0) || "NA"}
             </span>
           </div>
-          <div>
-            <h3 className="font-semibold">{project.name}</h3>
+          
+          {/* Project Details */}
+          <div className="min-w-0">
+            <h3 className="font-semibold truncate">{project.name}</h3>
             <div className="flex items-center mt-1">
-              <span className="px-3 py-1 text-sm rounded-full bg-purple-300 text-purple-800">
+              <span className="px-3 py-1 text-sm rounded-full bg-purple-300 text-purple-800 max-w-[120px] sm:max-w-[150px] truncate">
                 {project.type}
               </span>
             </div>
-            <p className="text-sm mt-2 text-gray-600 dark:bg-gray-700 dark:text-gray-100">
+            <p className="text-sm mt-2 text-gray-600 dark:text-gray-100">
               Created on: {new Date(project.created_on).toLocaleDateString()}
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 "
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log(project);
-            //setSelectedProject(project); 
-            openModal(project); // Open the modal
-          }}
-          
+
+        {/* Right Section - Icons */}
+        <div className="flex items-center space-x-2 flex-shrink-0">
+          {/* Settings Button */}
+          <button
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              openModal(project);
+            }}
           >
             <Settings size={18} />
           </button>
-          <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600 "
-           onClick={() => {
-            localStorage.setItem("projectType", project.type);
-            if (project.type === "image" || project.type === "instance-segmentation") {
-              navigate(`/user-project/image/${project.name}`);
-            } else if (project.type === "ner_tagging") {
-              navigate(`/user-project/ner_tagging/${project.name}`);
-            } else {
-              navigate(`/user-project/sentiment_analysis/${project.name}`);
-            }
-          }}>
+          
+          {/* Navigation Button */}
+          <button
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600"
+            onClick={() => {
+              localStorage.setItem("projectType", project.type);
+              if (project.type === "image" || project.type === "instance-segmentation") {
+                navigate(`/user-project/image/${project.name}`);
+              } else if (project.type === "ner_tagging") {
+                navigate(`/user-project/ner_tagging/${project.name}`);
+              } else {
+                navigate(`/user-project/sentiment_analysis/${project.name}`);
+              }
+            }}
+          >
             <ExternalLink size={18} />
           </button>
         </div>
       </div>
+
+      {/* Project Settings Modal */}
       <ProjectSettingsModal
-              isOpen={isProjectSettingsModalOpen}
-              onClose={(e) => {
-                if (e && e.stopPropagation) {
-                  e.stopPropagation();
-                }
-                closeModal();
-              }}
-              
-              project={selectedProject}
-              organizationName={""}
-              onUpdateProject={(old_name, updatedProject) => {
-                console.log(old_name, updatedProject);
-                console.log(project);
-                project=updatedProject;
-                console.log(project);
-                onUpdateProjectC(old_name, updatedProject);
-                toast.success("Project updated successfully");
-              }}
-              onDeleteProject={(deletedProjectId) => {
-                onDeleteC(deletedProjectId)
-                toast.success("Project deleted successfully");
-              }}
-            />
+        isOpen={isProjectSettingsModalOpen}
+        onClose={(e) => {
+          if (e && e.stopPropagation) {
+            e.stopPropagation();
+          }
+          closeModal();
+        }}
+        project={selectedProject}
+        organizationName={""}
+        onUpdateProject={(old_name, updatedProject) => {
+          console.log(old_name, updatedProject);
+          project = updatedProject;
+          onUpdateProjectC(old_name, updatedProject);
+          toast.success("Project updated successfully");
+        }}
+        onDeleteProject={(deletedProjectId) => {
+          onDeleteC(deletedProjectId);
+          toast.success("Project deleted successfully");
+        }}
+      />
     </div>
   );
 };
