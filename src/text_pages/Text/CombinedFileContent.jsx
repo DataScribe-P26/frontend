@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import textStore from "../zustand/Textdata";
 import Footer from "./Footer"; // Importing footer component
 import { useTheme } from "../../text_pages/Text/ThemeContext"; // Import useTheme hook
+import { USER_TYPE } from "../../Main home/user-type";
 
 const CombinedFileContent = () => {
   const { fileType, setFileType, file, setFile, setContent, isUploaded, setIsUploaded } = textStore();
@@ -88,11 +89,12 @@ const handleFileUpload = async() => {
     
   };
   if (projectType === "sentiment_analysis") {
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const response = await fetch(`http://localhost:8000/upload/${projectName}`, {
+      const response = await fetch(`http://localhost:8000/upload/${projectType}/${userType}/${projectName}`, {
         method: "POST",
         body: formData,
       });

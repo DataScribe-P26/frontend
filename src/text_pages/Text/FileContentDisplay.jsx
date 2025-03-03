@@ -53,9 +53,14 @@ const FileContentDisplay = () => {
   const handleAutoAnnotation = async () => {
     await handleSubmit();
     try {
+      const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
       const response = await axios.post(
-        `http://127.0.0.1:8000/process_text/${projectName}`
-      );
+        `http://127.0.0.1:8000/process_text/${projectName}`,
+        null, // No request body
+        {
+          params: { user_type: userType }, // Sending user_type as a query parameter
+        }
+      )
   
       console.log("Pipeline Response:", response.data);
     return response.data;
@@ -499,7 +504,7 @@ const FileContentDisplay = () => {
     const type=projectType;
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
+          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
           {
             headers: {
               "Content-Type": "application/json",
@@ -531,7 +536,7 @@ const FileContentDisplay = () => {
         end: annotation.end,
       })),
     };
-    const user_type='single';
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     const type=projectType;
     // Display confirmation popup
     if (
@@ -542,7 +547,7 @@ const FileContentDisplay = () => {
       try {
         // Save progress to the backend
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${user_type}/${projectName}/upload/`,{data2:dataToSend},
+          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
           {
             headers: {
               "Content-Type": "application/json",

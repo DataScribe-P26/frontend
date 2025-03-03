@@ -516,8 +516,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     },
     {
       id: "ner_tagging",
-      title: "Natural Language Processing",
-      description: "Advanced text analysis and processing",
+      title: "Named Entity Recongition",
+      description: "Identify and categorize key information in text with precision.",
       illustration: NLPIllustration,
       color: "pink",
     },

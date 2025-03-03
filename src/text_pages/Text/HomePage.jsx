@@ -104,11 +104,12 @@ const HomePage = () => {
             }
           }
           else if (projectType === "sentiment_analysis") {
+            const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
             // response = await axios.get(
             //   `http://127.0.0.1:8000/projects/sentiment_analysis/${userType}/${projectName}/${user.email}`
             // );
             response = await axios.get(
-               `http://127.0.0.1:8000/get-annotations/${projectName}`);
+               `http://127.0.0.1:8000/get-annotations/${projectType}/${userType}/${projectName}`);
       
             if (response.data && response.data.annotations) 
               {

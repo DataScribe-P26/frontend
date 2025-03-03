@@ -61,7 +61,7 @@ useEffect(() => {
         const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
                  
                  const response = await axios.get(
-                   `http://127.0.0.1:8000/get-annotations/${projectName}`);
+                   `http://127.0.0.1:8000/get-annotations/${projectType}/${userType}/${projectName}`);
                  
                    if (response.data && response.data.annotations) {         
                     // Ensure it's an array before setting state
@@ -216,6 +216,29 @@ useEffect(() => {
     );
   };
 
+  // Add this useEffect to handle keyboard events
+useEffect(() => {
+  const handleKeyDown = (event) => {
+    // Navigate to previous sentence with left arrow key
+    if (event.key === "ArrowLeft" && currentIndex > 0) {
+      setCurrentIndex(Math.max(0, currentIndex - 1));
+    }
+    
+    // Navigate to next sentence with right arrow key
+    if (event.key === "ArrowRight" && content && currentIndex < content.length - 1) {
+      setCurrentIndex(Math.min(content.length - 1, currentIndex + 1));
+    }
+  };
+  
+  // Add the event listener when component mounts
+  window.addEventListener("keydown", handleKeyDown);
+  
+  // Remove the event listener when component unmounts
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+}, [currentIndex, content]); // Re-add listener when these values change
+
   const renderNavigation = () => {
     if (!content || content.length <= 1) return null;
     
@@ -256,13 +279,13 @@ useEffect(() => {
       // Find emotion from sentimentLabels if it exists
       const sentimentLabel = sentimentLabels.find(label => label.text === item.text);
       const emotion = sentimentLabel ? sentimentLabel.label.name : item.emotion;
-  
+      const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
       // Skip API call if emotion is null or empty
       if (!emotion) return;
   
       try {
         await axios.post(
-          `http://127.0.0.1:8000/annotate/`,
+          `http://127.0.0.1:8000/annotate/${projectType}/${userType}`,
           null,  
           {
             params: {
@@ -301,92 +324,17 @@ const calculateProgress = () => {
 };
 
 // Add this function to handle auto-annotation
+// Add this function to handle auto-annotation
 const handleAutoAnnotation = async () => {
-  if (calculateProgress() < 10) {
-    toast.error("Please annotate at least 10% of sentences manually first");
-    return;
-  }
-  
-  // Show loading toast
-  toast.loading("Auto-annotating remaining sentences...");
-  
+
   try {
-    // Get all sentences that have been labeled so far
-    const labeledSentences = content.filter((item, index) => {
-      return item.emotion || sentimentLabels.some(label => label.index === index);
-    });
-    
-    // Create a map of emotions used and their frequency
-    const emotionCounts = {};
-    labeledSentences.forEach(item => {
-      const emotion = item.emotion || sentimentLabels.find(label => label.text === item.text)?.label?.name;
-      if (emotion) {
-        emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
-      }
-    });
-    
-    // Find the most used emotion
-    let mostUsedEmotion = null;
-    let highestCount = 0;
-    
-    Object.entries(emotionCounts).forEach(([emotion, count]) => {
-      if (count > highestCount) {
-        mostUsedEmotion = emotion;
-        highestCount = count;
-      }
-    });
-    
-    if (!mostUsedEmotion && emotions.length > 0) {
-      // Fallback to the first emotion if no most used emotion is found
-      mostUsedEmotion = emotions[0].name;
-    }
-    
-    if (!mostUsedEmotion) {
-      toast.dismiss();
-      toast.error("No emotions available for auto-annotation");
-      return;
-    }
-    
-    // Apply the most used emotion to all unlabeled sentences
-    const updatedContent = [...content];
-    const newSentimentLabels = [...sentimentLabels];
-    const emotionObj = emotions.find(e => e.name === mostUsedEmotion) || { name: mostUsedEmotion };
-    
-    for (let i = 0; i < updatedContent.length; i++) {
-      // Skip if already labeled
-      if (updatedContent[i].emotion || newSentimentLabels.some(label => label.index === i)) {
-        continue;
-      }
-      
-      // Update content
-      updatedContent[i] = {
-        ...updatedContent[i],
-        emotion: mostUsedEmotion
-      };
-      
-      // Add sentiment label
-      const newSentimentLabel = {
-        text: updatedContent[i].text,
-        label: emotionObj,
-        index: i
-      };
-      
-      newSentimentLabels.push(newSentimentLabel);
-    }
-    
-    // Update state
-    setContent(updatedContent);
-    setSentimentLabels(newSentimentLabels);
-    
-    // Save to the server
-    await handleSubmit(updatedContent);
-    
-    toast.dismiss();
-    toast.success("Auto-annotation completed successfully");
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+      const response = await axios.post(`http://localhost:8000/train-model/${projectType}/${userType}/${projectName}`);
+      console.log("Success:", response.data);
+      alert("Model trained and missing emotions predicted successfully!");
   } catch (error) {
-    toast.dismiss();
-    console.error("Error during auto-annotation:", error);
-    toast.error("Auto-annotation failed: " + (error.message || "Unknown error"));
+      console.error("API call failed:", error.response?.data?.message || error.message);
+      alert(`Error: ${error.response?.data?.message || "Something went wrong."}`);
   }
 };
 
@@ -404,7 +352,8 @@ const handleAutoAnnotation = async () => {
       }) : [],
     };
     
-    const user_type = 'single';
+    const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+    
     
     // Display confirmation popup
     if (
@@ -415,7 +364,7 @@ const handleAutoAnnotation = async () => {
       try {
         // Save progress to the backend
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${projectType}/${user_type}/${projectName}/upload/`,
+          `http://127.0.0.1:8000/projects/${projectType}/${userType}/${projectName}/upload/`,
           {data2: dataToSend},
           {
             headers: {

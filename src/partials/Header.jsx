@@ -86,7 +86,7 @@ export const TopBar = ({ title }) => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      console.log("tututututu");
+      
       const response = await axios.get(`http://127.0.0.1:8000/notification`, {
         params: { email: user?.email },
         headers: {
