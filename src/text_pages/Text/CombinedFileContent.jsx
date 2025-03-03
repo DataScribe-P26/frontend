@@ -8,7 +8,7 @@ import { useTheme } from "../../text_pages/Text/ThemeContext"; // Import useThem
 import { USER_TYPE } from "../../Main home/user-type";
 
 const CombinedFileContent = () => {
-  const { fileType, setFileType, file, setFile, setContent, isUploaded, setIsUploaded } = textStore();
+  const { content,fileType, setFileType, file, setFile, setContent, isUploaded, setIsUploaded } = textStore();
   const { projectName } = useParams();
   const navigate = useNavigate();
   const { isDarkMode } = useTheme(); // Access dark mode state from ThemeContext
@@ -37,7 +37,9 @@ const handleFileChange = (event) => {
   setFile(selectedFile);
 };
 
-
+useEffect(() => {
+  console.log(content);
+});
 const handleFileUpload = async() => {
   if (!file) {
     alert("Please select a file to upload.");
@@ -73,21 +75,32 @@ const handleFileUpload = async() => {
         // Splitting lines and handling empty lines
         const lines = fileContent.trim().split("\n").filter(line => line.length > 0);
         
-        // Splitting by commas while handling potential extra spaces
-        processedContent = lines.map(line => line.split(",").map(cell => cell.trim()));
+        // Check if the first line is a header with "text"
+        const hasHeader = lines[0].toLowerCase().includes("text");
+        
+        // Use the dataset starting from index 1 (skipping header) if header exists
+        const dataLines = hasHeader ? lines.slice(1) : lines;
+        
+        // Process the CSV content into the format expected by the backend
+        processedContent = dataLines.map(line => {
+          const columns = line.split(",").map(cell => cell.trim());
+          // For CSV files, create an object with text field
+          return { text: columns[0] };
+        });
 
-        console.log(processedContent); // Debugging output
-
+        console.log("Processed CSV content:", processedContent); // Debugging output
       } catch (error) {
         alert("Invalid CSV file. Ensure it has properly formatted rows.");
         return;
       }
     }
 
+    // Store the processed content in the Zustand store
     setContent(processedContent);
     setIsUploaded(true);
     
   };
+  
   if (projectType === "sentiment_analysis") {
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     const formData = new FormData();

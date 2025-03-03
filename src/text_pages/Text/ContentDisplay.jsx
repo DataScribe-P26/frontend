@@ -53,59 +53,65 @@ useEffect(() => {
   useEffect(() => {
     const fetchSentimentsAndEmotions = async () => {
       try {
-        setContent(null);
-        // Clear existing data when project changes
+        // Clear existing data when project changes - for new projects, this ensures clean state
         setEmotions([]);
         setSentimentLabels([]);
         
         const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
                  
-                 const response = await axios.get(
-                   `http://127.0.0.1:8000/get-annotations/${projectType}/${userType}/${projectName}`);
-                 
-                   if (response.data && response.data.annotations) {         
-                    // Ensure it's an array before setting state
-                    const annotationsData = response.data.annotations[0].annotations;
-                              
-                    let processedContent = Array.isArray(annotationsData) ? annotationsData : Object.values(annotationsData);
-                              
-                    // Extract unique emotions from the content using a Set to prevent duplicates
-                    const uniqueEmotions = new Set();
-                    processedContent.forEach(item => {
-                      if (item.emotion) {
-                        uniqueEmotions.add(item.emotion);
-                      }
-                    });
-                              
-                    // Add unique emotions to the emotions list - convert Set to Array
-                    const emotionsArray = Array.from(uniqueEmotions);
-                    const formattedEmotions = emotionsArray.map(emotionName => ({ name: emotionName }));
-                    setEmotions(formattedEmotions);
-                              
-                    // Create sentiment labels for items that already have emotions
-                    const labels = [];
-                    processedContent.forEach((item, index) => {
-                      if (item.emotion) {
-                        const emotionObj = { name: item.emotion };
-                        labels.push({
-                          text: item.text,
-                          label: emotionObj,
-                          index: index
-                        });
-                      }
-                    });
-                              
-                    setSentimentLabels(labels);
-                    setContent(processedContent);
-                  }   
-                } catch (error) {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/get-annotations/${projectType}/${userType}/${projectName}`);
+        
+        if (response.data && response.data.annotations && response.data.annotations.length > 0) {         
+          // Ensure it's an array before setting state
+          const annotationsData = response.data.annotations[0].annotations;
+                    
+          let processedContent = Array.isArray(annotationsData) ? annotationsData : Object.values(annotationsData);
+                    
+          // Extract unique emotions from the content using a Set to prevent duplicates
+          const uniqueEmotions = new Set();
+          processedContent.forEach(item => {
+            if (item.emotion) {
+              uniqueEmotions.add(item.emotion);
+            }
+          });
+                    
+          // Add unique emotions to the emotions list - convert Set to Array
+          const emotionsArray = Array.from(uniqueEmotions);
+          const formattedEmotions = emotionsArray.map(emotionName => ({ name: emotionName }));
+          setEmotions(formattedEmotions);
+                    
+          // Create sentiment labels for items that already have emotions
+          const labels = [];
+          processedContent.forEach((item, index) => {
+            if (item.emotion) {
+              const emotionObj = { name: item.emotion };
+              labels.push({
+                text: item.text,
+                label: emotionObj,
+                index: index
+              });
+            }
+          });
+                    
+          setSentimentLabels(labels);
+          setContent(processedContent);
+          console.log("Loaded content and labels:", processedContent, labels);
+        } else {
+          console.log("No annotations found for this project - might be a new project");
+          // For new projects, keep content that might already be set
+          // but initialize empty emotions and sentiment labels
+          if (!content || content.length === 0) {
+            console.log("Setting empty content");
+            setContent([]);
+          }
+        }
+      } catch (error) {
         console.error("Error fetching sentiments:", error);
       }
     };
-
-    if (!content || !sentimentLabels || !emotions) {
-      fetchSentimentsAndEmotions();
-    }
+  
+    fetchSentimentsAndEmotions();
   }, [projectName]);
 
   const handleCreateEmotion = (newEmotion) => {
@@ -182,6 +188,9 @@ useEffect(() => {
         
         try {
           addSentimentLabel(newSentimentLabel);
+          setTimeout(() => {
+            handleSubmit(updatedContent);
+          }, 100);
           await handleSubmit(updatedContent);
         } catch (error) {
           console.error("Error submitting sentiment label:", error);
@@ -270,7 +279,15 @@ useEffect(() => {
   };
 
   const handleSubmit = async (contentToSave = content) => {
-    if (!contentToSave) return;
+    if (!contentToSave || contentToSave.length === 0) {
+      console.warn("No content to save");
+      return;
+    }
+    const currentContent = contentToSave || textStore.getState().content;
+  const currentSentimentLabels = textStore.getState().annotations;
+  
+  console.log("Submitting content:", currentContent);
+  console.log("Current sentiment labels:", currentSentimentLabels);
   
     let hasSuccess = false;
     let hasError = false;

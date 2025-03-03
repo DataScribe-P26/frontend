@@ -3,120 +3,171 @@ import axios from "axios";
 import { useAuth } from "../../login/AuthContext.jsx";
 import { USER_TYPE } from "../../Main home/user-type.js";
 
-const ExportModal = ({ isOpen, onClose, projectName,projectType }) => {
+const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {
   const [exportFormat, setExportFormat] = useState("json");
   const { user } = useAuth();
 
-
-
   const handleExport = async () => {
     try {
-      const projectType = localStorage.getItem("projectType");
       const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-      const response = await axios.get(
-        `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
-      );
-    
+      
+      // NER tagging export logic (keeping your original code as-is)
+      if (projectType === "ner_tagging") {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+        );
+        
+        console.log("API Response:", response.data);
+        console.log("Requesting data with:", user.email, projectName);
 
-      const { text, entities } = response.data[0];
-      console.log("API Response:", response.data);
+        const { text, entities } = response.data[0];
 
-      console.log("Requesting data with:", user.email, projectName);
-
-      if (!text || !entities || entities.length === 0) {
-        throw new Error("Incomplete data: text or entities are missing.");
-      }
-
-      let fileContent;
-      if (exportFormat === "json") {
-        fileContent = JSON.stringify({ text, entities }, null, 2);
-      } else if (exportFormat === "csv") {
-        const headers = "Entity,Label,Start,End";
-        const rows = entities
-          .map(
-            (entity) =>
-              `"${entity.entity.replace(/"/g, '""')}",` +
-              `"${entity.label.replace(/"/g, '""')}",` +
-              `${entity.start},${entity.end}`
-          )
-          .join("\n");
-
-        fileContent = `Text\n"${text.replace(/"/g, '""')}"\n\n${headers}\n${rows}`;
-      } else if (exportFormat === "bio" || exportFormat === "bilou") {
-        const words = text.split(/\s+/);
-        let annotations = [];
-        let currentEntityIndex = 0;
-        let currentEntity = entities[currentEntityIndex] || null;
-
-        for (let i = 0; i < words.length; i++) {
-          const word = words[i];
-          const wordStartPosition = text.indexOf(
-            word,
-            i > 0 ? text.indexOf(words[i - 1]) + words[i - 1].length : 0
-          );
-          const wordEndPosition = wordStartPosition + word.length - 1;
-
-          let label = "O";
-
-          if (currentEntity && wordStartPosition >= currentEntity.start && wordEndPosition <= currentEntity.end) {
-            const entityWords = text
-              .slice(currentEntity.start, currentEntity.end + 1)
-              .trim()
-              .split(/\s+/);
-            const entityLength = entityWords.length;
-            const entityWordIndex = entityWords.indexOf(word);
-
-            if (exportFormat === "bio") {
-              label =
-                entityWordIndex === 0
-                  ? `B-${currentEntity.label}`
-                  : `I-${currentEntity.label}`;
-            } else if (exportFormat === "bilou") {
-              if (entityLength === 1) {
-                label = `U-${currentEntity.label}`;
-              } else if (entityWordIndex === 0) {
-                label = `B-${currentEntity.label}`;
-              } else if (entityWordIndex === entityLength - 1) {
-                label = `L-${currentEntity.label}`;
-              } else {
-                label = `I-${currentEntity.label}`;
-              }
-            }
-          } else {
-            while (currentEntity && currentEntity.end < wordEndPosition) {
-              currentEntityIndex++;
-              currentEntity = entities[currentEntityIndex] || null;
-            }
-            label = "O";
-          }
-
-          annotations.push(`${word} ${label}`);
+        if (!text || !entities || entities.length === 0) {
+          throw new Error("Incomplete data: text or entities are missing.");
         }
 
-        fileContent = annotations.join("\n");
+        let fileContent;
+        if (exportFormat === "json") {
+          fileContent = JSON.stringify({ text, entities }, null, 2);
+        } else if (exportFormat === "csv") {
+          const headers = "Entity,Label,Start,End";
+          const rows = entities
+            .map(
+              (entity) =>
+                `"${entity.entity.replace(/"/g, '""')}",` +
+                `"${entity.label.replace(/"/g, '""')}",` +
+                `${entity.start},${entity.end}`
+            )
+            .join("\n");
+
+          fileContent = `Text\n"${text.replace(/"/g, '""')}"\n\n${headers}\n${rows}`;
+        } else if (exportFormat === "bio" || exportFormat === "bilou") {
+          const words = text.split(/\s+/);
+          let annotations = [];
+          let currentEntityIndex = 0;
+          let currentEntity = entities[currentEntityIndex] || null;
+
+          for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            const wordStartPosition = text.indexOf(
+              word,
+              i > 0 ? text.indexOf(words[i - 1]) + words[i - 1].length : 0
+            );
+            const wordEndPosition = wordStartPosition + word.length - 1;
+
+            let label = "O";
+
+            if (currentEntity && wordStartPosition >= currentEntity.start && wordEndPosition <= currentEntity.end) {
+              const entityWords = text
+                .slice(currentEntity.start, currentEntity.end + 1)
+                .trim()
+                .split(/\s+/);
+              const entityLength = entityWords.length;
+              const entityWordIndex = entityWords.indexOf(word);
+
+              if (exportFormat === "bio") {
+                label =
+                  entityWordIndex === 0
+                    ? `B-${currentEntity.label}`
+                    : `I-${currentEntity.label}`;
+              } else if (exportFormat === "bilou") {
+                if (entityLength === 1) {
+                  label = `U-${currentEntity.label}`;
+                } else if (entityWordIndex === 0) {
+                  label = `B-${currentEntity.label}`;
+                } else if (entityWordIndex === entityLength - 1) {
+                  label = `L-${currentEntity.label}`;
+                } else {
+                  label = `I-${currentEntity.label}`;
+                }
+              }
+            } else {
+              while (currentEntity && currentEntity.end < wordEndPosition) {
+                currentEntityIndex++;
+                currentEntity = entities[currentEntityIndex] || null;
+              }
+              label = "O";
+            }
+
+            annotations.push(`${word} ${label}`);
+          }
+
+          fileContent = annotations.join("\n");
+        }
+        
+        // Create and download the file (NER logic)
+        const utf8Blob = new Blob([`\uFEFF${fileContent}`], {
+          type:
+            exportFormat === "json"
+              ? "application/json;charset=utf-8"
+              : exportFormat === "csv"
+              ? "text/csv;charset=utf-8"
+              : "text/plain;charset=utf-8",
+        });
+
+        const url = window.URL.createObjectURL(utf8Blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `${projectName || "project"}.${exportFormat}`
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } 
+      // New Sentiment Analysis export logic
+      else if (projectType === "sentiment_analysis") {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/get-annotations/sentiment_analysis/${userType}/${projectName}`
+        );
+        
+        console.log("API Response:", response.data);
+        
+        if (!response.data || !response.data.annotations || response.data.annotations.length === 0) {
+          throw new Error("No sentiment analysis data found.");
+        }
+        
+        // Get the sentiment data from the response
+        const sentimentData = response.data.annotations[0].annotations;
+        
+        let fileContent;
+        if (exportFormat === "json") {
+          // Format sentiment data as JSON
+          fileContent = JSON.stringify(sentimentData, null, 2);
+        } else if (exportFormat === "csv") {
+          // Format sentiment data as CSV
+          const headers = "Text,Emotion";
+          const rows = sentimentData.map(item => 
+            `"${item.text.replace(/"/g, '""')}","${(item.emotion || '').replace(/"/g, '""')}"`
+          ).join("\n");
+          
+          fileContent = `${headers}\n${rows}`;
+        }
+        
+        // Create and download the file (Sentiment Analysis)
+        const utf8Blob = new Blob([`\uFEFF${fileContent}`], {
+          type:
+            exportFormat === "json"
+              ? "application/json;charset=utf-8"
+              : "text/csv;charset=utf-8",
+        });
+
+        const url = window.URL.createObjectURL(utf8Blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `${projectName || "project"}.${exportFormat}`
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
       }
-
-      const utf8Blob = new Blob([`\uFEFF${fileContent}`], {
-        type:
-          exportFormat === "json"
-            ? "application/json;charset=utf-8"
-            : exportFormat === "csv"
-            ? "text/csv;charset=utf-8"
-            : "text/plain;charset=utf-8",
-      });
-
-      const url = window.URL.createObjectURL(utf8Blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        `${projectName || "project"}_data.${exportFormat}`
-      );
-
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
 
       onClose();
     } catch (error) {
@@ -153,13 +204,8 @@ const ExportModal = ({ isOpen, onClose, projectName,projectType }) => {
             <option value="csv">CSV</option>
             {projectType === "ner_tagging" ? (
               <>
-                
                 <option value="bio">BIO</option>
                 <option value="bilou">BILOU</option>
-              </>
-            ) : projectType === "sentiment_analysis" ? (
-              <>
-                {/* Add other formats for sentiment analysis if needed */}
               </>
             ) : null}
           </select>
