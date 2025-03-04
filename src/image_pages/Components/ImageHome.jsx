@@ -8,7 +8,7 @@ import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 import { useAuth } from "../../login/AuthContext";
-import TopBar from "../../partials/Header.jsx";
+import TopBar from "../../partials/Navbar.jsx";
 import { Sidebar } from "./Image Project/ImageSidebar.jsx";
 
 function Imagehome() {

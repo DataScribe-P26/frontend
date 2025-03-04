@@ -539,7 +539,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
         } shadow-xl rounded-lg max-h-[85vh] flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div
           className={`px-6 py-4 border-b ${
             isDarkMode ? "border-gray-700" : "border-gray-200"
@@ -554,7 +553,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
           </h2>
         </div>
 
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto image_scrollbar">
           {error && (
             <div className="mx-6 mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
@@ -562,7 +560,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
             </div>
           )}
 
-          {/* Dataset Split Configuration */}
           <div className="px-6 py-4">
             <div
               className={`text-base font-medium mb-4 ${
@@ -644,7 +641,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
             </div>
           </div>
 
-          {/* Augmentation Toggle */}
           <div
             className={`px-6 py-4 border-0 ${
               isDarkMode ? "border-gray-700" : "border-gray-200"
@@ -714,7 +710,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
             </div>
           </div>
 
-          {/* Augmentation Config */}
           <AugmentationConfig
             config={augConfig}
             setConfig={setAugConfig}
@@ -722,7 +717,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
             isDarkMode={isDarkMode}
           />
 
-          {/* Format Selection */}
           <div
             className={`px-6 py-4 border-0 ${
               isDarkMode ? "border-gray-700" : "border-gray-200"
@@ -754,7 +748,6 @@ const ExportModal = ({ setExportModal, projectName }) => {
           </div>
         </div>
 
-        {/* Footer */}
         <div
           className={`p-4 flex justify-end space-x-3 border-t ${
             isDarkMode ? "border-gray-700" : "border-gray-200"
