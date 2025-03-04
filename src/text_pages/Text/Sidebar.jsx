@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Menu, Home, Database, Tag, Grid, Upload, Download } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
-import textStore from "../zustand/Textdata";
+import textStore from "../../state/combinedTextData.js";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import ExportModal from "./ExportModal.jsx";
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import textStore from "../zustand/Textdata"; // Assuming your store is set up to manage text and files
+import textStore from "../../state/combinedTextData.js";
 import FileContentDisplay from "./FileContentDisplay";
 import CombinedFileContent from "./CombinedFileContent";
 import ContentDisplay from "./ContentDisplay";

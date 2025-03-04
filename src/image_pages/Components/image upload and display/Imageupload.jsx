@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import useStore from "../../../Zustand/Alldata";
+import useStore from "../../../state/Alldata";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";

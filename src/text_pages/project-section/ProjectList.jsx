@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectModal from "./ProjectModal";
 import { HiPlus, HiFolder } from "react-icons/hi";
-import textStore from "../zustand/Textdata";
+import textStore from "../../state/combinedTextData.js";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Navbar from "../Text/Navbar.jsx";

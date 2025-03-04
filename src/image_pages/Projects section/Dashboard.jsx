@@ -20,7 +20,7 @@ import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "./CreateOrgProject";
 import { HiAnnotation } from "react-icons/hi";
 import ProjectSettingsModal from "./ProjectSettingsModal";
-import useStore from "../../Zustand/Alldata";
+import useStore from "../../state/Alldata";
 
 const Dashboard = () => {
   const navigate = useNavigate();

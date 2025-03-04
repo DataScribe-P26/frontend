@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import textStore from "../zustand/Textdata";
+import textStore from "../../state/combinedTextData.js";
 import Footer from "./Footer"; // Importing footer component
 import { useTheme } from "../../text_pages/Text/ThemeContext"; // Import useTheme hook
 import { USER_TYPE } from "../../Main home/user-type";

@@ -1,5 +1,3 @@
-import { create } from "zustand";
-
 const uniqueColorCombinations = [
   ["#F8BBD0", "#FEE4E4", "#D67A7A"], // Pastel Red
   ["#A5D6A7", "#E8F5E9", "#6B9A3A"], // Pastel Green
@@ -25,29 +23,11 @@ const uniqueColorCombinations = [
   ["#E57373", "#FCE4EC", "#C62828"], // Pastel Dark Red
   ["#9C6FEC", "#E3F2FD", "#5C6BC0"], // Pastel Dark Indigo
   ["#A5D6A7", "#E8F5E9", "#4B8A3B"], // Pastel Dark Green
-  ["#D7A25E", "#FFF4E1", "#9A6A33"], // Pastel Dark Orange
 ];
 
-const textStore = create((set) => ({
-  //project
-  projects: [],
-  setProjects: (newProjects) => set(() => ({ projects: newProjects })),
-  showModal: false,
-  setShowModal: (isVisible) => set(() => ({ showModal: isVisible })),
-
-
-  isUploaded: false,
-  setIsUploaded: (status) => set({ isUploaded: status }),
-  
-  //current project
-  projectname: "",
-  project_type: "",
-  setprojectname: (name) => set(() => ({ projectname: name })),
-  setproject_type: (type) => set(() => ({ project_type: type })),
-
-  //labels
+const createLabelsSlice = (set) => ({
   labels: [],
-  availableColors: [...uniqueColorCombinations], // Initially, all colors are available
+  availableColors: [...uniqueColorCombinations],
 
   addLabel: (name) =>
     set((state) => {
@@ -56,7 +36,6 @@ const textStore = create((set) => ({
       }
 
       const [colorSet, ...remainingColors] = state.availableColors;
-
       return {
         labels: [
           ...state.labels,
@@ -86,7 +65,7 @@ const textStore = create((set) => ({
     }),
 
   setLabels: (labels) =>
-    set((state) => ({
+    set(() => ({
       labels,
       availableColors: uniqueColorCombinations.filter(
         (colorSet) =>
@@ -99,38 +78,11 @@ const textStore = create((set) => ({
       ),
     })),
 
-    emotions: [],  
-    setEmotions: (newEmotions) => set({ emotions: newEmotions }),  
+  emotions: [],
+  setEmotions: (newEmotions) => set({ emotions: newEmotions }),
 
-    sentimentLabels: [],
-    setSentimentLabels: (newSentimentLabels) => set({ sentimentLabels: newSentimentLabels }),
+  sentimentLabels: [],
+  setSentimentLabels: (newSentimentLabels) => set({ sentimentLabels: newSentimentLabels }),
+});
 
-  //file
-  fileType: "text",
-  file: null,
-  content: null,
-  setFileType: (fileType) => set({ fileType }),
-  setFile: (file) => set({ file }),
-  setContent: (content) => set({ content }),
-  resetStore: () => set({ fileType: "text", file: null, content: null }),
-
-  //annotations
-  annotations: [],
-  setAnnotations: (annotations) => set({ annotations }),
-  addAnnotation: (annotation) =>
-    set((state) => ({
-      annotations: [...state.annotations, annotation],
-    })),
-  deleteAnnotation: (annotationToDelete) =>
-    set((state) => ({
-      annotations: state.annotations.filter(
-        (annotation) =>
-          !(
-            annotation.text === annotationToDelete.text &&
-            annotation.label.name === annotationToDelete.label.name
-          )
-      ),
-    })),
-}));
-
-export default textStore;
+export default createLabelsSlice;
