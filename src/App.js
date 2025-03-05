@@ -14,10 +14,8 @@ import CombinedFileContent from "./components/textProject/fileUpload/uploadFile"
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
 import Analysis from "./image_pages/Components/Image Project/Analysis";
 import ProjectSection from "./Projects section/ProjectSection";
-import ProjectCreationPage from "./Projects section/ProjectCreationPage";
-import OrganizationCreationPage from "./Projects section/OrganizationCreationPage";
 import CreateOrgProject from "./components/organizations/CreateOrgProject";
-import AddMembers from "./Projects section/AddMembers";
+
 import Dashboard from "./pages/organizations/Dashboard";
 import LandingPage from "../src/Main home/landing";
 import PricingPage from "./components/landing/PricingPage";
@@ -42,15 +40,6 @@ function App() {
                 <ProjectSection />
               </ProtectedRoute>
             }
-          />
-
-          <Route path="/create-project" element={<ProjectCreationPage />} />
-
-          <Route path="/add-members" element={<AddMembers />} />
-
-          <Route
-            path="/create-organization"
-            element={<OrganizationCreationPage />}
           />
 
           <Route path="/CreateOrgProject" element={<CreateOrgProject />} />
