@@ -3,7 +3,7 @@ import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../login/AuthContext";
 import { useTheme } from "../text_pages/Text/ThemeContext";
-import useStore from "../state/Alldata";
+import useStore from "../state/imageData/Alldata";
 import { useEffect } from "react";
 import { USER_TYPE } from "../Main home/user-type";
 import axios from "axios";
@@ -465,7 +465,8 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     {
       id: "ner_tagging",
       title: "Named Entity Recongition",
-      description: "Identify and categorize key information in text with precision.",
+      description:
+        "Identify and categorize key information in text with precision.",
       illustration: NLPIllustration,
       color: "pink",
     },
@@ -677,10 +678,16 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
   );
 };
 
-const ProjectCard = ({ project, onProjectClick, onUpdateProjectC, onDeleteC }) => {
+const ProjectCard = ({
+  project,
+  onProjectClick,
+  onUpdateProjectC,
+  onDeleteC,
+}) => {
   const navigate = useNavigate();
   const [selectedProject, setSelectedProject] = useState(null);
-  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false);
+  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
+    useState(false);
 
   const openModal = (project) => {
     setSelectedProject(project);
@@ -695,7 +702,6 @@ const ProjectCard = ({ project, onProjectClick, onUpdateProjectC, onDeleteC }) =
     <div className="bg-white text-gray-900 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer dark:bg-gray-700 dark:text-gray-100">
       {/* Flex container to ensure responsiveness */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full space-y-2 sm:space-y-0">
-        
         {/* Left Section - Project Info */}
         <div className="flex items-center space-x-4 min-w-0">
           {/* Project Icon */}
@@ -704,7 +710,7 @@ const ProjectCard = ({ project, onProjectClick, onUpdateProjectC, onDeleteC }) =
               {project?.name?.charAt(0) || "NA"}
             </span>
           </div>
-          
+
           {/* Project Details */}
           <div className="min-w-0">
             <h3 className="font-semibold truncate">{project.name}</h3>
@@ -731,13 +737,16 @@ const ProjectCard = ({ project, onProjectClick, onUpdateProjectC, onDeleteC }) =
           >
             <Settings size={18} />
           </button>
-          
+
           {/* Navigation Button */}
           <button
             className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-purple-600"
             onClick={() => {
               localStorage.setItem("projectType", project.type);
-              if (project.type === "image" || project.type === "instance-segmentation") {
+              if (
+                project.type === "image" ||
+                project.type === "instance-segmentation"
+              ) {
                 navigate(`/user-project/image/${project.name}`);
               } else if (project.type === "ner_tagging") {
                 navigate(`/user-project/ner_tagging/${project.name}`);
@@ -827,10 +836,9 @@ const ProjectsPage = ({ setActiveTab }) => {
     localStorage.setItem("projectType", project.type);
     if (project.type === "image" || project.type === "instance-segmentation") {
       navigate(`/user-project/image/${project.name}`);
-    } else if(project.type === "ner_tagging" ) {
+    } else if (project.type === "ner_tagging") {
       navigate(`/user-project/ner_tagging/${project.name}`);
-    }
-    else{
+    } else {
       navigate(`/user-project/sentiment_analysis/${project.name}`);
     }
   };
@@ -843,7 +851,9 @@ const ProjectsPage = ({ setActiveTab }) => {
     );
   };
   const handleDeleteProjectC = (deletedProjectId) => {
-    setProjects((prevProjects) => prevProjects.filter(p => p.name !== deletedProjectId));
+    setProjects((prevProjects) =>
+      prevProjects.filter((p) => p.name !== deletedProjectId)
+    );
   };
 
   return (
@@ -885,7 +895,7 @@ const ProjectsPage = ({ setActiveTab }) => {
                 key={project._id}
                 project={project}
                 onProjectClick={handleProjectClick}
-                onUpdateProjectC={handleUpdateProjectC} 
+                onUpdateProjectC={handleUpdateProjectC}
                 onDeleteC={handleDeleteProjectC}
               />
             ))}

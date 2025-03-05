@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import useStore from "../../../state/Alldata";
+import useStore from "../../../state/imageData/Alldata";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
@@ -383,9 +383,10 @@ function ImageUpload({
 
   return (
     <div className=" p-6 rounded-xl shadow-md flex flex-col items-center  dark:text-gray-100">
-      
-        <span className="p-1 mb-2 font-medium border-b border-gray-200 dark:border-gray-700">Upload More Images</span>
-      
+      <span className="p-1 mb-2 font-medium border-b border-gray-200 dark:border-gray-700">
+        Upload More Images
+      </span>
+
       <input
         type="file"
         accept="image/*"

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import textStore from "../../state/combinedTextData.js";
+import textStore from "../../state/textData/combinedTextData";
 import FileContentDisplay from "./FileContentDisplay";
 import CombinedFileContent from "./CombinedFileContent";
 import ContentDisplay from "./ContentDisplay";
@@ -20,18 +20,22 @@ const Workspace = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       {!isAnnotationStarted && <Navbar />} {/* Conditionally render Navbar */}
       <div className="flex flex-grow">
-        {!isAnnotationStarted && <Sidebar />} {/* Conditionally render Sidebar */}
+        {!isAnnotationStarted && <Sidebar />}{" "}
+        {/* Conditionally render Sidebar */}
         <div className="flex-grow p-8 bg-gradient-to-r from-gray-100 to-gray-150">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             {projectName} - Annotation Workspace
           </h2>
           {/* Conditionally render content */}
           {content ? (
-              projectType === "ner_tagging" ? <FileContentDisplay /> : <ContentDisplay />
+            projectType === "ner_tagging" ? (
+              <FileContentDisplay />
             ) : (
-              <CombinedFileContent onStartAnnotation={handleStartAnnotation} />
-            )}
-
+              <ContentDisplay />
+            )
+          ) : (
+            <CombinedFileContent onStartAnnotation={handleStartAnnotation} />
+          )}
         </div>
       </div>
     </div>

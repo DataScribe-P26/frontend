@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useStore from "../../../state/Alldata";
+import useStore from "../../../state/imageData/Alldata";
 import toast from "react-hot-toast";
 import { useTheme } from "../../../text_pages/Text/ThemeContext";
 

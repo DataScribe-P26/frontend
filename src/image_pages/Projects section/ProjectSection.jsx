@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "../../partials/Sidebar";
-import { TopBar } from "../../partials/Header";
+import { TopBar } from "../../partials/Navbar";
 import { Profile } from "../../pages/Profile";
 import { useUser } from "../../utils/useUser";
 import OrganizationsPage from "../../pages/Organisation";

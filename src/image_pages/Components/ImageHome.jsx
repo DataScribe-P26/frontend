@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import useStore from "../../state/Alldata";
+import useStore from "../../state/imageData/Alldata.js";
 import { useParams, Link } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
 import Main from "./Image Project/Main";
 import Navbar from "../../text_pages/Text/Navbar.jsx";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx"; // Import dark mode context
 import { useAuth } from "../../login/AuthContext";
-import TopBar from "../../partials/Header.jsx";
+import TopBar from "../../partials/Navbar.jsx";
 import { Sidebar } from "./Image Project/ImageSidebar.jsx";
 
 function Imagehome() {

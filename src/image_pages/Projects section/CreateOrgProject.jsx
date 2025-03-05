@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../login/AuthContext";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
-import useStore from "../../state/Alldata";
+import useStore from "../../state/imageData/Alldata";
 import { useEffect } from "react";
 import { USER_TYPE } from "../../Main home/user-type";
 import axios from "axios";
@@ -517,7 +517,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     {
       id: "ner_tagging",
       title: "Named Entity Recongition",
-      description: "Identify and categorize key information in text with precision.",
+      description:
+        "Identify and categorize key information in text with precision.",
       illustration: NLPIllustration,
       color: "pink",
     },
@@ -682,10 +683,9 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
             projectData.type === "instance-segmentation"
           ) {
             navigate(`/user-project/image/${projectData.name}`);
-          } else if ( projectData.type === "ner-tagging" ) {
+          } else if (projectData.type === "ner-tagging") {
             navigate(`/user-project/ner_tagging/${projectData.name}`);
-          }
-          else{
+          } else {
             navigate(`/user-project/sentiment_analysis/${projectData.name}`);
           }
           setProjectData({ name: "", description: "", type: "" });

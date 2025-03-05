@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUpload from "../image upload and display/Imageupload";
-import useStore from "../../../state/Alldata";
+import useStore from "../../../state/imageData/Alldata";
 import { useParams } from "react-router-dom";
 import Spinner from "./loading_screen";
 import { Bar } from "react-chartjs-2";

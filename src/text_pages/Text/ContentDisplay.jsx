@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import textStore from "../../state/combinedTextData.js";
+import textStore from "../../state/textData/combinedTextData.js";
 import CreateEmotion from "./CreateEmotion.jsx";
 import { useTheme } from "./ThemeContext.jsx";
 import axios from "axios";

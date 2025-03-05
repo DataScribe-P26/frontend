@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import createProjectsSlice from "./textData/projectsStore";
-import createCurrentProjectSlice from "./textData/CurrentProjectStore";
-import createLabelsSlice from "./textData/labelsStore";
-import createFileSlice from "./textData/fileStore";
-import createAnnotationsSlice from "./textData/annotationsStore";
+import createProjectsSlice from "./projectsStore";
+import createCurrentProjectSlice from "./CurrentProjectStore";
+import createLabelsSlice from "./labelsStore";
+import createFileSlice from "./fileStore";
+import createAnnotationsSlice from "./annotationsStore";
 
 // Create a Single Zustand Store with All Slices
 const textStore = create((set, get) => ({

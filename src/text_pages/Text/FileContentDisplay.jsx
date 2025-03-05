@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import textStore from "../../state/combinedTextData.js";
+import textStore from "../../state/textData/combinedTextData.js";
 import CreateLabel from "./CreateLabel.jsx";
 import { useTheme } from "./ThemeContext.jsx";
 import axios from "axios";
@@ -29,7 +29,7 @@ const FileContentDisplay = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedText, setSelectedText] = useState("");
   const { projectName } = useParams();
-   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
@@ -40,7 +40,7 @@ const FileContentDisplay = () => {
 
   const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
   // useEffect(() => {
-  //   localStorage.removeItem("sentimentResult"); // Clear the stored sentiment data 
+  //   localStorage.removeItem("sentimentResult"); // Clear the stored sentiment data
   //_id:ObjectId('67bd923af3116dc3d253524d')
 
   // }, []);
@@ -60,18 +60,15 @@ const FileContentDisplay = () => {
         {
           params: { user_type: userType }, // Sending user_type as a query parameter
         }
-      )
-  
-      console.log("Pipeline Response:", response.data);
-    return response.data;
-  
+      );
 
+      console.log("Pipeline Response:", response.data);
+      return response.data;
     } catch (error) {
       console.error("Error during auto-annotation:", error);
     }
   };
-  
-  
+
   const handleCreateLabel = (newLabel) => {
     const isDuplicate = labels.some((label) => label.name === newLabel.name);
 
@@ -190,14 +187,14 @@ const FileContentDisplay = () => {
         // Clear existing data when project changes
         setLabels([]);
         setAnnotations([]);
-        let user_type='single';
-        const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-        console.log('current user is',userType);
+        let user_type = "single";
+        const userType =
+          localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
+        console.log("current user is", userType);
         const response = await axios.get(
-         
           `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
-        console.log('hello------',response.data[0]);
+        console.log("hello------", response.data[0]);
         if (response.data?.[0]) {
           setContent(response.data[0].text || null);
 
@@ -262,13 +259,11 @@ const FileContentDisplay = () => {
         end: selectedText.end,
         index: fileType === "text" ? -1 : currentIndex,
       };
-      
+
       try {
-        addAnnotation(newAnnotation); 
+        addAnnotation(newAnnotation);
         setSelectedText("");
         await handleSubmit();
-        
-        
       } catch (error) {
         console.error("Error submitting annotation:", error);
       }
@@ -392,8 +387,8 @@ const FileContentDisplay = () => {
   };
 
   const renderAnnotations = () => {
-    if (projectType !== "ner_tagging") return null; 
-  
+    if (projectType !== "ner_tagging") return null;
+
     // Use reduce to filter out duplicate annotations by their text property
     const uniqueAnnotations = annotations.reduce((unique, current) => {
       if (!unique.some((annotation) => annotation.text === current.text)) {
@@ -401,11 +396,11 @@ const FileContentDisplay = () => {
       }
       return unique;
     }, []);
-  
+
     const filteredAnnotations = uniqueAnnotations.filter(
       (annotation) => fileType === "text" || annotation.index === currentIndex
     );
-  
+
     return (
       <div
         className={`mt-4 p-4 bg-white rounded-lg shadow ${
@@ -418,7 +413,10 @@ const FileContentDisplay = () => {
         ) : (
           <div className="flex flex-col gap-2">
             {filteredAnnotations.map((annotation, index) => (
-              <div key={index} className="flex items-center p-3 bg-gray-100 rounded">
+              <div
+                key={index}
+                className="flex items-center p-3 bg-gray-100 rounded"
+              >
                 <span className="text-sm font-medium">
                   <div
                     className="px-2 py-1 rounded-md text-white"
@@ -449,7 +447,6 @@ const FileContentDisplay = () => {
       </div>
     );
   };
-  
 
   const renderNavigation = () => {
     if (fileType === "json" && Array.isArray(content)) {
@@ -494,34 +491,34 @@ const FileContentDisplay = () => {
     };
 
     console.log("Submitting data:", JSON.stringify(dataToSend, null, 2));
-    const user_type='single';
-    
-    let image=null;
-    let data={image,dataToSend};
+    const user_type = "single";
+
+    let image = null;
+    let data = { image, dataToSend };
     console.log(data);
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-    console.log('current user is',userType);
-    const type=projectType;
-      try {
-        const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response);
-      } catch (error) {
-        if (error.response) {
-          console.error("Error response data:", error.response.data);
-          toast.error(error.message);
-        } else {
-          console.error("Network Error:", error.message);
-          toast.error("Change Not Saved");
+    console.log("current user is", userType);
+    const type = projectType;
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
+        { data2: dataToSend },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      );
+      console.log(response);
+    } catch (error) {
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        toast.error(error.message);
+      } else {
+        console.error("Network Error:", error.message);
+        toast.error("Change Not Saved");
       }
-
+    }
   };
   const handleExitProject = async () => {
     const dataToSend = {
@@ -537,7 +534,7 @@ const FileContentDisplay = () => {
       })),
     };
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-    const type=projectType;
+    const type = projectType;
     // Display confirmation popup
     if (
       window.confirm(
@@ -547,7 +544,8 @@ const FileContentDisplay = () => {
       try {
         // Save progress to the backend
         const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,{data2:dataToSend},
+          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
+          { data2: dataToSend },
           {
             headers: {
               "Content-Type": "application/json",
@@ -555,7 +553,7 @@ const FileContentDisplay = () => {
           }
         );
         console.log(response.ok);
-        if (response.status==200) {
+        if (response.status == 200) {
           console.log("Progress saved successfully.");
         } else {
           console.error("Failed to save progress.");
@@ -574,20 +572,19 @@ const FileContentDisplay = () => {
     }
   };
 
-
-
-
   // Add a button or trigger this function when navigating back to the project selection
   const handleNavigateBack = () => {
     handleExitProject();
   };
   return (
-
     <div className="flex flex-col h-screen bg-white dark:bg-gray-900">
-        
-              <Sidebar/>
-              <div className={`flex-1 transition-all duration-300 ${isCollapsed ? "ml-20" : "ml-64"}`}>
-              <Navbar />
+      <Sidebar />
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isCollapsed ? "ml-20" : "ml-64"
+        }`}
+      >
+        <Navbar />
         <div
           className={`flex-grow h-screen p-8 bg-gradient-to-r bg-gray-100 overflow-y-auto custom-scrollbar ${
             isDarkMode ? "bg-gray-900" : ""
@@ -614,7 +611,7 @@ const FileContentDisplay = () => {
                   {renderContent()}
                 </div>
 
-                {selectedText && projectType === "ner_tagging" &&(
+                {selectedText && projectType === "ner_tagging" && (
                   <div className="mt-4">
                     <select
                       onChange={handleLabelChange}
@@ -642,8 +639,6 @@ const FileContentDisplay = () => {
                     </button>
                   </div>
                 )}
-                
-
               </div>
 
               {renderNavigation()}
@@ -677,10 +672,8 @@ const FileContentDisplay = () => {
                     Auto Annotate
                   </button>
                 )}
-
               </div>
 
-              
               {/* {projectType === "sentiment_analysis" && (
                   <div
                     className={`mt-6 p-6 rounded-lg shadow-lg transition-all duration-300 ${
@@ -712,7 +705,6 @@ const FileContentDisplay = () => {
                     )}
                   </div>
                 )} */}
-
 
               {renderAnnotations()}
 
