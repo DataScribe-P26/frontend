@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useTheme } from "../Text/ThemeContext";
-import HelpModalImg from "../Text/HelpModalImg";
-import { useAuth } from "../../login/AuthContext";
+import { useTheme } from "../../../context/ThemeContext";
+import HelpModalImg from "./HelpModalImg";
+import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
 
 const Navbar = () => {

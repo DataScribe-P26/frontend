@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../login/AuthContext";
-import { useTheme } from "../text_pages/Text/ThemeContext";
-import useStore from "../state/store/imageData/Alldata";
+import { useAuth } from "../../context/AuthContext";
+import useStore from "../../state/store/imageData/combinedImageData";
+
 import { useEffect } from "react";
-import { USER_TYPE } from "../constants/user-type";
+import { USER_TYPE } from "../../constants/user-type";
 import axios from "axios";
 import toast from "react-hot-toast";
-import ProjectSettingsModal from "../Projects section/ProjectSettingsModal";
+import ProjectSettingsModal from "../../Projects section/ProjectSettingsModal";
 
 const ObjectDetectionIllustration = () => (
   <svg

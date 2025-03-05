@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
-import NeonCursor from "../components/home/Neon";
+import NeonCursor from "../../components/home/Neon";
 import { GoogleLogin } from "@react-oauth/google";
 export default function Register() {
   const [email, setEmail] = useState("");

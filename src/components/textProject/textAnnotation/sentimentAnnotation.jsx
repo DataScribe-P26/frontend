@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../../../text_pages/Text/Navbar";
+import Navbar from "../modals/Navbar";
 import Sidebar from "../modals/Sidebar";
 import Footer from "../modals/Footer";
 import textStore from "../../../state/store/textData/combinedTextData";
-import CreateEmotion from "../../../text_pages/Text/CreateEmotion";
+import CreateEmotion from "../modals/CreateEmotion";
 import { useTheme } from "../../../context/ThemeContext";
 import axios from "axios";
 import toast from "react-hot-toast";

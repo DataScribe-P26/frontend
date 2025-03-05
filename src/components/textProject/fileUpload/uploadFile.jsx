@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../../text_pages/Text/Navbar";
+import Navbar from "../modals/Navbar";
 import Sidebar from "../modals/Sidebar";
 import textStore from "../../../state/store/textData/combinedTextData";
 import Footer from "../modals/Footer"; // Importing footer component

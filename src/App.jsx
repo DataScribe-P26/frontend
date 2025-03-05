@@ -5,21 +5,20 @@ import { AuthProvider, ProtectedRoute } from "./context/AuthContext";
 // Import your components
 
 import Imagehome from "./pages/imagePages/mainAnnotation";
-import Mainhome from "./Main home/Mainhome";
 import Login from "./pages/authPages/Login";
-import Register from "./login/Register";
+import Register from "./pages/authPages/Register";
 import HomePage from "./pages/textPages/HomePage";
 import LabelManager from "./pages/textPages/LabelManager";
 import CombinedFileContent from "./components/textProject/fileUpload/uploadFile";
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
-import Analysis from "./image_pages/Components/Image Project/Analysis";
 import ProjectSection from "./Projects section/ProjectSection";
 import CreateOrgProject from "./components/organizations/CreateOrgProject";
 
 import Dashboard from "./pages/organizations/Dashboard";
-import LandingPage from "../src/Main home/landing";
 import PricingPage from "./components/landing/PricingPage";
+
 import ContentDisplay from "./components/textProject/textAnnotation/sentimentAnnotation";
+import LandingPage from "./pages/landing/landingPage";
 
 function App() {
   return (

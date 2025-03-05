@@ -20,7 +20,7 @@ import ExportModal from "../../components/imageProject/exportOption/export_modal
 import { USER_TYPE } from "../../constants/user-type";
 import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
 import HomePage from "../../components/home/Hero";
-import ProjectsPage from "../Projects";
+import ProjectsPage from "../../components/home/Projects";
 import OrganizationsPage from "../../components/home/Organisation";
 import { Profile } from "../../components/home/Profile";
 

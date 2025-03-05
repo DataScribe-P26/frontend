@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
-import Navbar from "../../text_pages/Text/Navbar";
+import Navbar from "../../components/textProject/modals/Navbar";
 import {
   UserPlus,
   Layout,

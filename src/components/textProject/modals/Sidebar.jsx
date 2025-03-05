@@ -12,7 +12,7 @@ import {
 import { HiAnnotation } from "react-icons/hi";
 import textStore from "../../../state/store/textData/combinedTextData";
 import { useTheme } from "../../../context/ThemeContext";
-import ExportModal from "./ExportModal";
+import ExportModal from "../exportOption/ExportModal";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);

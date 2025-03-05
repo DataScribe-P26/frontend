@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../../login/AuthContext";
-import { USER_TYPE } from "../../Main home/user-type";
+import { useAuth } from "../../../context/AuthContext";
+import { USER_TYPE } from "../../../constants/user-type";
 
 const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {
   const [exportFormat, setExportFormat] = useState("json");

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useTheme } from "./ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
+
 
 const CreateEmotion = ({
   isOpen,

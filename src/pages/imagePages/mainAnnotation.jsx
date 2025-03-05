@@ -3,9 +3,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import useStore from "../../state/store/imageData/combinedImageData";
 import { useParams, Link } from "react-router-dom";
-import Analysis from "./Image Project/Analysis";
+import Analysis from "./analysisPage";
 import Main from "./Main";
-import Navbar from "../../text_pages/Text/Navbar";
 import { useTheme } from "../../context/ThemeContext"; // Import dark mode context
 import { useAuth } from "../../context/AuthContext";
 import TopBar from "../../components/navbar/Navbar";

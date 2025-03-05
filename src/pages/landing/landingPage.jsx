@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
-import PricingPage from "../components/landing/PricingPage";
 import {
   Image,
   FileText,

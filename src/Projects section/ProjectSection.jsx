@@ -4,7 +4,7 @@ import { TopBar } from "../components/navbar/Navbar";
 import { Profile } from "../components/home/Profile";
 import { useUser } from "../components/home/useUser";
 import OrganizationsPage from "../components/home/Organisation";
-import ProjectsPage from "../pages/Projects";
+import ProjectsPage from "../components/home/Projects";
 import HomePage from "../components/home/Hero";
 import Login from "../pages/authPages/Login";
 
