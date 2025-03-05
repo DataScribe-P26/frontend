@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import Stages from "../Drawing/Stages";
 import Options from "../Drawing/Options";
-import useStore from "../../../state/imageData/Alldata";
+import useStore from "../../../state/store/imageData/Alldata.js";
 import toast from "react-hot-toast";
 import axios from "axios";
 import AnnotationsLabels from "../Drawing/AnnotationsLabels";

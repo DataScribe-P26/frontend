@@ -10,7 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
-import textStore from "../../state/textData/combinedTextData.js";
+import textStore from "../../state/store/textData/combinedTextData.js";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";
 import ExportModal from "./ExportModal.jsx";
 

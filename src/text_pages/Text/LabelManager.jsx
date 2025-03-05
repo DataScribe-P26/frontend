@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import toast from "react-hot-toast";
 import CreateLabel from "./CreateLabel";
-import textStore from "../../state/textData/combinedTextData.js";
+import textStore from "../../state/store/textData/combinedTextData.js";
 import axios from "axios";
 import Footer from "./Footer";
 import { useTheme } from "../../text_pages/Text/ThemeContext.jsx";

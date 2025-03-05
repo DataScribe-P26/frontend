@@ -3,7 +3,7 @@ import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../login/AuthContext";
 import { useTheme } from "../text_pages/Text/ThemeContext";
-import useStore from "../state/imageData/Alldata";
+import useStore from "../state/store/imageData/Alldata";
 import { useEffect } from "react";
 import { USER_TYPE } from "../Main home/user-type";
 import axios from "axios";

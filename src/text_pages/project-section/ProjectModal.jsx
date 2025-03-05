@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import textStore from "../../state/textData/combinedTextData";
+import textStore from "../../state/store/textData/combinedTextData";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../Text/ThemeContext";

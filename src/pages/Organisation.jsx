@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import { useAuth } from "../login/AuthContext";
 import { useTheme } from "../text_pages/Text/ThemeContext";
-import useStore from "../state/imageData/Alldata";
+import useStore from "../state/store/imageData/Alldata";
 import toast from "react-hot-toast";
 import { use } from "react";
 import { useNavigate } from "react-router-dom";

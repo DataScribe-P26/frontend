@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../text_pages/Text/ThemeContext";
 import { useAuth } from "../../login/AuthContext";
-import useStore from "../../state/imageData/Alldata";
+import useStore from "../../state/store/imageData/Alldata.js";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { USER_TYPE } from "../../Main home/user-type.js";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import useStore from "../../state/imageData/Alldata.js";
+import useStore from "../../state/store/imageData/Alldata.js";
 import { useParams, Link } from "react-router-dom";
 import Analysis from "./Image Project/Analysis";
 import Main from "./Image Project/Main";
