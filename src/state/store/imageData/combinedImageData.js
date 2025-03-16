@@ -1,10 +1,10 @@
 import create from "zustand";
 import createImageSlice from "./imageSlice";
 import createAnnotationSlice from "./annotationSlice";
-import createAutoAnnotationSlice from "./autoAnnotationConfig";
-import createClassesSlice from "./classes";
-import createModalSlice from "./modals";
-import createProjectSlice from "./projects";
+import createAutoAnnotationSlice from "./configSlice";
+import createClassesSlice from "./classesSlice";
+import createModalSlice from "./modalsSlice";
+import createProjectSlice from "./projectsSlice";
 
 const useStore = create((set, get) => ({
   ...createImageSlice(set, get),

@@ -1,4 +1,4 @@
-import { randomBrightColor } from "./utils";
+import { randomBrightColor } from "../../../utils/utils";
 
 const createClassesSlice = (set) => ({
   classes: [],

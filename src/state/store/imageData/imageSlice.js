@@ -1,4 +1,4 @@
-import { loadFromLocalStorage, processAnnotations } from "./utils";
+import { loadFromLocalStorage, processAnnotations } from "../../../utils/utils";
 
 const createImageSlice = (set, get) => ({
   imageSrc: [],

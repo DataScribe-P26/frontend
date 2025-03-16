@@ -1,4 +1,4 @@
-import { loadFromLocalStorage } from "./utils";
+import { loadFromLocalStorage } from "../../../utils/utils";
 
 const createProjectSlice = (set) => ({
   project_name: "",
