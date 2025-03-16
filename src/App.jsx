@@ -11,14 +11,14 @@ import HomePage from "./pages/textPages/HomePage";
 import LabelManager from "./pages/textPages/LabelManager";
 import CombinedFileContent from "./components/textProject/fileUpload/uploadFile";
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
-import ProjectSection from "./Projects section/ProjectSection";
+import ProjectSection from "./components/organizations/ProjectSection";
 import CreateOrgProject from "./components/organizations/CreateOrgProject";
 
-import Dashboard from "./pages/organizations/Dashboard";
+import Dashboard from "./pages/organizationsPages/Dashboard";
 import PricingPage from "./components/landing/PricingPage";
 
 import ContentDisplay from "./components/textProject/textAnnotation/sentimentAnnotation";
-import LandingPage from "./pages/landing/landingPage";
+import LandingPage from "./pages/landingPage/landingPage";
 
 function App() {
   return (

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { USER_TYPE } from "../../constants/user-type";
 import axios from "axios";
 import toast from "react-hot-toast";
-import ProjectSettingsModal from "../../Projects section/ProjectSettingsModal";
+import ProjectSettingsModal from "../organizations/ProjectSettingsModal";
 
 const ObjectDetectionIllustration = () => (
   <svg

@@ -19,7 +19,7 @@ import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "../../components/organizations/CreateOrgProject";
 import { HiAnnotation } from "react-icons/hi";
-import ProjectSettingsModal from "../../Projects section/ProjectSettingsModal";
+import ProjectSettingsModal from "../../components/organizations/ProjectSettingsModal";
 import useStore from "../../state/store/imageData/combinedImageData";
 
 const Dashboard = () => {
