@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../utils/authUtils";
+import { useTheme } from "../../utils/ThemeUtils";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import Navbar from "../../components/textProject/modals/Navbar";
 import {

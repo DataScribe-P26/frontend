@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
-import { useAuth } from "../../../context/AuthContext";
-import { useTheme } from "../../../context/ThemeContext";
+import { useAuth } from "../../../utils/authUtils";
+import { useTheme } from "../../../utils/ThemeUtils";
 
 const AugmentationConfig = ({ config, setConfig, isOn, isDarkMode }) => {
   if (!isOn) return null;

@@ -10,12 +10,13 @@ import {
   Trash2,
 } from "lucide-react";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../utils/authUtils";
+import { useTheme } from "../../utils/ThemeUtils";
 import useStore from "../../state/store/imageData/combinedImageData";
 import toast from "react-hot-toast";
 import { use } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../state/api-client/api";
 
 const OrganizationCard = ({ name, role, createdOn }) => {
   const navigate = useNavigate();
@@ -346,7 +347,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await axios.get(
+      const response = await api(
         `http://127.0.0.1:8000/users/search?query=${query}`
       );
       setSearchResults(response.data.matches);

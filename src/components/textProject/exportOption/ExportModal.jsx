@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 import { USER_TYPE } from "../../../constants/user-type";
 
 const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {

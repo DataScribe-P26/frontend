@@ -10,7 +10,7 @@ import { Transformer } from "react-konva";
 import { all } from "axios";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 
 function Stages({
   images,

@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../../../utils/ThemeUtils";
 import HelpModalImg from "../../textProject/modals/HelpModalImg";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 import axios from "axios";
 const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);

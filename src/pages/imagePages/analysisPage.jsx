@@ -6,7 +6,7 @@ import Spinner from "../../components/imageProject/annotationSection/loading_scr
 
 import { Bar } from "react-chartjs-2";
 import Navbar from "../../components/imageProject/annotationSection/ImageNavbar";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../utils/ThemeUtils";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
 import HomePage from "../../components/home/Hero";

@@ -1,9 +1,9 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider, ProtectedRoute } from "./context/AuthContext";
-
+import { useEffect } from "react";
+import useAuthStore from "./state/store/authData/authStore";
+import { useAuthCheck } from "./utils/authUtils";
 // Import your components
-
 import Imagehome from "./pages/imagePages/mainAnnotation";
 import Login from "./pages/authPages/Login";
 import Register from "./pages/authPages/Register";
@@ -13,116 +13,147 @@ import CombinedFileContent from "./components/textProject/fileUpload/uploadFile"
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
 import ProjectSection from "./components/organizations/ProjectSection";
 import CreateOrgProject from "./components/organizations/CreateOrgProject";
-
 import Dashboard from "./pages/organizationsPages/Dashboard";
 import PricingPage from "./components/landing/PricingPage";
-
 import ContentDisplay from "./components/textProject/textAnnotation/sentimentAnnotation";
 import LandingPage from "./pages/landingPage/landingPage";
 
+// RequireAuth component for protected routes
+const RequireAuth = ({ children }) => {
+  const token = useAuthStore((state) => state.token);
+  const location = useLocation();
+
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
+
 function App() {
+  // Use the auth check hook to handle global auth state
+  useAuthCheck();
+
   return (
-    <AuthProvider>
-      <div className="">
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/price" element={<PricingPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+    <div className="">
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/price" element={<PricingPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <ProjectSection />
-              </ProtectedRoute>
-            }
-          />
+        {/* Protected Routes */}
+        <Route
+          path="/home"
+          element={
+            <RequireAuth>
+              <ProjectSection />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/CreateOrgProject"
+          element={
+            <RequireAuth>
+              <CreateOrgProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/organizations"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
 
-          <Route path="/CreateOrgProject" element={<CreateOrgProject />} />
+        {/* Protected Image Routes */}
+        <Route
+          path="/user-project/image/:projectName"
+          element={
+            <RequireAuth>
+              <Imagehome />
+            </RequireAuth>
+          }
+        />
 
-          <Route path="/organizations" element={<Dashboard />} />
+        {/* Protected Text Routes */}
+        <Route
+          path="/user-project/ner_tagging/:projectName"
+          element={
+            <RequireAuth>
+              <HomePage />
+            </RequireAuth>
+          }
+        />
 
-          <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/user-project/sentiment_analysis/:projectName"
+          element={
+            <RequireAuth>
+              <HomePage />
+            </RequireAuth>
+          }
+        />
 
-          {/* Protected Image Routes */}
+        <Route
+          path="/text/:projectName/content"
+          element={
+            <RequireAuth>
+              <CombinedFileContent />
+            </RequireAuth>
+          }
+        />
 
-          <Route
-            path="/user-project/image/:projectName"
-            element={
-              <ProtectedRoute>
-                <Imagehome />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/combined-file-content/:projectName"
+          element={
+            <RequireAuth>
+              <CombinedFileContent />
+            </RequireAuth>
+          }
+        />
 
-          {/* Protected Text Routes */}
+        <Route
+          path="/text/:projectName/labelManager"
+          element={
+            <RequireAuth>
+              <LabelManager />
+            </RequireAuth>
+          }
+        />
 
-          <Route
-            path="/user-project/ner_tagging/:projectName"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/text/:projectName/filecontentdisplay"
+          element={
+            <RequireAuth>
+              <FileContentDisplay />
+            </RequireAuth>
+          }
+        />
 
-          <Route
-            path="/user-project/sentiment_analysis/:projectName"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/text/:projectName/contentdisplay"
+          element={
+            <RequireAuth>
+              <ContentDisplay />
+            </RequireAuth>
+          }
+        />
+      </Routes>
 
-          <Route
-            path="/text/:projectName/content"
-            element={
-              <ProtectedRoute>
-                <CombinedFileContent />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/combined-file-content/:projectName"
-            element={
-              <ProtectedRoute>
-                <CombinedFileContent />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/text/:projectName/labelManager"
-            element={
-              <ProtectedRoute>
-                <LabelManager />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/text/:projectName/filecontentdisplay"
-            element={
-              <ProtectedRoute>
-                <FileContentDisplay />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/text/:projectName/contentdisplay"
-            element={
-              <ProtectedRoute>
-                <ContentDisplay />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-
-        <Toaster />
-      </div>
-    </AuthProvider>
+      <Toaster />
+    </div>
   );
 }
 

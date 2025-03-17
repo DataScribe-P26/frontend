@@ -8,8 +8,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../utils/authUtils";
+import { useTheme } from "../../utils/ThemeUtils";
 import useStore from "../../state/store/imageData/combinedImageData";
 import { useEffect } from "react";
 import { USER_TYPE } from "../../constants/user-type";
@@ -400,9 +400,6 @@ const CombinedIllustration = () => (
     <rect x="125" y="90" width="25" height="12" fill="#2563EB" rx="6" />
 
     {/* Cursor */}
-    <g transform="translate(160, 70)" className="animate-bounce">
-      <path d="M0 0 L10 20 L5 20 L0 30 L-5 20 L0 20 Z" fill="#3B82F6" />
-    </g>
 
     {/* Object detection points */}
     <circle cx="100" cy="90" r="2" fill="#2563EB" />

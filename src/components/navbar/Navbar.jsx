@@ -8,7 +8,7 @@ import {
   LogOut,
   DollarSign,
 } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For making HTTP requests
 

@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../../../utils/ThemeUtils";
 import HelpModalImg from "./HelpModalImg";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 import axios from "axios";
 
 const Navbar = () => {
@@ -53,7 +53,6 @@ const Navbar = () => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      
       const response = await axios.get(`http://127.0.0.1:8000/notification`, {
         params: { email: user?.email },
         headers: {

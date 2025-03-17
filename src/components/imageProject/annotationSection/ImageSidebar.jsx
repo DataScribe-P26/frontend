@@ -3,7 +3,7 @@ import React from "react";
 import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import { BsPersonWorkspace } from "react-icons/bs";
 

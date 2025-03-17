@@ -14,7 +14,7 @@ import AnnotationsLabels from "../../components/imageProject/annotationSection/A
 import Modal from "../../components/imageProject/annotationSection/classaddModal";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ImageNavbar from "../../components/imageProject/annotationSection/ImageNavbar";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../utils/ThemeUtils";
 import { X } from "lucide-react";
 import ExportModal from "../../components/imageProject/exportOption/export_modal";
 import { USER_TYPE } from "../../constants/user-type";

@@ -4,10 +4,10 @@ import textStore from "../../state/store/textData/combinedTextData";
 import Navbar from "../../components/textProject/modals/Navbar";
 import Sidebar from "../../components/textProject/modals/Sidebar";
 import Footer from "../../components/textProject/modals/Footer";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../utils/ThemeUtils";
 import axios from "axios";
 import { USER_TYPE } from "../../constants/user-type";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../utils/authUtils";
 
 const HomePage = () => {
   const { projectName } = useParams();

@@ -9,9 +9,9 @@ import CreateLabel from "../../components/textProject/modals/CreateLabel";
 import textStore from "../../state/store/textData/combinedTextData";
 import axios from "axios";
 import Footer from "../../components/textProject/modals/Footer";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../utils/ThemeUtils";
 import { USER_TYPE } from "../../constants/user-type";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../utils/authUtils";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();

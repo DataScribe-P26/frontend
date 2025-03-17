@@ -5,11 +5,11 @@ import Sidebar from "../modals/Sidebar";
 import Footer from "../modals/Footer";
 import textStore from "../../../state/store/textData/combinedTextData";
 import CreateLabel from "../modals/CreateLabel";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../../../utils/ThemeUtils";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { USER_TYPE } from "../../../constants/user-type";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../utils/authUtils";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate

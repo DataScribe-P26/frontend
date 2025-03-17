@@ -5,8 +5,8 @@ import useStore from "../../state/store/imageData/combinedImageData";
 import { useParams, Link } from "react-router-dom";
 import Analysis from "./analysisPage";
 import Main from "./Main";
-import { useTheme } from "../../context/ThemeContext"; // Import dark mode context
-import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../utils/ThemeUtils"; // Import dark mode context
+import { useAuth } from "../../utils/authUtils";
 import TopBar from "../../components/navbar/Navbar";
 import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
 
