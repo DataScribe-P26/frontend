@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useAuthStore from "../state/store/authData/authStore";
+import useAuthStore from "../state/store/authStore/authStore";
 
 export const setCookie = function (name, value, hours) {
   let expires = "";
@@ -69,7 +69,10 @@ export const useAuthCheck = function () {
     function () {
       // Only redirect from login/register pages when authenticated
       // Allow access to "/" and "/price" at all times
-      if (token && (location.pathname === "/login" || location.pathname === "/register")) {
+      if (
+        token &&
+        (location.pathname === "/login" || location.pathname === "/register")
+      ) {
         navigate("/home", { replace: true });
       }
     },

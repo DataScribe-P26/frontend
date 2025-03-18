@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useStore from "../../../state/store/imageData/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageData";
 import toast from "react-hot-toast";
 import { useTheme } from "../../../utils/ThemeUtils";
 

@@ -1,7 +1,7 @@
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
-import useAuthStore from "./state/store/authData/authStore";
+import useAuthStore from "./state/store/authStore/authStore";
 import { useAuthCheck } from "./utils/authUtils";
 // Import your components
 import Imagehome from "./pages/imagePages/mainAnnotation";
@@ -23,9 +23,8 @@ const RequireAuth = ({ children }) => {
   const token = useAuthStore((state) => state.token);
   const location = useLocation();
 
-
   if (!token) {
-    console.log("amsmcm",location)
+    console.log("amsmcm", location);
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

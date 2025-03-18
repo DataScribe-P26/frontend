@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "../../components/textProject/modals/Sidebar";
-import textStore from "../../state/store/textData/combinedTextData";
+import textStore from "../../state/store/textStore/combinedTextData";
 import FileContentDisplay from "../../components/textProject/textAnnotation/nerAnnotation";
 import CombinedFileContent from "../../components/textProject/fileUpload/uploadFile";
 import ContentDisplay from "../../components/textProject/textAnnotation/sentimentAnnotation";

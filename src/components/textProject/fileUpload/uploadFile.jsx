@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../modals/Navbar";
 import Sidebar from "../modals/Sidebar";
-import textStore from "../../../state/store/textData/combinedTextData";
+import textStore from "../../../state/store/textStore/combinedTextData";
 import Footer from "../modals/Footer"; // Importing footer component
 import { useTheme } from "../../../utils/ThemeUtils"; // Import useTheme hook
-import { USER_TYPE } from "../../../constants/user-type";
+import { USER_TYPE } from "../../../constants/user";
 
 const CombinedFileContent = () => {
   const {

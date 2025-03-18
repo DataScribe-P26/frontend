@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/ThemeUtils";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 import toast from "react-hot-toast";
 import { use } from "react";
 import { useNavigate } from "react-router-dom";
@@ -346,9 +346,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await api.get(
-        `/users/search?query=${query}`
-      );
+      const response = await api.get(`/users/search?query=${query}`);
       setSearchResults(response.data.matches);
       const formattedUsers = response.data.matches.map((user, index) => {
         // Extract name from email (part before @)
@@ -388,10 +386,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     console.log(data);
 
     try {
-      const response = await api.post(
-        "/organizations/add-members",
-        data
-      );
+      const response = await api.post("/organizations/add-members", data);
       console.log(response.data);
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);
@@ -667,9 +662,7 @@ const OrganizationsPage = () => {
       const userType = USER_TYPE.ORGANIZATION;
       localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
       console.log("current user is", userType);
-      const response = await api.get(
-        `/organizations/user/${user.email}`
-      );
+      const response = await api.get(`/organizations/user/${user.email}`);
       console.log("ORGS---", response.data);
       setOrganizations(response.data);
       setLoading(false);

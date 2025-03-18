@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Group, Layer, Rect, Stage, Text, Line, Circle } from "react-konva";
 import Konvaimage from "../imageUpload/Konvaimage";
 import toast from "react-hot-toast";
-import useStore from "../../../state/store/imageData/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageData";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";
@@ -122,14 +122,11 @@ function Stages({
         const user_type = localStorage.getItem("userType");
         const email = user.email;
         console.log(email);
-        const response = await api.post(
-          `/api/infer/${projectName}`,
-          {
-            image_ids: imageIds,
-            user_type: user_type,
-            email: email,
-          }
-        );
+        const response = await api.post(`/api/infer/${projectName}`, {
+          image_ids: imageIds,
+          user_type: user_type,
+          email: email,
+        });
 
         console.log(response.data);
         if (response.data) {

@@ -5,7 +5,7 @@ import { FaLock, FaRegSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { FaAnchorLock } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import useStore from "../../../state/store/imageData/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageData";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";

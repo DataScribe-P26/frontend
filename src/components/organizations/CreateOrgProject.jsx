@@ -10,9 +10,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/ThemeUtils";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 import { useEffect } from "react";
-import { USER_TYPE } from "../../constants/user-type";
+import { USER_TYPE } from "../../constants/user";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -598,10 +598,7 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     console.log(data);
 
     try {
-      const response = await api.post(
-        "/organizations/add-members",
-        data
-      );
+      const response = await api.post("/organizations/add-members", data);
 
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);

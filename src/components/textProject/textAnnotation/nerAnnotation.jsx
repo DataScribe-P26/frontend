@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../modals/Navbar";
 import Sidebar from "../modals/Sidebar";
 import Footer from "../modals/Footer";
-import textStore from "../../../state/store/textData/combinedTextData";
+import textStore from "../../../state/store/textStore/combinedTextData";
 import CreateLabel from "../modals/CreateLabel";
 import { useTheme } from "../../../utils/ThemeUtils";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { USER_TYPE } from "../../../constants/user-type";
+import { USER_TYPE } from "../../../constants/user";
 import { useAuth } from "../../../utils/authUtils";
 import api from "../../../state/api-client/api";
 

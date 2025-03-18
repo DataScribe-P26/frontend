@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 import { useEffect } from "react";
-import { USER_TYPE } from "../../constants/user-type";
+import { USER_TYPE } from "../../constants/user";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ProjectSettingsModal from "../organizations/ProjectSettingsModal";
@@ -804,9 +804,9 @@ const ProjectsPage = ({ setActiveTab }) => {
       setLoading(true);
       localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
       const response = await api.get(`/user-projects/`, {
-        params: { email: user.email }, 
+        params: { email: user.email },
       });
-      
+
       setProjects(response.data);
       setLoading(false);
     } catch (error) {

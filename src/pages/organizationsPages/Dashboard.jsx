@@ -20,7 +20,7 @@ import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "../../components/organizations/CreateOrgProject";
 import { HiAnnotation } from "react-icons/hi";
 import ProjectSettingsModal from "../../components/organizations/ProjectSettingsModal";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -97,10 +97,7 @@ const Dashboard = () => {
         details: orgDetails.details || "",
       };
 
-      const response = await api.put(
-        `/organization-update`,
-        data
-      );
+      const response = await api.put(`/organization-update`, data);
 
       if (response.status === 200) {
         toast.success("Organization details updated successfully");
@@ -164,9 +161,7 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await api.get(
-        `/users/search?query=${query}`
-      );
+      const response = await api.get(`/users/search?query=${query}`);
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
     } catch (error) {
@@ -213,10 +208,7 @@ const Dashboard = () => {
     console.log(data);
 
     try {
-      const response = await api.post(
-        "/organizations/add-members",
-        data
-      );
+      const response = await api.post("/organizations/add-members", data);
 
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);

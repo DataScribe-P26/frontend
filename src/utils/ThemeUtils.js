@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useThemeStore from "../state/store/themeData/themStore";
+import useThemeStore from "../state/store/themeStore/themStore";
 
 export const ThemeProvider = ({ children }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);

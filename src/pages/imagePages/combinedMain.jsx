@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import Stages from "../../components/imageProject/annotationSection/drawing";
 import Options from "../../components/imageProject/annotationSection/Options";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 import toast from "react-hot-toast";
 import api from "../../state/api-client/api";
 import AnnotationsLabels from "../../components/imageProject/annotationSection/AnnotationsLabels";
@@ -17,7 +17,7 @@ import ImageNavbar from "../../components/imageProject/annotationSection/ImageNa
 import { useTheme } from "../../utils/ThemeUtils";
 import { X } from "lucide-react";
 import ExportModal from "../../components/imageProject/exportOption/export_modal";
-import { USER_TYPE } from "../../constants/user-type";
+import { USER_TYPE } from "../../constants/user";
 import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
 import HomePage from "../../components/home/Hero";
 import ProjectsPage from "../../components/home/Projects";

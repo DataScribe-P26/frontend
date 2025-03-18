@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUpload from "../../components/imageProject/imageUpload/Imageupload";
-import useStore from "../../state/store/imageData/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageData";
 import { useParams } from "react-router-dom";
 import Spinner from "../../components/imageProject/annotationSection/loading_screen";
 

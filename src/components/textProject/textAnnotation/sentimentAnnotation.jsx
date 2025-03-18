@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../modals/Navbar";
 import Sidebar from "../modals/Sidebar";
 import Footer from "../modals/Footer";
-import textStore from "../../../state/store/textData/combinedTextData";
+import textStore from "../../../state/store/textStore/combinedTextData";
 import CreateEmotion from "../modals/CreateEmotion";
 import { useTheme } from "../../../utils/ThemeUtils";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { USER_TYPE } from "../../../constants/user-type";
+import { USER_TYPE } from "../../../constants/user";
 import { useAuth } from "../../../utils/authUtils";
 import api from "../../../state/api-client/api";
 
@@ -335,20 +335,16 @@ const ContentDisplay = () => {
       if (!emotion) return;
 
       try {
-        await api.post(
-          `/annotate/${projectType}/${userType}`,
-          null,
-          {
-            params: {
-              project_name: projectName,
-              text: item.text,
-              emotion: emotion,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        await api.post(`/annotate/${projectType}/${userType}`, null, {
+          params: {
+            project_name: projectName,
+            text: item.text,
+            emotion: emotion,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         hasSuccess = true;
       } catch (error) {
         console.error(
