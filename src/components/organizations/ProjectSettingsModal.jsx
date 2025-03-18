@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import TeamMemberModal from "./TeamMemberModal";
+import TeamMemberModal from "./teamMemberModal";
 import { useAuth } from "../../utils/authUtils";
 import axios from "axios";
 
-import { USER_TYPE } from "../../constants/user";
+import { USER_TYPE } from "../../constants/useConstants";
 
 const ProjectSettingsModal = ({
   isOpen,

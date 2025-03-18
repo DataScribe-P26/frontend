@@ -6,7 +6,7 @@ import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth, login } from "../../utils/authUtils";
 import api from "../../state/api-client/api";
-import NeonCursor from "../../components/home/Neon";
+import NeonCursor from "../../components/home/neon";
 import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import textStore from "../../state/store/textStore/combinedTextData";
-import Navbar from "../../components/textProject/modals/Navbar";
-import Sidebar from "../../components/textProject/modals/Sidebar";
-import Footer from "../../components/textProject/modals/Footer";
-import { useTheme } from "../../utils/ThemeUtils";
+import textStore from "../../state/store/textStore/combinedTextSlice";
+import Navbar from "../../components/textProject/modals/navbar";
+import Sidebar from "../../components/textProject/modals/sidebar";
+import Footer from "../../components/textProject/modals/footer";
+import { useTheme } from "../../utils/themeUtils";
 import api from "../../state/api-client/api";
-import { USER_TYPE } from "../../constants/user";
+import { USER_TYPE } from "../../constants/useConstants";
 import { useAuth } from "../../utils/authUtils";
 
 const HomePage = () => {

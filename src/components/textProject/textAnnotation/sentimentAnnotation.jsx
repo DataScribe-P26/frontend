@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../modals/Navbar";
-import Sidebar from "../modals/Sidebar";
-import Footer from "../modals/Footer";
-import textStore from "../../../state/store/textStore/combinedTextData";
-import CreateEmotion from "../modals/CreateEmotion";
-import { useTheme } from "../../../utils/ThemeUtils";
+import Navbar from "../modals/navbar";
+import Sidebar from "../modals/sidebar";
+import Footer from "../modals/footer";
+import textStore from "../../../state/store/textStore/combinedTextSlice";
+import CreateEmotion from "../modals/createEmotion";
+import { useTheme } from "../../../utils/themeUtils";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { USER_TYPE } from "../../../constants/user";
+import { USER_TYPE } from "../../../constants/useConstants";
 import { useAuth } from "../../../utils/authUtils";
 import api from "../../../state/api-client/api";
 

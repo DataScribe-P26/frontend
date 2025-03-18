@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link, Navigate } from "react-router-dom";
-import { useTheme } from "../../../utils/ThemeUtils";
-import HelpModalImg from "../../textProject/modals/HelpModalImg";
+import { useTheme } from "../../../utils/themeUtils";
+import HelpModalImg from "../../textProject/modals/helpModalImg";
 import { useAuth, logout } from "../../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

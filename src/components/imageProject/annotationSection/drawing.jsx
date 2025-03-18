@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Group, Layer, Rect, Stage, Text, Line, Circle } from "react-konva";
-import Konvaimage from "../imageUpload/Konvaimage";
+import Konvaimage from "../imageUpload/konvaImage";
 import toast from "react-hot-toast";
-import useStore from "../../../state/store/imageStore/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageSlice";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RxReset } from "react-icons/rx";

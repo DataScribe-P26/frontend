@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Sidebar } from "../sidebar/Sidebar";
-import { TopBar } from "../navbar/Navbar";
-import { Profile } from "../home/Profile";
+import { Sidebar } from "../sidebar/sidebar";
+import { TopBar } from "../navbar/navbar";
+import { Profile } from "../home/profile";
 import { useUser } from "../home/useUser";
-import OrganizationsPage from "../home/Organisation";
-import ProjectsPage from "../home/Projects";
-import HomePage from "../home/Hero";
-import Login from "../../pages/authPages/Login";
+import OrganizationsPage from "../home/organisation";
+import ProjectsPage from "../home/projects";
+import HomePage from "../home/hero";
+import Login from "../../pages/authPages/login";
 
 const ProjectSection = () => {
   const [activeTab, setActiveTab] = useState("home");

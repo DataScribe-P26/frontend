@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../../../utils/authUtils";
-import { useTheme } from "../../../utils/ThemeUtils";
+import { useTheme } from "../../../utils/themeUtils";
 import api from "../../../state/api-client/api";
 const AugmentationConfig = ({ config, setConfig, isOn, isDarkMode }) => {
   if (!isOn) return null;

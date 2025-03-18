@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import useStore from "../../../state/store/imageStore/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageSlice";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
-import { USER_TYPE } from "../../../constants/user";
+import { USER_TYPE } from "../../../constants/useConstants";
 import api from "../../../state/api-client/api";
 
 function ImageUpload({

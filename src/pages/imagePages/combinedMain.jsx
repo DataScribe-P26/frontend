@@ -6,23 +6,23 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Stages from "../../components/imageProject/annotationSection/drawing";
-import Options from "../../components/imageProject/annotationSection/Options";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import Options from "../../components/imageProject/annotationSection/options";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
 import api from "../../state/api-client/api";
-import AnnotationsLabels from "../../components/imageProject/annotationSection/AnnotationsLabels";
-import Modal from "../../components/imageProject/annotationSection/classaddModal";
+import AnnotationsLabels from "../../components/imageProject/annotationSection/annotationsLabels";
+import Modal from "../../components/imageProject/annotationSection/classaAddModal";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ImageNavbar from "../../components/imageProject/annotationSection/ImageNavbar";
-import { useTheme } from "../../utils/ThemeUtils";
+import ImageNavbar from "../../components/imageProject/annotationSection/imageNavbar";
+import { useTheme } from "../../utils/themeUtils";
 import { X } from "lucide-react";
-import ExportModal from "../../components/imageProject/exportOption/export_modal";
-import { USER_TYPE } from "../../constants/user";
-import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
-import HomePage from "../../components/home/Hero";
-import ProjectsPage from "../../components/home/Projects";
-import OrganizationsPage from "../../components/home/Organisation";
-import { Profile } from "../../components/home/Profile";
+import ExportModal from "../../components/imageProject/exportOption/exportModal";
+import { USER_TYPE } from "../../constants/useConstants";
+import { Sidebar } from "../../components/imageProject/annotationSection/imageSidebar";
+import HomePage from "../../components/home/hero";
+import ProjectsPage from "../../components/home/projects";
+import OrganizationsPage from "../../components/home/organisation";
+import { Profile } from "../../components/home/profile";
 
 function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const {

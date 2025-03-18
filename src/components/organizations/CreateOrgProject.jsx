@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
-import { useTheme } from "../../utils/ThemeUtils";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import { useTheme } from "../../utils/themeUtils";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { useEffect } from "react";
-import { USER_TYPE } from "../../constants/user";
+import { USER_TYPE } from "../../constants/useConstants";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";

@@ -10,9 +10,9 @@ import {
   Download,
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
-import textStore from "../../../state/store/textStore/combinedTextData";
-import { useTheme } from "../../../utils/ThemeUtils";
-import ExportModal from "../exportOption/ExportModal";
+import textStore from "../../../state/store/textStore/combinedTextSlice";
+import { useTheme } from "../../../utils/themeUtils";
+import ExportModal from "../exportOption/exportModal";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "../../../utils/ThemeUtils";
+import { useTheme } from "../../../utils/themeUtils";
 
 function AnnotationsLabels({ currentImage, classes, setExportModal }) {
   const { isDarkMode } = useTheme();

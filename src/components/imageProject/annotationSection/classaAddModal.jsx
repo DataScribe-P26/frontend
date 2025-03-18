@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import useStore from "../../../state/store/imageStore/combinedImageData";
+import useStore from "../../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
-import { useTheme } from "../../../utils/ThemeUtils";
+import { useTheme } from "../../../utils/themeUtils";
 
 function Modal({ classes, setcl }) {
   const { isDarkMode } = useTheme();

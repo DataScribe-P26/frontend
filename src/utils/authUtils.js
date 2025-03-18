@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useAuthStore from "../state/store/authStore/authStore";
+import useAuthStore from "../state/store/authStore/authSlice";
 
 export const setCookie = function (name, value, hours) {
   let expires = "";

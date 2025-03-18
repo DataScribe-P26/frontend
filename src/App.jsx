@@ -1,24 +1,23 @@
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
-import useAuthStore from "./state/store/authStore/authStore";
+import useAuthStore from "./state/store/authStore/authSlice";
 import { useAuthCheck } from "./utils/authUtils";
 // Import your components
 import Imagehome from "./pages/imagePages/mainAnnotation";
-import Login from "./pages/authPages/Login";
-import Register from "./pages/authPages/Register";
-import HomePage from "./pages/textPages/HomePage";
-import LabelManager from "./pages/textPages/LabelManager";
+import Login from "./pages/authPages/login";
+import Register from "./pages/authPages/register";
+import HomePage from "./pages/textPages/homePage";
+import LabelManager from "./pages/textPages/labelManager";
 import CombinedFileContent from "./components/textProject/fileUpload/uploadFile";
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
-import ProjectSection from "./components/organizations/ProjectSection";
-import CreateOrgProject from "./components/organizations/CreateOrgProject";
-import Dashboard from "./pages/organizationsPages/Dashboard";
-import PricingPage from "./components/landing/PricingPage";
+import ProjectSection from "./components/organizations/projectSection";
+import CreateOrgProject from "./components/organizations/createOrgProject";
+import Dashboard from "./pages/organizationsPages/dashboard";
+import PricingPage from "./components/landing/pricingPage";
 import ContentDisplay from "./components/textProject/textAnnotation/sentimentAnnotation";
 import LandingPage from "./pages/landingPage/landingPage";
 
-// RequireAuth component for protected routes
 const RequireAuth = ({ children }) => {
   const token = useAuthStore((state) => state.token);
   const location = useLocation();
@@ -32,19 +31,16 @@ const RequireAuth = ({ children }) => {
 };
 
 function App() {
-  // Use the auth check hook to handle global auth state
   useAuthCheck();
 
   return (
     <div className="">
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/price" element={<PricingPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
         <Route
           path="/home"
           element={

@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import ImageUpload from "../../components/imageProject/imageUpload/Imageupload";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import ImageUpload from "../../components/imageProject/imageUpload/imageUpload";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { useParams } from "react-router-dom";
-import Spinner from "../../components/imageProject/annotationSection/loading_screen";
+import Spinner from "../../components/imageProject/annotationSection/loadingScreen";
 
 import { Bar } from "react-chartjs-2";
-import Navbar from "../../components/imageProject/annotationSection/ImageNavbar";
-import { useTheme } from "../../utils/ThemeUtils";
+import Navbar from "../../components/imageProject/annotationSection/imageNavbar";
+import { useTheme } from "../../utils/themeUtils";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
-import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
-import HomePage from "../../components/home/Hero";
-import ProjectsPage from "../../components/home/Projects";
-import OrganizationsPage from "../../components/home/Organisation";
-import { Profile } from "../../components/home/Profile";
+import { Sidebar } from "../../components/imageProject/annotationSection/imageSidebar";
+import HomePage from "../../components/home/hero";
+import ProjectsPage from "../../components/home/projects";
+import OrganizationsPage from "../../components/home/organisation";
+import { Profile } from "../../components/home/profile";
 
 import {
   Chart as ChartJS,

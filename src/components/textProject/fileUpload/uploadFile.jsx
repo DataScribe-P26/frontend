@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../modals/Navbar";
-import Sidebar from "../modals/Sidebar";
-import textStore from "../../../state/store/textStore/combinedTextData";
-import Footer from "../modals/Footer"; // Importing footer component
-import { useTheme } from "../../../utils/ThemeUtils"; // Import useTheme hook
-import { USER_TYPE } from "../../../constants/user";
+import Navbar from "../modals/navbar";
+import Sidebar from "../modals/sidebar";
+import textStore from "../../../state/store/textStore/combinedTextSlice";
+import Footer from "../modals/footer"; // Importing footer component
+import { useTheme } from "../../../utils/themeUtils"; // Import useTheme hook
+import { USER_TYPE } from "../../../constants/useConstants";
 
 const CombinedFileContent = () => {
   const {

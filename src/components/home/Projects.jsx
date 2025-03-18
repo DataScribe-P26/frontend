@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { useEffect } from "react";
-import { USER_TYPE } from "../../constants/user";
+import { USER_TYPE } from "../../constants/useConstants";
 import axios from "axios";
 import toast from "react-hot-toast";
-import ProjectSettingsModal from "../organizations/ProjectSettingsModal";
+import ProjectSettingsModal from "../organizations/projectSettingsModal";
 import api from "../../state/api-client/api";
 
 const ObjectDetectionIllustration = () => (

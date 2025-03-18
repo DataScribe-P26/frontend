@@ -1,7 +1,6 @@
-// pages/Profile
 import React from "react";
 import { motion } from "framer-motion";
-import { ProfileForm } from "../userProfile/Profileform";
+import { ProfileForm } from "../userProfile/profileform";
 export const Profile = ({ user, onUpdateProfile }) => {
   return (
     <motion.div
@@ -39,7 +38,6 @@ export const Profile = ({ user, onUpdateProfile }) => {
   );
 };
 
-// hooks/useUser.js
 import { useState, useEffect } from "react";
 
 export const useUser = () => {

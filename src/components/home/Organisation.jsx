@@ -10,8 +10,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAuth } from "../../utils/authUtils";
-import { useTheme } from "../../utils/ThemeUtils";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import { useTheme } from "../../utils/themeUtils";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
 import { use } from "react";
 import { useNavigate } from "react-router-dom";

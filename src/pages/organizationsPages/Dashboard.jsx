@@ -3,9 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../../state/api-client/api";
 import toast from "react-hot-toast";
 import { useAuth } from "../../utils/authUtils";
-import { useTheme } from "../../utils/ThemeUtils";
+import { useTheme } from "../../utils/themeUtils";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
-import Navbar from "../../components/textProject/modals/Navbar";
+import Navbar from "../../components/textProject/modals/navbar";
 import {
   UserPlus,
   Layout,
@@ -17,10 +17,10 @@ import {
 } from "lucide-react";
 import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
-import CreateOrgProjectModal from "../../components/organizations/CreateOrgProject";
+import CreateOrgProjectModal from "../../components/organizations/createOrgProject";
 import { HiAnnotation } from "react-icons/hi";
-import ProjectSettingsModal from "../../components/organizations/ProjectSettingsModal";
-import useStore from "../../state/store/imageStore/combinedImageData";
+import ProjectSettingsModal from "../../components/organizations/projectSettingsModal";
+import useStore from "../../state/store/imageStore/combinedImageSlice";
 
 const Dashboard = () => {
   const navigate = useNavigate();

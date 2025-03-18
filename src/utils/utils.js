@@ -21,7 +21,6 @@ export const processAnnotations = (image) => {
   const offsetX = (800 - scaledWidth) / 2;
   const offsetY = (450 - scaledHeight) / 2;
 
-  //  rectangle annotations
   const new_rectangles = image.rectangle_annotations.map((rect) => ({
     ...rect,
     x: rect.x * image.width_multiplier + offsetX,
@@ -30,7 +29,6 @@ export const processAnnotations = (image) => {
     height: rect.height * image.height_multiplier,
   }));
 
-  //  polygon annotations
   const new_polygons = image.polygon_annotations.map((polygon) => ({
     ...polygon,
     points: polygon.points.map((point) => ({
@@ -39,7 +37,6 @@ export const processAnnotations = (image) => {
     })),
   }));
 
-  //  segmentation annotations
   const new_segmentation = image.segmentation_annotations.map((polygon) => ({
     ...polygon,
     points: polygon.points.map((point) => ({
