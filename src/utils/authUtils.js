@@ -67,7 +67,9 @@ export const useAuthCheck = function () {
 
   useEffect(
     function () {
-      if (token && isPublicRoute(location.pathname)) {
+      // Only redirect from login/register pages when authenticated
+      // Allow access to "/" and "/price" at all times
+      if (token && (location.pathname === "/login" || location.pathname === "/register")) {
         navigate("/home", { replace: true });
       }
     },

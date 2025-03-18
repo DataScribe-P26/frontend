@@ -10,6 +10,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { USER_TYPE } from "../../../constants/user-type";
 import { useAuth } from "../../../utils/authUtils";
+import api from "../../../state/api-client/api";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -191,8 +192,8 @@ const FileContentDisplay = () => {
         const userType =
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         console.log("current user is", userType);
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+        const response = await api.get(
+          `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
         console.log("hello------", response.data[0]);
         if (response.data?.[0]) {
@@ -500,8 +501,8 @@ const FileContentDisplay = () => {
     console.log("current user is", userType);
     const type = projectType;
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
+      const response = await api.post(
+        `/projects/${type}/${userType}/${projectName}/upload/`,
         { data2: dataToSend },
         {
           headers: {
@@ -543,8 +544,8 @@ const FileContentDisplay = () => {
     ) {
       try {
         // Save progress to the backend
-        const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${type}/${userType}/${projectName}/upload/`,
+        const response = await api.post(
+          `/projects/${type}/${userType}/${projectName}/upload/`,
           { data2: dataToSend },
           {
             headers: {

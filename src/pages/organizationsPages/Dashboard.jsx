@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../state/api-client/api";
 import toast from "react-hot-toast";
 import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/ThemeUtils";
@@ -74,8 +74,8 @@ const Dashboard = () => {
     if (user) {
       storedOrgName = localStorage.getItem("organizationName");
       console.log(storedOrgName);
-      axios
-        .get(`http://127.0.0.1:8000/organization-details`, {
+      api
+        .get(`/organization-details`, {
           params: { org_name: storedOrgName },
         })
         .then((response) => {
@@ -97,8 +97,8 @@ const Dashboard = () => {
         details: orgDetails.details || "",
       };
 
-      const response = await axios.put(
-        `http://127.0.0.1:8000/organization-update`,
+      const response = await api.put(
+        `/organization-update`,
         data
       );
 
@@ -117,8 +117,8 @@ const Dashboard = () => {
   const handleDeleteProject = async (name) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
-        await axios.delete(
-          `http://127.0.0.1:8000/delete-org-project/${user.email}/${name}/${organizationName}`
+        await api.delete(
+          `/delete-org-project/${user.email}/${name}/${organizationName}`
         );
         alert("Project deleted successfully!");
         setProjects((prevProjects) =>
@@ -140,14 +140,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user) {
-      axios
-        .get(`http://127.0.0.1:8000/ORG-user-projects`, {
+      api
+        .get(`/ORG-user-projects`, {
           params: { org_name: storedOrgName, user_email: user.email },
         })
         .then((response) => setProjects(response.data || []));
 
-      axios
-        .get("http://127.0.0.1:8000/organization-members", {
+      api
+        .get("/organization-members", {
           params: { org_name: storedOrgName },
         })
         .then((response) =>
@@ -164,8 +164,8 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/users/search?query=${query}`
+      const response = await api.get(
+        `/users/search?query=${query}`
       );
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
@@ -213,8 +213,8 @@ const Dashboard = () => {
     console.log(data);
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/organizations/add-members",
+      const response = await api.post(
+        "/organizations/add-members",
         data
       );
 

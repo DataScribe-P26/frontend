@@ -11,6 +11,7 @@ import { all } from "axios";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../utils/authUtils";
+import api from "../../../state/api-client/api";
 
 function Stages({
   images,
@@ -66,8 +67,8 @@ function Stages({
       const email = user.email;
       console.log(email);
       if (trained == true) return;
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/train-and-infer/${projectName}?user_type=${user_type}&email=${email}` // Use & instead of ?
+      const response = await api.post(
+        `/api/train-and-infer/${projectName}?user_type=${user_type}&email=${email}` // Use & instead of ?
       );
       console.log(response.data);
       if (response.data) {
@@ -121,8 +122,8 @@ function Stages({
         const user_type = localStorage.getItem("userType");
         const email = user.email;
         console.log(email);
-        const response = await axios.post(
-          `http://127.0.0.1:8000/api/infer/${projectName}`,
+        const response = await api.post(
+          `/api/infer/${projectName}`,
           {
             image_ids: imageIds,
             user_type: user_type,

@@ -9,7 +9,6 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import axios from "axios";
 import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/ThemeUtils";
 import useStore from "../../state/store/imageData/combinedImageData";
@@ -347,8 +346,8 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await api(
-        `http://127.0.0.1:8000/users/search?query=${query}`
+      const response = await api.get(
+        `/users/search?query=${query}`
       );
       setSearchResults(response.data.matches);
       const formattedUsers = response.data.matches.map((user, index) => {
@@ -389,8 +388,8 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     console.log(data);
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/organizations/add-members",
+      const response = await api.post(
+        "/organizations/add-members",
         data
       );
       console.log(response.data);
@@ -668,8 +667,8 @@ const OrganizationsPage = () => {
       const userType = USER_TYPE.ORGANIZATION;
       localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
       console.log("current user is", userType);
-      const response = await axios.get(
-        `http://127.0.0.1:8000/organizations/user/${user.email}`
+      const response = await api.get(
+        `/organizations/user/${user.email}`
       );
       console.log("ORGS---", response.data);
       setOrganizations(response.data);

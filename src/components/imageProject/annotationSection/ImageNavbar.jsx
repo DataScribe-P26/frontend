@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../../state/api-client/api";
 import {
   Search,
   Bell,
@@ -53,7 +54,7 @@ const Navbar = () => {
   const fetchNotifications = async () => {
     try {
       console.log("tututututu");
-      const response = await axios.get(`http://127.0.0.1:8000/notification`, {
+      const response = await api.get(`/notification`, {
         params: { email: user?.email },
         headers: {
           Authorization: `Bearer ${user?.token}`, // Pass token if required
@@ -73,8 +74,8 @@ const Navbar = () => {
   const respondToInvitation = async (notificationId, action) => {
     try {
       console.log(notificationId, " ", action);
-      const response = await axios.post(
-        `http://127.0.0.1:8000/notifications/respond`,
+      const response = await api.post(
+        `/notifications/respond`,
         { notification_id: notificationId, action },
         {
           headers: {

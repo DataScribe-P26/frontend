@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
 import { USER_TYPE } from "../../../constants/user-type";
+import api from "../../../state/api-client/api";
 
 function ImageUpload({
   projectName,
@@ -263,8 +264,8 @@ function ImageUpload({
 
             const userType =
               localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-            const response = await axios.post(
-              `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/upload/`,
+            const response = await api.post(
+              `/projects/image/${userType}/${projectName}/upload/`,
               { data1: data },
               {
                 headers: { "Content-Type": "application/json" },

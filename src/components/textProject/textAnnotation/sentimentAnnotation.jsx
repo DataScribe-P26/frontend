@@ -10,6 +10,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { USER_TYPE } from "../../../constants/user-type";
 import { useAuth } from "../../../utils/authUtils";
+import api from "../../../state/api-client/api";
 
 const ContentDisplay = () => {
   const navigate = useNavigate();
@@ -62,8 +63,8 @@ const ContentDisplay = () => {
         const userType =
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
 
-        const response = await axios.get(
-          `http://127.0.0.1:8000/get-annotations/${projectType}/${userType}/${projectName}`
+        const response = await api.get(
+          `/get-annotations/${projectType}/${userType}/${projectName}`
         );
 
         if (
@@ -334,8 +335,8 @@ const ContentDisplay = () => {
       if (!emotion) return;
 
       try {
-        await axios.post(
-          `http://127.0.0.1:8000/annotate/${projectType}/${userType}`,
+        await api.post(
+          `/annotate/${projectType}/${userType}`,
           null,
           {
             params: {
@@ -383,8 +384,8 @@ const ContentDisplay = () => {
   const handleAutoAnnotation = async () => {
     try {
       const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-      const response = await axios.post(
-        `http://localhost:8000/train-model/${projectType}/${userType}/${projectName}`
+      const response = await api.post(
+        `/train-model/${projectType}/${userType}/${projectName}`
       );
       console.log("Success:", response.data);
       alert("Model trained and missing emotions predicted successfully!");
@@ -429,8 +430,8 @@ const ContentDisplay = () => {
     ) {
       try {
         // Save progress to the backend
-        const response = await axios.post(
-          `http://127.0.0.1:8000/projects/${projectType}/${userType}/${projectName}/upload/`,
+        const response = await api.post(
+          `/projects/${projectType}/${userType}/${projectName}/upload/`,
           { data2: dataToSend },
           {
             headers: {

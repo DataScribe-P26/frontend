@@ -23,7 +23,9 @@ const RequireAuth = ({ children }) => {
   const token = useAuthStore((state) => state.token);
   const location = useLocation();
 
+
   if (!token) {
+    console.log("amsmcm",location)
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

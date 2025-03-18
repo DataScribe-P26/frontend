@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, X } from 'lucide-react';
-import axios from 'axios';
+import api from '../../state/api-client/api';
 
 const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,8 +16,8 @@ const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }
 
   const fetchAvailableMembers = async () => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/organization-members/`,
+      const response = await api.get(
+        `/organization-members/`,
         { params: { org_name: organizationName } }
       );
       setAvailableMembers(response.data.members || []);
@@ -34,8 +34,8 @@ const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }
     }
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/organization-members/search`,
+      const response = await api.get(
+        `/organization-members/search`,
         { params: { org_name: organizationName, query } }
       );
       setSearchResults(response.data.matches);

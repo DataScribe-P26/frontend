@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../../utils/authUtils";
 import { USER_TYPE } from "../../../constants/user-type";
+import api from "../../../state/api-client/api";
 
 const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {
   const [exportFormat, setExportFormat] = useState("json");
@@ -13,8 +14,8 @@ const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {
 
       // NER tagging export logic (keeping your original code as-is)
       if (projectType === "ner_tagging") {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+        const response = await api.get(
+          `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
         console.log("API Response:", response.data);
@@ -127,8 +128,8 @@ const ExportModal = ({ isOpen, onClose, projectName, projectType }) => {
       }
       // New Sentiment Analysis export logic
       else if (projectType === "sentiment_analysis") {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/get-annotations/sentiment_analysis/${userType}/${projectName}`
+        const response = await api.get(
+          `/get-annotations/sentiment_analysis/${userType}/${projectName}`
         );
 
         console.log("API Response:", response.data);

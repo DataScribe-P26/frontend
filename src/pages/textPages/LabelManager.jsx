@@ -7,7 +7,7 @@ import Sidebar from "../../components/textProject/modals/Sidebar";
 import toast from "react-hot-toast";
 import CreateLabel from "../../components/textProject/modals/CreateLabel";
 import textStore from "../../state/store/textData/combinedTextData";
-import axios from "axios";
+import api from "../../state/api-client/api";
 import Footer from "../../components/textProject/modals/Footer";
 import { useTheme } from "../../utils/ThemeUtils";
 import { USER_TYPE } from "../../constants/user-type";
@@ -30,8 +30,8 @@ const LabelManager = () => {
         const userType =
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         console.log("current user is", userType);
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/ner_tagging/${userType}/${projectName}/${user.email}`
+        const response = await api.get(
+          `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
         if (response.data?.[0]?.entities) {

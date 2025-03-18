@@ -11,6 +11,7 @@ import {
 import { useAuth } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For making HTTP requests
+import api from "../../state/api-client/api";
 
 export const TopBar = ({ title }) => {
   const [showProfile, setShowProfile] = useState(false);
@@ -86,7 +87,7 @@ export const TopBar = ({ title }) => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/notification`, {
+      const response = await api.get(`/notification`, {
         params: { email: user?.email },
         headers: {
           Authorization: `Bearer ${user?.token}`, // Pass token if required
@@ -106,8 +107,8 @@ export const TopBar = ({ title }) => {
   const respondToInvitation = async (notificationId, action) => {
     try {
       console.log(notificationId, " ", action);
-      const response = await axios.post(
-        `http://127.0.0.1:8000/notifications/respond`,
+      const response = await api.post(
+        `/notifications/respond`,
         { notification_id: notificationId, action },
         {
           headers: {

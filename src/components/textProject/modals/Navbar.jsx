@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../../../utils/ThemeUtils";
 import HelpModalImg from "./HelpModalImg";
 import { useAuth } from "../../../utils/authUtils";
-import axios from "axios";
-
+import api from "../../../state/api-client/api";
 const Navbar = () => {
   const [isHelpOpen, setHelpOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -53,7 +52,7 @@ const Navbar = () => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/notification`, {
+      const response = await api.get(`/notification`, {
         params: { email: user?.email },
         headers: {
           Authorization: `Bearer ${user?.token}`, // Pass token if required
@@ -73,8 +72,8 @@ const Navbar = () => {
   const respondToInvitation = async (notificationId, action) => {
     try {
       console.log(notificationId, " ", action);
-      const response = await axios.post(
-        `http://127.0.0.1:8000/notifications/respond`,
+      const response = await api.post(
+        `/notifications/respond`,
         { notification_id: notificationId, action },
         {
           headers: {

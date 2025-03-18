@@ -3,12 +3,12 @@ import { Settings, ExternalLink, Plus, X, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
 import useStore from "../../state/store/imageData/combinedImageData";
-
 import { useEffect } from "react";
 import { USER_TYPE } from "../../constants/user-type";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ProjectSettingsModal from "../organizations/ProjectSettingsModal";
+import api from "../../state/api-client/api";
 
 const ObjectDetectionIllustration = () => (
   <svg
@@ -498,8 +498,8 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
   const handleSubmit = () => {
     console.log(projectData.type);
     if (isFormValid) {
-      axios
-        .post("http://127.0.0.1:8000/user-projects/", {
+      api
+        .post("/user-projects/", {
           email: user?.email,
           name: projectData.name,
           description: projectData.description,
@@ -803,10 +803,10 @@ const ProjectsPage = ({ setActiveTab }) => {
     try {
       setLoading(true);
       localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
-
-      const response = await axios.get(
-        `http://127.0.0.1:8000/user-projects/?email=${user.email}`
-      );
+      const response = await api.get(`/user-projects/`, {
+        params: { email: user.email }, 
+      });
+      
       setProjects(response.data);
       setLoading(false);
     } catch (error) {

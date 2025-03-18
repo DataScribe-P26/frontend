@@ -17,6 +17,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { UserPlus } from "lucide-react";
+import api from "../../state/api-client/api";
 
 const ObjectDetectionIllustration = () => (
   <svg
@@ -480,8 +481,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
 
   const fetchAvailableMembers = async () => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/organization-members/?org_name=${organizationName}`
+      const response = await api.get(
+        `/organization-members/?org_name=${organizationName}`
       );
       setAvailableMembers(response.data.members || []);
     } catch (error) {
@@ -563,8 +564,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     }
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/organization-members/search?org_name=${organizationName}&query=${query}`
+      const response = await api.get(
+        `/organization-members/search?org_name=${organizationName}&query=${query}`
       );
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
@@ -597,8 +598,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     console.log(data);
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/organizations/add-members",
+      const response = await api.post(
+        "/organizations/add-members",
         data
       );
 
@@ -657,8 +658,8 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     const isoDate = formatDateToCustomString(currentDate);
     addProject(projectData.name, projectData.description, projectData.type);
     if (isFormValid) {
-      axios
-        .post("http://127.0.0.1:8000/create-org-projects/", {
+      api
+        .post("/create-org-projects/", {
           email: user?.email,
           name: projectData.name,
           description: projectData.description,

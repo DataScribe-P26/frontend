@@ -9,6 +9,7 @@ import { useTheme } from "../../utils/ThemeUtils"; // Import dark mode context
 import { useAuth } from "../../utils/authUtils";
 import TopBar from "../../components/navbar/Navbar";
 import { Sidebar } from "../../components/imageProject/annotationSection/ImageSidebar";
+import api from "../../state/api-client/api";
 
 function Imagehome() {
   const {
@@ -48,8 +49,8 @@ function Imagehome() {
   }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
-    axios
-      .get(`http://127.0.0.1:8000/user-projects/?email=${user.email}`)
+    api
+      .get(`/user-projects/?email=${user.email}`)
       .then((response) => {
         const projects = response.data;
         const project = projects.find((p) => p.name === projectName);
@@ -86,8 +87,8 @@ function Imagehome() {
         setImageSrc([]);
         clear_classes();
 
-        const response = await axios.get(
-          `http://127.0.0.1:8000/projects/image/${userType}/${projectName}/${user.email}`,
+        const response = await api.get(
+          `/projects/image/${userType}/${projectName}/${user.email}`,
           { signal: controller.signal }
         );
 

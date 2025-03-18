@@ -1,8 +1,7 @@
 import React from "react";
-import axios from "axios";
 import { useAuth } from "../../../utils/authUtils";
 import { useTheme } from "../../../utils/ThemeUtils";
-
+import api from "../../../state/api-client/api";
 const AugmentationConfig = ({ config, setConfig, isOn, isDarkMode }) => {
   if (!isOn) return null;
 
@@ -458,8 +457,8 @@ const ExportModal = ({ setExportModal, projectName }) => {
       const type = "detection";
       const user_type = "single";
 
-      const response = await axios.post(
-        `http://127.0.0.1:8000/export/${type}/${user_type}/${projectName}/${
+      const response = await api.post(
+        `/export/${type}/${user_type}/${projectName}/${
           user.email
         }/${selectedFormat}/${isOn}?train_split=${splits[0]}&val_split=${
           splits[1] - splits[0]
