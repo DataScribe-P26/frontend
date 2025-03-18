@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { UserPlus, X } from 'lucide-react';
-import api from '../../state/api-client/api';
+import React, { useState, useEffect } from "react";
+import { UserPlus, X } from "lucide-react";
+import { get } from "../../state/api-client/api";
 
-const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }) => {
+const TeamMemberModal = ({
+  isteamOpen,
+  onCloseteam,
+  organizationName,
+  onSubmit,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -16,10 +21,10 @@ const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }
 
   const fetchAvailableMembers = async () => {
     try {
-      const response = await api.get(
-        `/organization-members/`,
-        { params: { org_name: organizationName } }
-      );
+      const response = await get(`/organization-members/`, {
+        org_name: organizationName,
+      });
+
       setAvailableMembers(response.data.members || []);
     } catch (error) {
       console.error("Error fetching members:", error);
@@ -34,10 +39,11 @@ const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }
     }
 
     try {
-      const response = await api.get(
-        `/organization-members/search`,
-        { params: { org_name: organizationName, query } }
-      );
+      const response = await get(`/organization-members/search`, {
+        org_name: organizationName,
+        query: query,
+      });
+
       setSearchResults(response.data.matches);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -93,18 +99,20 @@ const TeamMemberModal = ({ isteamOpen, onCloseteam, organizationName, onSubmit }
               <UserPlus className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
             </div>
             <div className="h-96 overflow-y-auto border rounded-lg p-4">
-              {(searchQuery ? searchResults : availableMembers).map((member) => (
-                <div
-                  key={member.email}
-                  className="flex items-center  justify-between p-2 hover:bg-gray-500 rounded-lg cursor-pointer"
-                  onClick={() => handleSelectMember(member.email)}
-                >
-                  <span>{member.email}</span>
-                  <button className="text-blue-600 hover:text-blue-800">
-                    Add
-                  </button>
-                </div>
-              ))}
+              {(searchQuery ? searchResults : availableMembers).map(
+                (member) => (
+                  <div
+                    key={member.email}
+                    className="flex items-center  justify-between p-2 hover:bg-gray-500 rounded-lg cursor-pointer"
+                    onClick={() => handleSelectMember(member.email)}
+                  >
+                    <span>{member.email}</span>
+                    <button className="text-blue-600 hover:text-blue-800">
+                      Add
+                    </button>
+                  </div>
+                )
+              )}
             </div>
           </div>
 

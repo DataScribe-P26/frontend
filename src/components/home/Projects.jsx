@@ -8,7 +8,7 @@ import { USER_TYPE } from "../../constants/useConstants";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ProjectSettingsModal from "../organizations/projectSettingsModal";
-import api from "../../state/api-client/api";
+import { get, post } from "../../state/api-client/api";
 
 const ObjectDetectionIllustration = () => (
   <svg
@@ -498,13 +498,12 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
   const handleSubmit = () => {
     console.log(projectData.type);
     if (isFormValid) {
-      api
-        .post("/user-projects/", {
-          email: user?.email,
-          name: projectData.name,
-          description: projectData.description,
-          type: projectData.type,
-        })
+      post("/user-projects/", {
+        email: user?.email,
+        name: projectData.name,
+        description: projectData.description,
+        type: projectData.type,
+      })
         .then((response) => {
           toast.success("Project created successfully!");
           reset();
@@ -803,9 +802,7 @@ const ProjectsPage = ({ setActiveTab }) => {
     try {
       setLoading(true);
       localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
-      const response = await api.get(`/user-projects/`, {
-        params: { email: user.email },
-      });
+      const response = await get(`/user-projects/`, { email: user.email });
 
       setProjects(response.data);
       setLoading(false);

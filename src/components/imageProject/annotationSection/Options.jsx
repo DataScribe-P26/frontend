@@ -10,6 +10,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { del } from "../../../state/api-client/api";
 
 function Options({ action, setAction, submit, project_type }) {
   const {
@@ -32,7 +33,7 @@ function Options({ action, setAction, submit, project_type }) {
     const image_id = all_annotations[currentIndex].id;
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     try {
-      const response = await axios.delete(
+      const response = await del(
         `http://127.0.0.1:8000/images/${projectName}/${userType}/${image_id}`
       );
 

@@ -5,6 +5,7 @@ import { useAuth } from "../../utils/authUtils";
 import axios from "axios";
 
 import { USER_TYPE } from "../../constants/useConstants";
+import { del, put } from "../../state/api-client/api";
 
 const ProjectSettingsModal = ({
   isOpen,
@@ -56,7 +57,7 @@ const ProjectSettingsModal = ({
           userType === USER_TYPE.INDIVIDUAL
             ? `http://127.0.0.1:8000/delete-project/${user.email}/${editedProject.name}`
             : `http://127.0.0.1:8000/delete-org-project/${user.email}/${editedProject.name}/${organizationName}`;
-        await axios.delete(endpoint);
+        await del(endpoint);
         alert("Project deleted successfully!");
         onDeleteProject(editedProject.name);
       } catch (error) {
@@ -79,20 +80,11 @@ const ProjectSettingsModal = ({
     try {
       // API call to add members
       console.log(editedProject.name, " ", organizationName, " ", newMembers);
-      const response = await fetch(
-        "http://127.0.0.1:8000/add-members-to-project",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            project_name: editedProject.name,
-            org_id: organizationName,
-            new_team_members: newMembers,
-          }),
-        }
-      );
+      const response = await put("/add-members-to-project", {
+        project_name: editedProject.name,
+        org_id: organizationName,
+        new_team_members: newMembers,
+      });
 
       if (response.ok) {
         const updatedMembers = [...editedProject.team_members, ...newMembers];
@@ -131,7 +123,7 @@ const ProjectSettingsModal = ({
               team_members: editedProject.team_members,
             };
       console.log(payload);
-      const response = await axios.put(endpoint, payload, {
+      const response = await put(endpoint, payload, {
         headers: { "Content-Type": "application/json" },
       });
 

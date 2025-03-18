@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../../state/api-client/api";
+import { del, get, post, put } from "../../state/api-client/api";
 import toast from "react-hot-toast";
 import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
@@ -74,10 +74,7 @@ const Dashboard = () => {
     if (user) {
       storedOrgName = localStorage.getItem("organizationName");
       console.log(storedOrgName);
-      api
-        .get(`/organization-details`, {
-          params: { org_name: storedOrgName },
-        })
+      get(`/organization-details`, { org_name: storedOrgName })
         .then((response) => {
           setOrgDetails(response.data);
           setOriginalOrgDetails(response.data);
@@ -97,7 +94,7 @@ const Dashboard = () => {
         details: orgDetails.details || "",
       };
 
-      const response = await api.put(`/organization-update`, data);
+      const response = await put(`/organization-update`, data);
 
       if (response.status === 200) {
         toast.success("Organization details updated successfully");
@@ -114,7 +111,7 @@ const Dashboard = () => {
   const handleDeleteProject = async (name) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
-        await api.delete(
+        await del(
           `/delete-org-project/${user.email}/${name}/${organizationName}`
         );
         alert("Project deleted successfully!");
@@ -137,19 +134,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user) {
-      api
-        .get(`/ORG-user-projects`, {
-          params: { org_name: storedOrgName, user_email: user.email },
-        })
-        .then((response) => setProjects(response.data || []));
+      get(`/ORG-user-projects`, {
+        org_name: storedOrgName,
+        user_email: user.email,
+      }).then((response) => setProjects(response.data || []));
 
-      api
-        .get("/organization-members", {
-          params: { org_name: storedOrgName },
-        })
-        .then((response) =>
-          setOrganizationMembers(response.data.members || [])
-        );
+      get("/organization-members", {
+        org_name: storedOrgName,
+      }).then((response) =>
+        setOrganizationMembers(response.data.members || [])
+      );
     }
   }, [user, organizationName]);
 
@@ -161,7 +155,7 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await api.get(`/users/search?query=${query}`);
+      const response = await get(`/users/search?query=${query}`);
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
     } catch (error) {
@@ -208,7 +202,7 @@ const Dashboard = () => {
     console.log(data);
 
     try {
-      const response = await api.post("/organizations/add-members", data);
+      const response = await post("/organizations/add-members", data);
 
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);

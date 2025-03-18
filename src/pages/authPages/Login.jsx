@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth, login } from "../../utils/authUtils";
-import api from "../../state/api-client/api";
+import { post } from "../../state/api-client/api";
 import NeonCursor from "../../components/home/neon";
 import { GoogleLogin } from "@react-oauth/google";
 
@@ -33,7 +33,7 @@ export default function Login() {
     }
 
     try {
-      const result = await api.post("/auth/login", {
+      const result = await post("/auth/login", {
         email: email.trim(),
         password: password.trim(),
       });
@@ -67,7 +67,7 @@ export default function Login() {
 
   const onSuccess = async (response) => {
     try {
-      const result = await api.post("/auth/callback", {
+      const result = await post("/auth/callback", {
         token: response.credential, // Send the Google token to the backend
       });
 

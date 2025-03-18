@@ -125,12 +125,15 @@ const CombinedFileContent = () => {
       formData.append("file", file);
 
       try {
-        const response = await fetch(
-          `http://localhost:8000/upload/${projectType}/${userType}/${projectName}`,
-          {
-            method: "POST",
-            body: formData,
-          }
+        const url = `/annotate/${projectType}/${userType}?project_name=${encodeURIComponent(
+          projectName
+        )}&text=${encodeURIComponent(item.text)}&emotion=${encodeURIComponent(
+          emotion
+        )}`;
+
+        const response = await post(
+          `/upload/${projectType}/${userType}/${projectName}`,
+          formData
         );
 
         const result = await response.json();

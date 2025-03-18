@@ -5,7 +5,7 @@ import Navbar from "../../components/textProject/modals/navbar";
 import Sidebar from "../../components/textProject/modals/sidebar";
 import Footer from "../../components/textProject/modals/footer";
 import { useTheme } from "../../utils/themeUtils";
-import api from "../../state/api-client/api";
+import { get } from "../../state/api-client/api";
 import { USER_TYPE } from "../../constants/useConstants";
 import { useAuth } from "../../utils/authUtils";
 
@@ -59,7 +59,7 @@ const HomePage = () => {
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         let response;
         if (projectType === "ner_tagging") {
-          response = await api.get(
+          response = await get(
             `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
           );
 
@@ -109,7 +109,7 @@ const HomePage = () => {
           // response = await axios.get(
           //   `http://127.0.0.1:8000/projects/sentiment_analysis/${userType}/${projectName}/${user.email}`
           // );
-          response = await api.get(
+          response = await get(
             `/get-annotations/${projectType}/${userType}/${projectName}`
           );
 

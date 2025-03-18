@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../../../utils/authUtils";
 import { useTheme } from "../../../utils/themeUtils";
-import api from "../../../state/api-client/api";
+import { post } from "../../../state/api-client/api";
 const AugmentationConfig = ({ config, setConfig, isOn, isDarkMode }) => {
   if (!isOn) return null;
 
@@ -457,7 +457,7 @@ const ExportModal = ({ setExportModal, projectName }) => {
       const type = "detection";
       const user_type = "single";
 
-      const response = await api.post(
+      const response = await post(
         `/export/${type}/${user_type}/${projectName}/${
           user.email
         }/${selectedFormat}/${isOn}?train_split=${splits[0]}&val_split=${

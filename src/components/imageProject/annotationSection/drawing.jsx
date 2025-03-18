@@ -11,7 +11,7 @@ import { all } from "axios";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../utils/authUtils";
-import api from "../../../state/api-client/api";
+import { del, post } from "../../../state/api-client/api";
 
 function Stages({
   images,
@@ -67,7 +67,7 @@ function Stages({
       const email = user.email;
       console.log(email);
       if (trained == true) return;
-      const response = await api.post(
+      const response = await post(
         `/api/train-and-infer/${projectName}?user_type=${user_type}&email=${email}` // Use & instead of ?
       );
       console.log(response.data);
@@ -122,7 +122,7 @@ function Stages({
         const user_type = localStorage.getItem("userType");
         const email = user.email;
         console.log(email);
-        const response = await api.post(`/api/infer/${projectName}`, {
+        const response = await post(`/api/infer/${projectName}`, {
           image_ids: imageIds,
           user_type: user_type,
           email: email,
@@ -713,9 +713,8 @@ function Stages({
       );
       currentImage.annotations = new_anno;
       submit(currentImage);
-      const response = await fetch(
-        `http://127.0.0.1:8000/images/${currentImage.id}/annotations/${class_id}/${annotationToDelete.type}`,
-        { method: "DELETE" }
+      const response = await del(
+        `/images/${currentImage.id}/annotations/${class_id}/${annotationToDelete.type}`
       );
 
       if (!response.ok) {

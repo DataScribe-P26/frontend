@@ -45,22 +45,22 @@ export const useUser = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // Replace with your actual API call
-        const response = await fetch("/api/user");
-        const data = await response.json();
-        setUser(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       // Replace with your actual API call
+  //       const response = await fetch("/api/user");
+  //       const data = await response.json();
+  //       setUser(data);
+  //     } catch (err) {
+  //       setError(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
 
   const updateUser = async (userData) => {
     try {

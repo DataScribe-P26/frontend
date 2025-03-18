@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../utils/themeUtils";
 import HelpModalImg from "./helpModalImg";
 import { useAuth, logout } from "../../../utils/authUtils";
-import api from "../../../state/api-client/api";
+import { get, post } from "../../../state/api-client/api";
 const Navbar = () => {
   const navigate = useNavigate();
 
@@ -54,12 +54,13 @@ const Navbar = () => {
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
     try {
-      const response = await api.get(`/notification`, {
-        params: { email: user?.email },
-        headers: {
-          Authorization: `Bearer ${user?.token}`, // Pass token if required
-        },
-      });
+      const response = await get(
+        `/notification`,
+        { email: user?.email },
+        {
+          Authorization: `Bearer ${user?.token}`,
+        }
+      );
       console.log(response.data);
       // Ensure the response is an array
       const notificationsArray = response.data.notifications || []; // Default to an empty array if notifications is undefined
@@ -74,7 +75,7 @@ const Navbar = () => {
   const respondToInvitation = async (notificationId, action) => {
     try {
       console.log(notificationId, " ", action);
-      const response = await api.post(
+      const response = await post(
         `/notifications/respond`,
         { notification_id: notificationId, action },
         {

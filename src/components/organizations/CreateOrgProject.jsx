@@ -17,7 +17,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { UserPlus } from "lucide-react";
-import api from "../../state/api-client/api";
+import { get, post } from "../../state/api-client/api";
 
 const ObjectDetectionIllustration = () => (
   <svg
@@ -481,7 +481,7 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
 
   const fetchAvailableMembers = async () => {
     try {
-      const response = await api.get(
+      const response = await get(
         `/organization-members/?org_name=${organizationName}`
       );
       setAvailableMembers(response.data.members || []);
@@ -564,7 +564,7 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     }
 
     try {
-      const response = await api.get(
+      const response = await get(
         `/organization-members/search?org_name=${organizationName}&query=${query}`
       );
       setSearchResults(response.data.matches);
@@ -598,7 +598,7 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     console.log(data);
 
     try {
-      const response = await api.post("/organizations/add-members", data);
+      const response = await post("/organizations/add-members", data);
 
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);
@@ -655,16 +655,15 @@ const CreateOrgProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     const isoDate = formatDateToCustomString(currentDate);
     addProject(projectData.name, projectData.description, projectData.type);
     if (isFormValid) {
-      api
-        .post("/create-org-projects/", {
-          email: user?.email,
-          name: projectData.name,
-          description: projectData.description,
-          type: projectData.type,
-          org_id: organizationName,
-          created_by: user?.email,
-          team_members: selectedMembers,
-        })
+      post("/create-org-projects/", {
+        email: user?.email,
+        name: projectData.name,
+        description: projectData.description,
+        type: projectData.type,
+        org_id: organizationName,
+        created_by: user?.email,
+        team_members: selectedMembers,
+      })
         .then((response) => {
           toast.success("Project created successfully!");
           setprojectname(projectData.name);

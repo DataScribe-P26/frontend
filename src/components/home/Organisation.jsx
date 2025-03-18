@@ -13,9 +13,8 @@ import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
-import { use } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../state/api-client/api";
+import { get, post } from "../../state/api-client/api";
 
 const OrganizationCard = ({ name, role, createdOn }) => {
   const navigate = useNavigate();
@@ -316,15 +315,10 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
       admin_id: user.email,
     };
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/organizations/create/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(organizationData),
-        }
+      const response = await post(
+        "/organizations/create/",
+        organizationData,
+        {}
       );
 
       if (!response.ok) {
@@ -346,7 +340,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await api.get(`/users/search?query=${query}`);
+      const response = await get(`/users/search?query=${query}`);
       setSearchResults(response.data.matches);
       const formattedUsers = response.data.matches.map((user, index) => {
         // Extract name from email (part before @)
@@ -386,7 +380,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     console.log(data);
 
     try {
-      const response = await api.post("/organizations/add-members", data);
+      const response = await post("/organizations/add-members", data);
       console.log(response.data);
       if (response.status === 200) {
         console.log("Members added successfully:", response.data);
@@ -662,7 +656,7 @@ const OrganizationsPage = () => {
       const userType = USER_TYPE.ORGANIZATION;
       localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
       console.log("current user is", userType);
-      const response = await api.get(`/organizations/user/${user.email}`);
+      const response = await get(`/organizations/user/${user.email}`);
       console.log("ORGS---", response.data);
       setOrganizations(response.data);
       setLoading(false);

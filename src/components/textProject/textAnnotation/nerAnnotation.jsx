@@ -10,7 +10,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { USER_TYPE } from "../../../constants/useConstants";
 import { useAuth } from "../../../utils/authUtils";
-import api from "../../../state/api-client/api";
+import { get, post } from "../../../state/api-client/api";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -55,12 +55,11 @@ const FileContentDisplay = () => {
     await handleSubmit();
     try {
       const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
-      const response = await axios.post(
-        `http://127.0.0.1:8000/process_text/${projectName}`,
-        null, // No request body
-        {
-          params: { user_type: userType }, // Sending user_type as a query parameter
-        }
+      const response = await post(
+        `http://127.0.0.1:8000/process_text/${projectName}?user_type=${encodeURIComponent(
+          userType
+        )}`,
+        {}
       );
 
       console.log("Pipeline Response:", response.data);
@@ -192,7 +191,7 @@ const FileContentDisplay = () => {
         const userType =
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         console.log("current user is", userType);
-        const response = await api.get(
+        const response = await get(
           `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
         console.log("hello------", response.data[0]);
@@ -501,7 +500,7 @@ const FileContentDisplay = () => {
     console.log("current user is", userType);
     const type = projectType;
     try {
-      const response = await api.post(
+      const response = await post(
         `/projects/${type}/${userType}/${projectName}/upload/`,
         { data2: dataToSend },
         {
@@ -544,7 +543,7 @@ const FileContentDisplay = () => {
     ) {
       try {
         // Save progress to the backend
-        const response = await api.post(
+        const response = await post(
           `/projects/${type}/${userType}/${projectName}/upload/`,
           { data2: dataToSend },
           {

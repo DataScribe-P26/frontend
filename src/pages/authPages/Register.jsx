@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import api from "../../state/api-client/api";
+import { post } from "../../state/api-client/api";
 import NeonCursor from "../../components/home/neon";
 import { GoogleLogin } from "@react-oauth/google";
 export default function Register() {
@@ -94,7 +94,7 @@ export default function Register() {
     if (!formIsValid) return;
 
     try {
-      const result = await api.post("/auth/register", {
+      const result = await post("/auth/register", {
         email: email.trim(),
         password: password.trim(),
         full_name: fullName.trim(),

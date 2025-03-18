@@ -9,7 +9,7 @@ import Stages from "../../components/imageProject/annotationSection/drawing";
 import Options from "../../components/imageProject/annotationSection/options";
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
-import api from "../../state/api-client/api";
+import { post } from "../../state/api-client/api";
 import AnnotationsLabels from "../../components/imageProject/annotationSection/annotationsLabels";
 import Modal from "../../components/imageProject/annotationSection/classaAddModal";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -192,7 +192,7 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
     const userType = localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
     console.log("Current User Type:", userType);
     try {
-      const response = await api.post(
+      const response = await post(
         `/projects/${type}/${userType}/${projectName}/upload/`,
         { data1: data },
         {

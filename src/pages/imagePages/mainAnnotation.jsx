@@ -9,7 +9,7 @@ import { useTheme } from "../../utils/themeUtils"; // Import dark mode context
 import { useAuth } from "../../utils/authUtils";
 import TopBar from "../../components/navbar/navbar";
 import { Sidebar } from "../../components/imageProject/annotationSection/imageSidebar";
-import api from "../../state/api-client/api";
+import { get } from "../../state/api-client/api";
 
 function Imagehome() {
   const {
@@ -49,8 +49,7 @@ function Imagehome() {
   }, [isDarkMode]);
 
   if (created_on === "" || created_on == null) {
-    api
-      .get(`/user-projects/?email=${user.email}`)
+    get(`/user-projects/?email=${user.email}`)
       .then((response) => {
         const projects = response.data;
         const project = projects.find((p) => p.name === projectName);
@@ -87,8 +86,9 @@ function Imagehome() {
         setImageSrc([]);
         clear_classes();
 
-        const response = await api.get(
+        const response = await get(
           `/projects/image/${userType}/${projectName}/${user.email}`,
+          {},
           { signal: controller.signal }
         );
 

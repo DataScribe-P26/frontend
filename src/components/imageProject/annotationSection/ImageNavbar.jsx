@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../../state/api-client/api";
+import { get, post } from "../../../state/api-client/api";
 import {
   Search,
   Bell,
@@ -56,12 +56,14 @@ const Navbar = () => {
   const fetchNotifications = async () => {
     try {
       console.log("tututututu");
-      const response = await api.get(`/notification`, {
-        params: { email: user?.email },
-        headers: {
+      const response = await get(
+        `/notification`,
+        { email: user?.email },
+        {
           Authorization: `Bearer ${user?.token}`, // Pass token if required
-        },
-      });
+        }
+      );
+
       console.log(response.data);
       // Ensure the response is an array
       const notificationsArray = response.data.notifications || []; // Default to an empty array if notifications is undefined
@@ -76,7 +78,7 @@ const Navbar = () => {
   const respondToInvitation = async (notificationId, action) => {
     try {
       console.log(notificationId, " ", action);
-      const response = await api.post(
+      const response = await post(
         `/notifications/respond`,
         { notification_id: notificationId, action },
         {

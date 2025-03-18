@@ -7,7 +7,7 @@ import Sidebar from "../../components/textProject/modals/sidebar";
 import toast from "react-hot-toast";
 import CreateLabel from "../../components/textProject/modals/createLabel";
 import textStore from "../../state/store/textStore/combinedTextSlice";
-import api from "../../state/api-client/api";
+import { get } from "../../state/api-client/api";
 import Footer from "../../components/textProject/modals/footer";
 import { useTheme } from "../../utils/themeUtils";
 import { USER_TYPE } from "../../constants/useConstants";
@@ -30,7 +30,7 @@ const LabelManager = () => {
         const userType =
           localStorage.getItem("userType") || USER_TYPE.INDIVIDUAL;
         console.log("current user is", userType);
-        const response = await api.get(
+        const response = await get(
           `/projects/ner_tagging/${userType}/${projectName}/${user.email}`
         );
 
