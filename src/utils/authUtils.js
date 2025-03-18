@@ -29,6 +29,40 @@ export const isPublicRoute = function (path) {
   return publicRoutes.includes(path);
 };
 
+export const login = function (accessToken, userData, navigate) {
+  const { setToken, setUser } = useAuthStore.getState();
+
+  setCookie("token", accessToken, 3);
+  setCookie("user", JSON.stringify(userData), 3);
+
+  localStorage.setItem("token", accessToken);
+  localStorage.setItem("user", JSON.stringify(userData));
+
+  setToken(accessToken);
+  setUser(userData);
+
+  if (navigate) {
+    navigate("/home", { replace: true });
+  }
+};
+
+export const logout = function (navigate) {
+  const { setToken, setUser } = useAuthStore.getState();
+
+  setCookie("token", "", -1);
+  setCookie("user", "", -1);
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  setToken(null);
+  setUser(null);
+
+  if (navigate) {
+    navigate("/login", { replace: true });
+  }
+};
+
 export const useAuthCheck = function () {
   const { token, setToken, setUser } = useAuthStore();
   const location = useLocation();
@@ -67,8 +101,6 @@ export const useAuthCheck = function () {
 
   useEffect(
     function () {
-      // Only redirect from login/register pages when authenticated
-      // Allow access to "/" and "/price" at all times
       if (
         token &&
         (location.pathname === "/login" || location.pathname === "/register")
@@ -81,43 +113,11 @@ export const useAuthCheck = function () {
 };
 
 export const useAuth = function () {
-  const {
-    token,
-    user,
-    setToken,
-    setUser,
-    logout: storeLogout,
-  } = useAuthStore();
-  const navigate = useNavigate();
-
-  const login = function (accessToken, userData) {
-    setCookie("token", accessToken, 3);
-    setCookie("user", JSON.stringify(userData), 3);
-
-    localStorage.setItem("token", accessToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    setToken(accessToken);
-    setUser(userData);
-    navigate("/home", { replace: true });
-  };
-
-  const logout = function () {
-    setCookie("token", "", -1);
-    setCookie("user", "", -1);
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    storeLogout();
-    navigate("/login", { replace: true });
-  };
+  const { token, user } = useAuthStore();
 
   return {
     token,
     user,
-    login,
-    logout,
     isAuthenticated: !!token,
   };
 };

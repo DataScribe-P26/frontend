@@ -3,7 +3,7 @@ import React from "react";
 import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../utils/authUtils";
+import { useAuth, logout } from "../../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import { BsPersonWorkspace } from "react-icons/bs";
 
@@ -13,12 +13,12 @@ export const Sidebar = ({
   isCollapsed,
   setIsCollapsed,
 }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Handle logout
   const handleLogout = () => {
-    logout();
+    logout(navigate);
     navigate("/login");
     setShowProfile(false);
   };

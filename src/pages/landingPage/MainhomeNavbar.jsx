@@ -8,14 +8,14 @@ import {
   FaMoon,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, logout } from "../../utils/authUtils";
 import { useTheme } from "../context/ThemeContext";
 
 const MainhomeNavbar = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
 
   // Get display name from user data
@@ -30,7 +30,7 @@ const MainhomeNavbar = () => {
 
   // Handle logout using AuthContext
   const handleLogout = () => {
-    logout();
+    logout(navigate);
     setShowProfile(false);
   };
 

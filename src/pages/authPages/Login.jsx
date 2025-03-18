@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HiAnnotation } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useAuth } from "../../utils/authUtils";
+import { useAuth, login } from "../../utils/authUtils";
 import api from "../../state/api-client/api";
 import NeonCursor from "../../components/home/Neon";
 import { GoogleLogin } from "@react-oauth/google";
@@ -13,7 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,7 +47,7 @@ export default function Login() {
         });
 
         // Call login which will handle navigation
-        login(tempToken, result.data.user);
+        login(tempToken, result.data.user, navigate);
       }
     } catch (error) {
       console.error("Login error:", error);

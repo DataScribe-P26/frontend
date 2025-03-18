@@ -8,7 +8,7 @@ import {
   LogOut,
   DollarSign,
 } from "lucide-react";
-import { useAuth } from "../../utils/authUtils";
+import { useAuth, logout } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For making HTTP requests
 import api from "../../state/api-client/api";
@@ -19,7 +19,7 @@ export const TopBar = ({ title }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false); // For notifications
   const [notifications, setNotifications] = useState([]); // Store notifications (invitations)
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Get display name from user data
@@ -62,7 +62,7 @@ export const TopBar = ({ title }) => {
 
   // Handle logout
   const handleLogout = () => {
-    logout();
+    logout(navigate);
     navigate("/login");
     setShowProfile(false);
   };

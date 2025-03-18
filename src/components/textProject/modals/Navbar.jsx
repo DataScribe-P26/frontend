@@ -9,17 +9,19 @@ import {
   DollarSign,
 } from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../utils/ThemeUtils";
 import HelpModalImg from "./HelpModalImg";
-import { useAuth } from "../../../utils/authUtils";
+import { useAuth, logout } from "../../../utils/authUtils";
 import api from "../../../state/api-client/api";
 const Navbar = () => {
+  const navigate = useNavigate();
+
   const [isHelpOpen, setHelpOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false); // For notifications
   const [notifications, setNotifications] = useState([]); // Store notifications (invitations)
 
@@ -241,7 +243,7 @@ const Navbar = () => {
                   </p>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={logout(navigate)}
                   className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-red-400 flex items-center space-x-2"
                 >
                   <LogOut size={16} />
