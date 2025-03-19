@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../utils/authUtils";
 import { get } from "../../state/api-client/api";
+import CreditPurchaseModal from "./pricingModal";
 import {
   DollarSign,
   CreditCard,
@@ -16,6 +17,7 @@ import {
 
 const WalletSection = () => {
   const [credits, setCredits] = useState(100);
+  const [openPricing, setOpenPricing] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("overview");
@@ -107,7 +109,7 @@ const WalletSection = () => {
   // Handle buy credits
   const handleBuyCredits = () => {
     // Implement buy credits flow
-    navi;
+    setOpenPricing(true);
     console.log("Buy credits clicked");
   };
 
@@ -136,8 +138,15 @@ const WalletSection = () => {
 
   const stats = calculateStats();
 
+  const onClose = () => {
+    setOpenPricing(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+      {openPricing && (
+        <CreditPurchaseModal isOpen={openPricing} onClose={onClose} />
+      )}{" "}
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center mb-8">
           <Wallet

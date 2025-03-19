@@ -16,10 +16,14 @@ import {
 import { useAuth, logout } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "../../state/api-client/api";
+import CreditPurchaseModal from "../wallet/pricingModal";
+import useWalletStore from "../../state/store/walletStore/walletSlice";
 
 export const TopBar = ({ title, setActiveTab }) => {
-  // Existing state
+  const { balance, setBalance } = useWalletStore();
   const [showProfile, setShowProfile] = useState(false);
+  const [openPricing, setOpenPricing] = useState(false);
+
   const [showTooltip, setShowTooltip] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -39,6 +43,12 @@ export const TopBar = ({ title, setActiveTab }) => {
     if (user.email) return user.email.split("@")[0];
     return "User";
   };
+  useEffect(() => {
+    get(`/wallet/${user.user_id}`).then((response) => {
+      console.log("wallet", response);
+      setBalance(response.data.balance);
+    });
+  }, [user]);
 
   const displayName = getDisplayName();
 
@@ -74,6 +84,9 @@ export const TopBar = ({ title, setActiveTab }) => {
     logout(navigate);
     navigate("/login");
     setShowProfile(false);
+  };
+  const onClose = () => {
+    setOpenPricing(false);
   };
 
   // Close profile dropdown when clicking outside
@@ -112,7 +125,8 @@ export const TopBar = ({ title, setActiveTab }) => {
   // Handle buying credits
   const handleBuyCredits = () => {
     // Placeholder for credit purchase functionality
-    navigate("/price");
+    setOpenPricing(true);
+    setShowWalletDropdown(false);
   };
 
   // Fetch credits balance
@@ -196,6 +210,7 @@ export const TopBar = ({ title, setActiveTab }) => {
           {title}
         </h1>
       </div>
+      <CreditPurchaseModal isOpen={openPricing} onClose={onClose} />
 
       {/* Right-Side Icons & User Profile */}
       <div className="flex items-center gap-6">
@@ -246,7 +261,7 @@ export const TopBar = ({ title, setActiveTab }) => {
             onClick={toggleWalletDropdown}
             className="flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-sm hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
           >
-            <Wallet2 size={20} /> <span>{credits} credits</span>
+            <Wallet2 size={20} /> <span>{balance} credits</span>
             <ChevronDown
               size={14}
               className={`transition-transform duration-300 ${
@@ -264,7 +279,7 @@ export const TopBar = ({ title, setActiveTab }) => {
                     Credits Balance
                   </h3>
                   <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                    {credits}
+                    {balance}
                   </span>
                 </div>
               </div>
