@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Sidebar } from "../sidebar/sidebar";
-import { TopBar } from "../navbar/navbar";
-import { Profile } from "../home/profile";
-import { useUser } from "../home/useUser";
-import OrganizationsPage from "../home/organisation";
-import ProjectsPage from "../home/projects";
-import HomePage from "../home/hero";
-import Login from "../../pages/authPages/login";
+import { Sidebar } from "../../components/sidebar/sidebar";
+import { TopBar } from "../../components/navbar/navbar";
+import { Profile } from "../../components/home/profile";
+import { useUser } from "../../components/home/useUser";
+import OrganizationsPage from "../../components/home/organisation";
+import ProjectsPage from "../../components/home/projects";
+import HomePage from "../../components/home/hero";
+import Login from "../authPages/login";
+import { WalletMinimalIcon } from "lucide-react";
+import WalletSection from "../../components/wallet/wallet";
 
 const ProjectSection = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -85,6 +87,8 @@ const ProjectSection = () => {
         return <OrganizationsPage />;
       case "projects":
         return <ProjectsPage />;
+      case "wallet":
+        return <WalletSection />;
       default:
         return <HomePage isCollapsed={isCollapsed} />;
     }
@@ -103,7 +107,12 @@ const ProjectSection = () => {
           isCollapsed ? "ml-20" : "ml-64"
         }`}
       >
-        <TopBar title={getPageTitle()} user={user} isCollapsed={isCollapsed} />
+        <TopBar
+          title={getPageTitle()}
+          user={user}
+          isCollapsed={isCollapsed}
+          setActiveTab={setActiveTab}
+        />
         <main
           className={`container mx-auto transition-all duration-300 dark:bg-gray-900 dark:text-gray-100 ${
             activeTab === "home" ? "p-0" : "p-8"

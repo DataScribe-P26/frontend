@@ -11,7 +11,7 @@ import HomePage from "./pages/textPages/homePage";
 import LabelManager from "./pages/textPages/labelManager";
 import CombinedFileContent from "./components/textProject/fileUpload/uploadFile";
 import FileContentDisplay from "./components/textProject/textAnnotation/nerAnnotation";
-import ProjectSection from "./components/organizations/projectSection";
+import ProjectSection from "./pages/homePages/home";
 import CreateOrgProject from "./components/organizations/createOrgProject";
 import Dashboard from "./pages/organizationsPages/dashboard";
 import PricingPage from "./components/landing/pricingPage";

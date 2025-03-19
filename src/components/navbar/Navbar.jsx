@@ -7,22 +7,32 @@ import {
   Moon,
   LogOut,
   DollarSign,
+  Wallet,
+  ChevronDown,
+  Plus,
+  CreditCard,
+  Wallet2,
 } from "lucide-react";
 import { useAuth, logout } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // For making HTTP requests
 import { get, post } from "../../state/api-client/api";
 
-export const TopBar = ({ title }) => {
+export const TopBar = ({ title, setActiveTab }) => {
+  // Existing state
   const [showProfile, setShowProfile] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false); // For notifications
-  const [notifications, setNotifications] = useState([]); // Store notifications (invitations)
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  // New wallet-related state
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [credits, setCredits] = useState(100);
+
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Get display name from user data
+  // Existing functions
   const getDisplayName = () => {
     if (!user) return "";
     if (user.name) return user.name;
@@ -32,7 +42,6 @@ export const TopBar = ({ title }) => {
 
   const displayName = getDisplayName();
 
-  // Handle theme toggle
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
@@ -73,15 +82,53 @@ export const TopBar = ({ title }) => {
       if (showProfile && !event.target.closest(".profile-container")) {
         setShowProfile(false);
       }
+      if (showWalletDropdown && !event.target.closest(".wallet-container")) {
+        setShowWalletDropdown(false);
+      }
+      if (
+        showNotifications &&
+        !event.target.closest(".notification-container")
+      ) {
+        setShowNotifications(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showProfile]);
+  }, [showProfile, showWalletDropdown, showNotifications]);
 
   // Handle Notifications Toggle
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
+    setShowWalletDropdown(false);
+  };
+
+  // Toggle wallet dropdown
+  const toggleWalletDropdown = () => {
+    setShowWalletDropdown(!showWalletDropdown);
+    setShowNotifications(false);
+  };
+
+  // Handle buying credits
+  const handleBuyCredits = () => {
+    // Placeholder for credit purchase functionality
+    navigate("/price");
+  };
+
+  // Fetch credits balance
+  const fetchCredits = async () => {
+    try {
+      // This would be replaced with an actual API call
+      // const response = await get("/user/credits", {}, {
+      //   Authorization: `Bearer ${user?.token}`,
+      // });
+      // setCredits(response.data.credits);
+
+      // For now, use the static value
+      setCredits(100);
+    } catch (error) {
+      console.error("Error fetching credits:", error);
+    }
   };
 
   // Fetch Pending Invitations for the User
@@ -91,19 +138,19 @@ export const TopBar = ({ title }) => {
         `/notification`,
         { email: user?.email },
         {
-          Authorization: `Bearer ${user?.token}`, // Pass token if required
+          Authorization: `Bearer ${user?.token}`,
         }
       );
       console.log(response.data);
-      // Ensure the response is an array
-      const notificationsArray = response.data.notifications || []; // Default to an empty array if notifications is undefined
+      const notificationsArray = response.data.notifications || [];
       setNotifications(notificationsArray);
       console.log(notificationsArray);
     } catch (error) {
       console.error("Error fetching invitations:", error);
-      setNotifications([]); // Fallback to empty array in case of error
+      setNotifications([]);
     }
   };
+
   // Handle responding to an invitation
   const respondToInvitation = async (notificationId, action) => {
     try {
@@ -113,14 +160,13 @@ export const TopBar = ({ title }) => {
         { notification_id: notificationId, action },
         {
           headers: {
-            Authorization: `Bearer ${user?.token}`, // Pass token if required
+            Authorization: `Bearer ${user?.token}`,
           },
         }
       );
 
       console.log(response.data.message);
 
-      // Update the notifications list after responding
       setNotifications((prevNotifications) =>
         prevNotifications.filter((notif) => notif._id !== notificationId)
       );
@@ -129,9 +175,17 @@ export const TopBar = ({ title }) => {
     }
   };
 
-  // Call fetchNotifications
+  // Fetch initial data
   useEffect(() => {
+    fetchCredits();
     fetchNotifications();
+  }, []);
+
+  // Update notifications when dropdown is toggled
+  useEffect(() => {
+    if (showNotifications) {
+      fetchNotifications();
+    }
   }, [showNotifications]);
 
   return (
@@ -186,14 +240,67 @@ export const TopBar = ({ title }) => {
           )}
         </div>
 
-        {/* Other Icons */}
-        <Search
-          className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer"
-          size={20}
-        />
+        {/* Wallet */}
+        <div className="relative wallet-container">
+          <button
+            onClick={toggleWalletDropdown}
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-sm hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+          >
+            <Wallet2 size={20} /> <span>{credits} credits</span>
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-300 ${
+                showWalletDropdown ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {/* Wallet Dropdown */}
+          {showWalletDropdown && (
+            <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-3 w-64 z-50">
+              <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                    Credits Balance
+                  </h3>
+                  <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                    {credits}
+                  </span>
+                </div>
+              </div>
+
+              <div className="px-4 py-3">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  Credits are used for auto-annotation and custom AI features.
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={handleBuyCredits}
+                    className="w-full flex items-center justify-center gap-2 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200"
+                  >
+                    <Plus size={16} />
+                    <span>Buy More Credits</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setActiveTab("wallet");
+                      setShowWalletDropdown(!showWalletDropdown);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md transition-colors duration-200"
+                  >
+                    <CreditCard size={16} />
+                    <span>Billing History</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Notification Icon */}
-        <div className="relative">
+        <div className="relative notification-container">
           <Bell
             className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer"
             size={20}

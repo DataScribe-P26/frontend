@@ -1,6 +1,14 @@
 // Sidebar
 import React from "react";
-import { Home, User, Building2, LogOut, Settings, Menu } from "lucide-react";
+import {
+  Home,
+  User,
+  Building2,
+  LogOut,
+  Settings,
+  Menu,
+  Wallet,
+} from "lucide-react";
 import { HiAnnotation } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useAuth, logout } from "../../utils/authUtils";
@@ -113,7 +121,6 @@ export const Sidebar = ({
               <Building2 size={18} className="shrink-0" />
               {!isCollapsed && <span>Organizations</span>}
             </button>
-
             <button
               onClick={() => setActiveTab("projects")}
               className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
@@ -124,8 +131,18 @@ export const Sidebar = ({
             >
               <Settings size={18} className="shrink-0" />
               {!isCollapsed && <span>Projects</span>}
+            </button>{" "}
+            <button
+              onClick={() => setActiveTab("wallet")}
+              className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                activeTab === "wallet"
+                  ? "bg-purple-50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              }`}
+            >
+              <Wallet size={18} className="shrink-0" />
+              {!isCollapsed && <span>Wallet</span>}
             </button>
-
             <button
               className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
               onClick={handleLogout}
