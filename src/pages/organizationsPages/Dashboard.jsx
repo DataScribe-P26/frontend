@@ -140,7 +140,7 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await get(`/users/search?query=${query}`);
+      const response = await get(`/users/search/${organizationName}?query=${query}`);
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
     } catch (error) {
@@ -157,6 +157,7 @@ const Dashboard = () => {
     }
     setSearchQuery("");
     setSearchResults([]);
+    
   };
   const handleEditClick = (member) => {
     setEditingMember(member.email);
@@ -666,6 +667,7 @@ const Dashboard = () => {
                       onClick={() => {
                         handleSubmit();
                         setIsModalOpen(false);
+                        setSelectedMembers([]);
                       }}
                     >
                       Add Members

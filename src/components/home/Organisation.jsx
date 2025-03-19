@@ -322,6 +322,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
       admin_id: user.email,
     };
     try {
+      localStorage.setItem("organizationName", orgData.name);
       const response = await post(
         "/organizations/create/",
         organizationData,
@@ -343,7 +344,8 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await get(`/users/search?query=${query}`);
+      const storedOrgName = localStorage.getItem("organizationName");
+      const response = await get(`/users/search/${storedOrgName}?query=${query}`);
       setSearchResults(response.data.matches);
       const formattedUsers = response.data.matches.map((user, index) => {
         // Extract name from email (part before @)
