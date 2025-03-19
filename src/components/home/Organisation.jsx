@@ -327,7 +327,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
         organizationData,
         {}
       );
-      const data = response
+      const data = response;
       console.log("Organization Created:", data);
       toast.success("Organization created successfully!");
     } catch (error) {
@@ -549,7 +549,9 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                             {/* Role Selector */}
                             <select
                               value={member.role || "Member"} // Ensure a default role
-                              onChange={(e) => handleRoleChange(member.email, e.target.value)}
+                              onChange={(e) =>
+                                handleRoleChange(member.email, e.target.value)
+                              }
                               className="p-1 border rounded-md text-sm dark:bg-gray-700 dark:text-white"
                             >
                               <option value="Member">Member</option>

@@ -14,74 +14,40 @@ import {
   FileText,
   Wallet,
 } from "lucide-react";
+import useWalletStore from "../../state/store/walletStore/walletSlice";
 
 const WalletSection = () => {
+  const { balance, setBalance } = useWalletStore();
+  const { user } = useAuth();
   const [credits, setCredits] = useState(100);
   const [openPricing, setOpenPricing] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("overview");
-  const { user } = useAuth();
-
-  // Sample transaction data (replace with API call)
-  const sampleTransactions = [
-    {
-      id: "tx-001",
-      type: "purchase",
-      amount: 50,
-      credits: 100,
-      date: new Date(2025, 2, 15),
-      status: "completed",
-      paymentMethod: "Credit Card (•••• 4242)",
-    },
-    {
-      id: "tx-002",
-      type: "usage",
-      amount: 0,
-      credits: -25,
-      date: new Date(2025, 2, 17),
-      status: "completed",
-      description: "Auto-annotation batch #A12345",
-    },
-    {
-      id: "tx-003",
-      type: "usage",
-      amount: 0,
-      credits: -15,
-      date: new Date(2025, 2, 18),
-      status: "completed",
-      description: "Custom AI model training",
-    },
-    {
-      id: "tx-004",
-      type: "purchase",
-      amount: 25,
-      credits: 50,
-      date: new Date(2025, 3, 1),
-      status: "completed",
-      paymentMethod: "Credit Card (•••• 4242)",
-    },
-  ];
 
   // Fetch wallet data
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
         setLoading(true);
-        // This would be replaced with actual API calls
-        // const creditsResponse = await get("/user/credits", {}, {
-        //   Authorization: `Bearer ${user?.token}`
-        // });
-        // setCredits(creditsResponse.data.credits);
+        setCredits(balance);
 
-        // const transactionsResponse = await get("/user/transactions", {}, {
-        //   Authorization: `Bearer ${user?.token}`
-        // });
-        // setTransactions(transactionsResponse.data.transactions);
+        // Get transactions from API
+        const response = await get(`wallet/${user.user_id}/transactions`);
+        console.log("history", response.data);
 
-        // Using sample data for now
-        setCredits(100);
-        setTransactions(sampleTransactions);
+        // Map API response to the format expected by the component
+        const mappedTransactions = response.data.map((tx) => ({
+          id: tx._id,
+          type: tx.transaction_type === "DEBIT" ? "usage" : "purchase",
+          amount: tx.amount || 0,
+          credits: tx.transaction_type === "DEBIT" ? -tx.amount : tx.amount,
+          date: new Date(tx.created_at),
+          status: "completed",
+          description: tx.description || "Transaction",
+        }));
+
+        setTransactions(mappedTransactions);
 
         setTimeout(() => {
           setLoading(false);
@@ -93,17 +59,20 @@ const WalletSection = () => {
     };
 
     fetchWalletData();
-  }, []);
+  }, [user.user_id, balance]);
 
   // Format date
   const formatDate = (date) => {
+    // Ensure date is properly parsed
+    const validDate = date instanceof Date && !isNaN(date) ? date : new Date();
+
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "numeric",
-    }).format(date);
+    }).format(validDate);
   };
 
   // Handle buy credits
@@ -282,72 +251,72 @@ const WalletSection = () => {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-900">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Description
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Credits
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Date & Time
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                      {transactions.map((transaction) => (
-                        <tr key={transaction.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div
-                                className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
-                                  transaction.type === "purchase"
-                                    ? "bg-green-100 dark:bg-green-900"
-                                    : "bg-blue-100 dark:bg-blue-900"
-                                }`}
-                              >
-                                {transaction.type === "purchase" ? (
-                                  <CreditCard
-                                    className={`h-5 w-5 text-green-600 dark:text-green-400`}
-                                  />
-                                ) : (
-                                  <Clock
-                                    className={`h-5 w-5 text-blue-600 dark:text-blue-400`}
-                                  />
-                                )}
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {transaction.type === "purchase"
-                                    ? "Credit Purchase"
-                                    : transaction.description}
+                  <div className="max-h-96 overflow-y-auto">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                      <thead className="bg-gray-50 dark:bg-gray-900 sticky top-0 z-10">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Description
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Credits
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Date & Time
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {transactions.map((transaction) => (
+                          <tr key={transaction.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div
+                                  className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
+                                    transaction.type === "purchase"
+                                      ? "bg-green-100 dark:bg-green-900"
+                                      : "bg-blue-100 dark:bg-blue-900"
+                                  }`}
+                                >
+                                  {transaction.type === "purchase" ? (
+                                    <CreditCard
+                                      className={`h-5 w-5 text-green-600 dark:text-green-400`}
+                                    />
+                                  ) : (
+                                    <Clock
+                                      className={`h-5 w-5 text-blue-600 dark:text-blue-400`}
+                                    />
+                                  )}
+                                </div>
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {transaction.description}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div
-                              className={`text-sm font-medium ${
-                                transaction.credits > 0
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-blue-600 dark:text-blue-400"
-                              }`}
-                            >
-                              {transaction.credits > 0 ? "+" : ""}
-                              {transaction.credits}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900 dark:text-white">
-                              {formatDate(transaction.date)}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div
+                                className={`text-sm font-medium ${
+                                  transaction.credits > 0
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-blue-600 dark:text-blue-400"
+                                }`}
+                              >
+                                {transaction.credits > 0 ? "+" : ""}
+                                {transaction.credits}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900 dark:text-white">
+                                {formatDate(transaction.date)}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}

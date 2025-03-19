@@ -21,6 +21,8 @@ import useWalletStore from "../../state/store/walletStore/walletSlice";
 
 export const TopBar = ({ title, setActiveTab }) => {
   const { balance, setBalance } = useWalletStore();
+  const { user } = useAuth();
+
   const [showProfile, setShowProfile] = useState(false);
   const [openPricing, setOpenPricing] = useState(false);
 
@@ -33,7 +35,6 @@ export const TopBar = ({ title, setActiveTab }) => {
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [credits, setCredits] = useState(100);
 
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Existing functions
