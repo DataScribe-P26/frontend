@@ -25,18 +25,15 @@ const WalletSection = () => {
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("overview");
 
-  // Fetch wallet data
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
         setLoading(true);
         setCredits(balance);
 
-        // Get transactions from API
         const response = await get(`wallet/${user.user_id}/transactions`);
         console.log("history", response.data);
 
-        // Map API response to the format expected by the component
         const mappedTransactions = response.data.map((tx) => ({
           id: tx._id,
           type: tx.transaction_type === "DEBIT" ? "usage" : "purchase",
@@ -61,9 +58,7 @@ const WalletSection = () => {
     fetchWalletData();
   }, [user.user_id, balance]);
 
-  // Format date
   const formatDate = (date) => {
-    // Ensure date is properly parsed
     const validDate = date instanceof Date && !isNaN(date) ? date : new Date();
 
     return new Intl.DateTimeFormat("en-US", {
@@ -75,14 +70,11 @@ const WalletSection = () => {
     }).format(validDate);
   };
 
-  // Handle buy credits
   const handleBuyCredits = () => {
-    // Implement buy credits flow
     setOpenPricing(true);
     console.log("Buy credits clicked");
   };
 
-  // Calculate usage statistics
   const calculateStats = () => {
     const usageTransactions = transactions.filter((tx) => tx.type === "usage");
     const purchaseTransactions = transactions.filter(
