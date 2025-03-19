@@ -495,44 +495,57 @@ const CreateProjectModal = ({ isOpen, onClose, onCreateProject }) => {
     projectData.description.trim() !== "" &&
     projectData.type !== "";
 
-  const handleSubmit = () => {
-    console.log(projectData.type);
-    if (isFormValid) {
-      post("/user-projects/", {
-        email: user?.email,
-        name: projectData.name,
-        description: projectData.description,
-        type: projectData.type,
-      })
-        .then((response) => {
-          toast.success("Project created successfully!");
-          reset();
-          setprojectname(projectData.name);
-          setprojectType(projectData.type);
-          localStorage.setItem("projectType", projectData.type);
-          console.log(projectData.type);
-          if (
-            projectData.type === "image" ||
-            projectData.type === "instance-segmentation"
-          ) {
-            navigate(`/user-project/image/${projectData.name}`);
-          } else if (projectData.type === "sentiment_analysis") {
-            navigate(`/user-project/sentiment_analysis/${projectData.name}`);
-          } else {
-            navigate(`/user-project/ner_tagging/${projectData.name}`);
-          }
-          setProjectData({ name: "", description: "", type: "" });
-
-          onClose();
+    const handleSubmit = () => {
+      console.log(projectData.type);
+      if (isFormValid) {
+        post("/user-projects/", {
+          email: user?.email,
+          name: projectData.name,
+          description: projectData.description,
+          type: projectData.type,
+          user_id: user.user_id
         })
-        .catch((error) => {
-          console.error("Error creating project:", error);
-          toast.error("Failed to create project. Please try again.");
-        });
-    } else {
-      toast.error("Please complete all fields.");
-    }
-  };
+          .then((response) => {
+            // Success handling
+            toast.success("Project created successfully!");
+            
+            // Store project information
+            reset();
+            setprojectname(projectData.name);
+            setprojectType(projectData.type);
+            localStorage.setItem("projectType", projectData.type);
+            
+            // Display credits information if returned
+            if (response.credits_used > 0) {
+              toast.info(`Credits used: ${response.credits_used}. Remaining free projects: ${response.free_projects_remaining}`);
+            }
+            
+            // Navigate based on project type
+            if (
+              projectData.type === "image" ||
+              projectData.type === "instance-segmentation"
+            ) {
+              navigate(`/user-project/image/${projectData.name}`);
+            } else if (projectData.type === "sentiment_analysis") {
+              navigate(`/user-project/sentiment_analysis/${projectData.name}`);
+            } else {
+              navigate(`/user-project/ner_tagging/${projectData.name}`);
+            }
+            
+            // Reset form and close modal
+            setProjectData({ name: "", description: "", type: "" });
+            onClose();
+          })
+          .catch((error) => {
+            console.error("Error creating project:", error);
+            // Enhanced error handling
+            const errorMessage = error.response?.data?.detail || "Failed to create project. Please try again.";
+            toast.error(errorMessage);
+          });
+      } else {
+        toast.error("Please complete all fields.");
+      }
+    };
 
   if (!isOpen) return null;
 
