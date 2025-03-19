@@ -13,7 +13,7 @@ import CreateOrgProjectModal from "../../components/organizations/createOrgProje
 import { HiAnnotation } from "react-icons/hi";
 import ProjectSettingsModal from "../../components/organizations/projectSettingsModal";
 import useStore from "../../state/store/imageStore/combinedImageSlice";
-
+import { Trash2 } from "lucide-react";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -48,6 +48,8 @@ const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [originalOrgDetails, setOriginalOrgDetails] = useState({});
 
+  const [editingMember, setEditingMember] = useState(null);
+  const [tempRole, setTempRole] = useState("");
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -156,8 +158,22 @@ const Dashboard = () => {
     setSearchQuery("");
     setSearchResults([]);
   };
+  const handleEditClick = (member) => {
+    setEditingMember(member.email);
+    setTempRole(member.role);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMember(null);
+    setTempRole("");
+  };
 
   const handleRoleChange = (email, role) => {
+    setOrganizationMembers((prev) =>
+      prev.map((member) =>
+        member.email === email ? { ...member, role } : member
+      )
+    );
     setSelectedMembers((prev) =>
       prev.map((member) =>
         member.email === email ? { ...member, role } : member
@@ -170,8 +186,39 @@ const Dashboard = () => {
       prevMembers.filter((member) => member.email !== email)
     );
   };
-
-  // IMPLEMENT HERE
+  const handleRoleUpdate = async (userEmail, tempRole) => {
+    try {
+      console.log(user.email);
+      console.log(organizationName);
+      const response = await put(
+        `/organizations/change-role?admin_email=${user.email}`,
+        {
+          org_name: organizationName,
+          user_email: userEmail,
+          new_role: tempRole
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error changing user role", error);
+      throw error;
+    }
+  };
+  const handleDeleteMember = async (userEmail) => {
+    try {
+      const response = await del(
+        `/organizations/remove-member?admin_email=${user.email}`,
+        {
+          org_name: organizationName,
+          user_email: userEmail
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error removing member from organization", error);
+      throw error;
+    }
+  };
   const handleSubmit = async () => {
     if (selectedMembers.length === 0) {
       console.error("No members selected");
@@ -428,30 +475,81 @@ const Dashboard = () => {
             </div>
 
             {/* Members List */}
-            <div
-              className={`rounded-lg p-6 mb-8 ${
-                isDarkMode ? "bg-gray-800" : "bg-white"
-              } bg-opacity-90 shadow`}
-            >
-              <h3 className="text-xl font-semibold mb-4">Current Members</h3>
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {organizationMembers.map((member, index) => (
-                  <div
-                    key={index}
-                    className={`p-4 rounded-lg ${
-                      isDarkMode
-                        ? "bg-gray-900 text-white"
-                        : "bg-gray-100 text-gray-900"
-                    } shadow-sm`}
-                  >
-                    <p className="font-medium">{member.email}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-100">
-                      {member.role}
-                    </p>
+          <div className={`rounded-lg p-6 mb-8 ${isDarkMode ? "bg-gray-800" : "bg-white"} bg-opacity-90 shadow `}>
+          <h3 className="text-xl font-semibold mb-4">Current Members</h3>
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {organizationMembers.map((member) => (
+              <div
+                key={member.email}
+                className={`p-4 rounded-lg flex justify-between items-center ${
+                  isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+                } shadow-sm`}
+              >
+                <div>
+                  <p className="font-medium">{member.email}</p>
+
+                  <div className="flex items-center justify-between mt-2">
+                    {/* Role Display / Edit Mode */}
+                    {editingMember === member.email ? (
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={tempRole}
+                          onChange={(e) => setTempRole(e.target.value)}
+                          className={`p-2 rounded border text-sm ${
+                            isDarkMode
+                              ? "bg-gray-700 text-white border-gray-600 focus:ring-purple-400"
+                              : "bg-purple-200 text-gray-900 border-gray-300 focus:ring-purple-500"
+                          } focus:ring-2`}
+                        >
+                          <option value="Member">Member</option>
+                          <option value="Admin">Admin</option>
+                          <option value="Viewer">Viewer</option>
+                        </select>
+                        <button
+                          onClick={() => {
+                            handleRoleUpdate(member.email, tempRole);
+
+                            setEditingMember(null);
+                          }}
+                          className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-1 text-sm font-medium text-gray-600 bg-gray-300 rounded hover:bg-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-sm">{member.role}</p>
+                    )}
                   </div>
-                ))}
-              </div>
+                </div>
+
+                  {/* Edit & Delete Buttons Aligned */}
+                  <div className="flex items-center gap-3">
+                    {editingMember !== member.email && (
+                      <button
+                        onClick={() => handleEditClick(member)}
+                        className="px-3 py-1 text-sm font-medium text-gray-700 bg-purple-400 rounded hover:bg-purple-500"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDeleteMember(member.email)}
+                      className="text-red-500 hover:text-red-700"
+                      title="Remove Member"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
 
             {/* Add Members Modal */}
             {isModalOpen && (

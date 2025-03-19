@@ -294,6 +294,13 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     setSelectedMembers((prev) => [...prev, user]);
     setSearchQuery("");
   };
+  const handleRoleChange = (email, role) => {
+    setSelectedMembers((prev) =>
+      prev.map((member) =>
+        member.email === email ? { ...member, role } : member
+      )
+    );
+  };
 
   const handleRemoveMember = (userId) => {
     setSelectedMembers((prev) => prev.filter((member) => member.id !== userId));
@@ -320,11 +327,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
         organizationData,
         {}
       );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const data = await response.json();
+      const data = response
       console.log("Organization Created:", data);
       toast.success("Organization created successfully!");
     } catch (error) {
@@ -542,6 +545,19 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                                 {member.email}
                               </p>
                             </div>
+
+                            {/* Role Selector */}
+                            <select
+                              value={member.role || "Member"} // Ensure a default role
+                              onChange={(e) => handleRoleChange(member.email, e.target.value)}
+                              className="p-1 border rounded-md text-sm dark:bg-gray-700 dark:text-white"
+                            >
+                              <option value="Member">Member</option>
+                              <option value="Admin">Admin</option>
+                              <option value="Viewer">Viewer</option>
+                            </select>
+
+                            {/* Remove Button */}
                             <button
                               onClick={() => handleRemoveMember(member.id)}
                               className="text-gray-400 hover:text-red-500 p-1 dark:bg-red-800 dark:text-gray-100 rounded-lg"
