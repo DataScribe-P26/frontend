@@ -8,7 +8,7 @@ import CreateEmotion from "../modals/createEmotion";
 import { useTheme } from "../../../utils/themeUtils";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { USER_TYPE } from "../../../constants/useConstants";
+import { USER_TYPE } from "../../../constants/userConstants";
 import { useAuth } from "../../../utils/authUtils";
 import { get, post } from "../../../state/api-client/api";
 

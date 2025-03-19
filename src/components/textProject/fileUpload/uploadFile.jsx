@@ -5,7 +5,7 @@ import Sidebar from "../modals/sidebar";
 import textStore from "../../../state/store/textStore/combinedTextSlice";
 import Footer from "../modals/footer"; // Importing footer component
 import { useTheme } from "../../../utils/themeUtils"; // Import useTheme hook
-import { USER_TYPE } from "../../../constants/useConstants";
+import { USER_TYPE } from "../../../constants/userConstants";
 
 const CombinedFileContent = () => {
   const {

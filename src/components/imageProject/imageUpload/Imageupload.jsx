@@ -3,7 +3,7 @@ import useStore from "../../../state/store/imageStore/combinedImageSlice";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdCloudUpload } from "react-icons/md";
-import { USER_TYPE } from "../../../constants/useConstants";
+import { USER_TYPE } from "../../../constants/userConstants";
 import { post } from "../../../state/api-client/api";
 
 function ImageUpload({

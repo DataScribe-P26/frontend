@@ -6,7 +6,7 @@ import Sidebar from "../../components/textProject/modals/sidebar";
 import Footer from "../../components/textProject/modals/footer";
 import { useTheme } from "../../utils/themeUtils";
 import { get } from "../../state/api-client/api";
-import { USER_TYPE } from "../../constants/useConstants";
+import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
 
 const HomePage = () => {

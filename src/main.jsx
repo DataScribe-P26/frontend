@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import "./App.css";
-import useThemeStore from "./state/store/themeStore/themSlice";
+import useThemeStore from "./state/store/themeStore/themeSlice";
 import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 

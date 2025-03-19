@@ -6,15 +6,7 @@ import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import Navbar from "../../components/textProject/modals/navbar";
-import {
-  UserPlus,
-  Layout,
-  Users,
-  Settings,
-  FolderPlus,
-  Home,
-  Menu,
-} from "lucide-react";
+import { Layout, Users, Settings, FolderPlus, Home, Menu } from "lucide-react";
 import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "../../components/organizations/createOrgProject";
@@ -47,15 +39,6 @@ const Dashboard = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
     useState(false);
-  const openModal = (project) => {
-    setSelectedProject(project);
-    setIsProjectSettingsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setSelectedProject(null);
-    setIsProjectSettingsModalOpen(false);
-  };
 
   // Add new state for organization details
   const [orgDetails, setOrgDetails] = useState({

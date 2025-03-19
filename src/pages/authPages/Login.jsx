@@ -24,7 +24,7 @@ export default function Login() {
     }
   }, [token, navigate]);
 
-  async function handleLogin(event) {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     if (!email || !password) {
@@ -60,7 +60,7 @@ export default function Login() {
         }
       );
     }
-  }
+  };
 
   const clientId =
     "849832574401-u80ur1j46qvdt7lr9lnatak8h6koj3l4.apps.googleusercontent.com"; // Replace with your actual Client ID

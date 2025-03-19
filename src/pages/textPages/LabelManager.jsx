@@ -10,7 +10,7 @@ import textStore from "../../state/store/textStore/combinedTextSlice";
 import { get } from "../../state/api-client/api";
 import Footer from "../../components/textProject/modals/footer";
 import { useTheme } from "../../utils/themeUtils";
-import { USER_TYPE } from "../../constants/useConstants";
+import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
 
 const LabelManager = () => {

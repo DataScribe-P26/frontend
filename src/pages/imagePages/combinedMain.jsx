@@ -17,7 +17,7 @@ import ImageNavbar from "../../components/imageProject/annotationSection/imageNa
 import { useTheme } from "../../utils/themeUtils";
 import { X } from "lucide-react";
 import ExportModal from "../../components/imageProject/exportOption/exportModal";
-import { USER_TYPE } from "../../constants/useConstants";
+import { USER_TYPE } from "../../constants/userConstants";
 import { Sidebar } from "../../components/imageProject/annotationSection/imageSidebar";
 import HomePage from "../../components/home/hero";
 import ProjectsPage from "../../components/home/projects";

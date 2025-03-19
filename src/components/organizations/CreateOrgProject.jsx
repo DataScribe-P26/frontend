@@ -12,7 +12,7 @@ import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { useEffect } from "react";
-import { USER_TYPE } from "../../constants/useConstants";
+import { USER_TYPE } from "../../constants/userConstants";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";

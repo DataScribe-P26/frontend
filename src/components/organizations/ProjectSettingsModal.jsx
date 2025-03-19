@@ -4,7 +4,7 @@ import TeamMemberModal from "./teamMemberModal";
 import { useAuth } from "../../utils/authUtils";
 import axios from "axios";
 
-import { USER_TYPE } from "../../constants/useConstants";
+import { USER_TYPE } from "../../constants/userConstants";
 import { del, put } from "../../state/api-client/api";
 
 const ProjectSettingsModal = ({
