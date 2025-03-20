@@ -15,6 +15,7 @@ import {
   Wallet,
 } from "lucide-react";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
+import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 
 const WalletSection = () => {
   const { balance, setBalance } = useWalletStore();
@@ -24,6 +25,7 @@ const WalletSection = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("overview");
+  const { orgId } = useOrganizationStore();
 
   useEffect(() => {
     const fetchWalletData = async () => {
@@ -31,7 +33,7 @@ const WalletSection = () => {
         setLoading(true);
         setCredits(balance);
 
-        const response = await get(`wallet/${user.user_id}/transactions`);
+        const response = await get(`/org-wallet/${orgId}/transactions`);
         console.log("history", response.data);
 
         const mappedTransactions = response.data.map((tx) => ({
