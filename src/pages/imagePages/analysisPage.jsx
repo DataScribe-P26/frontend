@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import Spinner from "../../components/imageProject/annotationSection/loadingScreen";
 import { useRole } from "../../utils/authUtils";
 import { Bar } from "react-chartjs-2";
-import Navbar from "../../components/imageProject/annotationSection/imageNavbar";
 import { useTheme } from "../../utils/themeUtils";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { Sidebar } from "../../components/imageProject/annotationSection/imageSidebar";

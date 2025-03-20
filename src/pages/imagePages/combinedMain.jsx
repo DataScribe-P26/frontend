@@ -13,7 +13,6 @@ import { post } from "../../state/api-client/api";
 import AnnotationsLabels from "../../components/imageProject/annotationSection/annotationsLabels";
 import Modal from "../../components/imageProject/annotationSection/classaAddModal";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ImageNavbar from "../../components/imageProject/annotationSection/imageNavbar";
 import { useTheme } from "../../utils/themeUtils";
 import { X } from "lucide-react";
 import ExportModal from "../../components/imageProject/exportOption/exportModal";
