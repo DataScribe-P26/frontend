@@ -6,7 +6,15 @@ import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import Navbar from "../../components/textProject/modals/navbar";
-import { Layout, Users, Settings, FolderPlus, Home, Menu } from "lucide-react";
+import {
+  Layout,
+  Users,
+  Settings,
+  FolderPlus,
+  Wallet2,
+  Home,
+  Menu,
+} from "lucide-react";
 import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "../../components/organizations/createOrgProject";
@@ -15,11 +23,13 @@ import ProjectSettingsModal from "../../components/organizations/projectSettings
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { Trash2 } from "lucide-react";
 import { useRole } from "../../utils/authUtils";
+import TopBar from "../../components/organizations/organizationNavbar";
+import WalletSection from "../../components/organizations/organizationWallet";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
-  const {userRole,setRole,clearRole}=useRole();
+  const { userRole, setRole, clearRole } = useRole();
   const {
     setprojectname,
     setCreatedOn,
@@ -142,7 +152,9 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await get(`/users/search/${organizationName}?query=${query}`);
+      const response = await get(
+        `/users/search/${organizationName}?query=${query}`
+      );
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
     } catch (error) {
@@ -159,7 +171,6 @@ const Dashboard = () => {
     }
     setSearchQuery("");
     setSearchResults([]);
-    
   };
   const handleEditClick = (member) => {
     setEditingMember(member.email);
@@ -303,6 +314,8 @@ const Dashboard = () => {
             </div>
           </div>
         );
+      case "wallet":
+        return <WalletSection />;
 
       case "projects":
         return (
@@ -315,29 +328,30 @@ const Dashboard = () => {
                   Manage and access all your organization's projects
                 </p>
               </div>
-              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
-              <button
-                className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
+              {(userType !== "org" ||
+                (userType === "org" && userRole !== "viewer")) && (
+                <button
+                  className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
                           text-white font-medium rounded-lg shadow-sm transition-colors duration-200
                           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  onClick={() => setIsModalOpen(true)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Create Project
-              </button>
-            )}
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Create Project
+                </button>
+              )}
               <CreateOrgProjectModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -381,7 +395,8 @@ const Dashboard = () => {
                         </h3>
                       </div>
                       {/* Action Icons */}
-                      {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+                      {(userType !== "org" ||
+                        (userType === "org" && userRole !== "viewer")) && (
                         <div className="flex space-x-2">
                           <button
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full
@@ -464,17 +479,18 @@ const Dashboard = () => {
             {/* Header Section */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-3xl font-semibold">Team Members</h2>
-              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className={`px-4 py-2 rounded-lg transition ${
-                  isDarkMode
-                    ? "bg-purple-700 hover:bg-purple-800 text-white"
-                    : "bg-purple-600 hover:bg-purple-700 text-white"
-                }`}
-              >
-                + Add Members
-              </button>
+              {(userType !== "org" ||
+                (userType === "org" && userRole !== "viewer")) && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className={`px-4 py-2 rounded-lg transition ${
+                    isDarkMode
+                      ? "bg-purple-700 hover:bg-purple-800 text-white"
+                      : "bg-purple-600 hover:bg-purple-700 text-white"
+                  }`}
+                >
+                  + Add Members
+                </button>
               )}
             </div>
 
@@ -539,26 +555,27 @@ const Dashboard = () => {
                     </div>
 
                     {/* Edit & Delete Buttons Aligned */}
-                   {/* Edit & Delete Buttons Aligned */}
-                   {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
-                    <div className="flex items-center gap-3">
-                      {editingMember !== member.email && (
+                    {/* Edit & Delete Buttons Aligned */}
+                    {(userType !== "org" ||
+                      (userType === "org" && userRole !== "viewer")) && (
+                      <div className="flex items-center gap-3">
+                        {editingMember !== member.email && (
+                          <button
+                            onClick={() => handleEditClick(member)}
+                            className="px-3 py-1 text-sm font-medium text-gray-700 bg-purple-400 rounded hover:bg-purple-500"
+                          >
+                            Edit
+                          </button>
+                        )}
                         <button
-                          onClick={() => handleEditClick(member)}
-                          className="px-3 py-1 text-sm font-medium text-gray-700 bg-purple-400 rounded hover:bg-purple-500"
+                          onClick={() => handleDeleteMember(member.email)}
+                          className="text-red-500 hover:text-red-700"
+                          title="Remove Member"
                         >
-                          Edit
+                          <Trash2 size={20} />
                         </button>
-                      )}
-                      <button
-                        onClick={() => handleDeleteMember(member.email)}
-                        className="text-red-500 hover:text-red-700"
-                        title="Remove Member"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </div>
-                    )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -697,8 +714,9 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold dark:bg-gray-900 dark:text-gray-100">
                 Organization Settings
               </h2>
-              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
-                !isEditing ? (
+              {(userType !== "org" ||
+                (userType === "org" && userRole !== "viewer")) &&
+                (!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
@@ -723,9 +741,7 @@ const Dashboard = () => {
                       Save Changes
                     </button>
                   </div>
-                )
-              )}
-
+                ))}
             </div>
 
             <div className="space-y-6">
@@ -852,6 +868,8 @@ const Dashboard = () => {
                 { name: "Dashboard", icon: Home, section: "dashboard" },
                 { name: "Projects", icon: Layout, section: "projects" },
                 { name: "Members", icon: Users, section: "members" },
+                { name: "Wallet", icon: Wallet2, section: "wallet" },
+
                 {
                   name: "Org Settings",
                   icon: Settings,
@@ -878,7 +896,7 @@ const Dashboard = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          <Navbar />
+          <TopBar />
           <main
             className={`p-6 transition-all duration-300 ${
               isSidebarCollapsed ? "ml-0" : "ml-0"

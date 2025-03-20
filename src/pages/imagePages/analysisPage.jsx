@@ -14,7 +14,9 @@ import ProjectsPage from "../../components/home/projects";
 import OrganizationsPage from "../../components/home/organisation";
 import { Profile } from "../../components/home/profile";
 import { USER_TYPE } from "../../constants/userConstants";
- 
+import WalletSection from "../../components/wallet/wallet";
+import TopBar from "../../components/navbar/Navbar";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +28,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import annotationPlugin from "chartjs-plugin-annotation";
- 
+
 ChartJS.register(
   annotationPlugin,
   CategoryScale,
@@ -37,12 +39,12 @@ ChartJS.register(
   Legend,
   ChartDataLabels
 );
- 
+
 function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const [activeTab, setActiveTab] = useState("Workspace");
   const [uploadProgress, setUploadProgress] = useState(0);
-  const {userRole,setRole,clearRole}=useRole();
- 
+  const { userRole, setRole, clearRole } = useRole();
+
   const { projectName } = useParams();
   const {
     imageSrc,
@@ -63,32 +65,30 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const [initialBatchProcessed, setInitialBatchProcessed] = useState(false);
   const userType = localStorage.getItem("userType");
   const { isDarkMode } = useTheme();
- 
+
   const [annotations, setAnnotations] = useState(all_annotations);
- 
+
   const classesAddedRef = useRef(false);
- 
+
   if (project_name === "") {
     setprojectname(projectName);
   }
- 
+
   useEffect(() => {
     loadAutoAnnotation(project_name);
     const userType = localStorage.getItem("userType");
     console.log("Current User Type:", userType);
-
- 
   }, [project_name]);
- 
+
   useEffect(() => {
     loadAutoAnnotation(project_name);
   }, [project_name]);
- 
+
   useEffect(() => {
     loadAutoAnnotation(projectName);
     loadThreshold(projectName);
   }, [projectName, loadAutoAnnotation, loadThreshold]);
- 
+
   const date = new Date(created_on);
   const monthNames = [
     "January",
@@ -107,24 +107,22 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const formattedDate = `${date.getDate().toString().padStart(2, "0")} ${
     monthNames[date.getMonth()]
   } ${date.getFullYear()}`;
- 
- 
- 
+
   useEffect(() => {
     setAnnotations(all_annotations);
   }, [all_annotations, set_allAnnotations]);
- 
+
   const classes_used = [];
   const totalImages = annotations?.length || 0;
   let imagesAnnotated = 0;
- 
+
   annotations?.forEach((annotation) => {
     const { annotations: annotationList } = annotation;
- 
+
     if (annotationList.length > 0) {
       imagesAnnotated++;
     }
- 
+
     annotationList?.forEach(({ class_name, Color }) => {
       if (class_name) {
         const existingClass = classes_used?.find(
@@ -138,7 +136,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
       }
     });
   });
- 
+
   useEffect(() => {
     if (!classesAddedRef.current) {
       classes_used?.forEach((clas) => {
@@ -157,7 +155,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
       classesAddedRef.current = true;
     }
   }, [classes_used, add_classes, classes]);
- 
+
   // Calculate the average count of annotations
   const totalClassCount = classes_used.reduce(
     (acc, curr) => acc + curr.count,
@@ -171,7 +169,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
     const status = percentageDeviation < 20 ? "Balanced" : "Imbalanced";
     return { ...item, status };
   });
- 
+
   // Calculate the average count of balanced classes
   const balancedClasses = classStatus.filter(
     (item) =>
@@ -183,13 +181,13 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const balancedAverage =
     balancedClasses.reduce((acc, curr) => acc + curr.count, 0) /
     balancedClasses.length;
- 
+
   // Sort the classes by count
   const sorted_class = classStatus.sort((a, b) => b.count - a.count);
- 
+
   const imagesWithoutAnnotation = totalImages - imagesAnnotated;
   const [loading, setloading] = useState(false);
- 
+
   const categorizedClasses = classStatus.map((item) => {
     if (item.status === "Balanced") {
       if (item.count === balancedAverage) {
@@ -202,7 +200,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
     }
     return { ...item, balanceType: "Imbalanced" };
   });
- 
+
   // Updated chart options with annotation
   const chartOptions = {
     responsive: true,
@@ -282,7 +280,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
       easing: "easeInOutCubic",
     },
   };
- 
+
   // Updated chart data
   const chartData = {
     labels: categorizedClasses.map((item) => item.class_name),
@@ -306,11 +304,13 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
         return <ProjectsPage setActiveTab={setActiveTab} />;
       case "Workspace":
         return;
+      case "wallet":
+        return <WalletSection />;
       default:
         return <ProjectsPage />;
     }
   };
- 
+
   return (
     <>
       <div className="flex h-screen bg-white dark:bg-gray-900">
@@ -325,9 +325,9 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
             isCollapsed ? "ml-20" : "ml-64"
           }`}
         >
-          <Navbar />
+          <TopBar />
           {renderContent()}
- 
+
           <div
             className={`w-full h-screen overflow-y-auto image_scrollbar px-8 py-4 ${
               isDarkMode ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-900"
@@ -351,7 +351,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                 </p>
               </div>
             </div>
- 
+
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left Column - Class Statistics */}
@@ -373,7 +373,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                     </div>
                   </div>
                 </div>
- 
+
                 <div className="p-6">
                   {sorted_class.length > 0 ? (
                     <>
@@ -451,7 +451,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                   )}
                 </div>
               </div>
- 
+
               {/* Right Column - Image Statistics & Controls */}
               <div className="space-y-6">
                 {/* Image Statistics Card */}
@@ -472,7 +472,7 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                       </div>
                     </div>
                   </div>
- 
+
                   <div className="p-6">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
@@ -508,11 +508,12 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                     </div>
                   </div>
                 </div>
- 
+
                 {/* Upload Section FIRST followed by Auto Annotation Section - Horizontal Layout */}
                 <div className="grid grid-cols-5 gap-6 ">
                   {/* Upload Section - FIRST (3 columns) */}
-                  {(userType !== "org" || (userType === "org" && userRole !== "viewer"))  && (
+                  {(userType !== "org" ||
+                    (userType === "org" && userRole !== "viewer")) && (
                     <div className="col-span-3 bg-white dark:bg-purple-900/20 rounded-xl shadow-md overflow-hidden">
                       <div className="p-4">
                         {loading ? (
@@ -532,58 +533,66 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                       </div>
                     </div>
                   )}
- 
- 
-                {/* Auto Annotation - SECOND (2 columns) */}
-                {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
-                  <div className="col-span-2 bg-white dark:bg-purple-900/20 rounded-xl shadow-md overflow-hidden">
-                    <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-medium">Auto Annotation</h2>
-                        <button
-                          onClick={() => toggleAutoAnnotation(projectName)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                            autoAnnotation ? "bg-green-600" : "bg-gray-400 dark:bg-gray-600"
-                          }`}
-                          role="switch"
-                          aria-checked={autoAnnotation}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              autoAnnotation ? "translate-x-6" : "translate-x-1"
+
+                  {/* Auto Annotation - SECOND (2 columns) */}
+                  {(userType !== "org" ||
+                    (userType === "org" && userRole !== "viewer")) && (
+                    <div className="col-span-2 bg-white dark:bg-purple-900/20 rounded-xl shadow-md overflow-hidden">
+                      <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-lg font-medium">
+                            Auto Annotation
+                          </h2>
+                          <button
+                            onClick={() => toggleAutoAnnotation(projectName)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                              autoAnnotation
+                                ? "bg-green-600"
+                                : "bg-gray-400 dark:bg-gray-600"
                             }`}
-                          />
-                        </button>
+                            role="switch"
+                            aria-checked={autoAnnotation}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                autoAnnotation
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        {!autoAnnotation ? (
+                          <div className="text-sm text-purple-600 mb-2 dark:text-gray-100">
+                            <p>
+                              Want to kickstart auto annotation? Set the
+                              threshold, and let the magic happen!
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="px-4 py-3 rounded-lg shadow-md dark:bg-purple-900/20 bg-purple-600">
+                            <label className="block text-sm font-medium text-gray-100 dark:text-gray-200 mb-2 text-center">
+                              Set Threshold Value
+                            </label>
+                            <input
+                              id="threshold"
+                              type="number"
+                              value={threshold}
+                              onChange={(e) =>
+                                setThreshold(projectName, e.target.value)
+                              }
+                              className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-purple-600 sm:text-sm text-center"
+                              placeholder="Adjust threshold"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
- 
-                    <div className="p-6">
-                      {!autoAnnotation ? (
-                        <div className="text-sm text-purple-600 mb-2 dark:text-gray-100">
-                          <p>
-                            Want to kickstart auto annotation? Set the threshold, and let the magic happen!
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="px-4 py-3 rounded-lg shadow-md dark:bg-purple-900/20 bg-purple-600">
-                          <label className="block text-sm font-medium text-gray-100 dark:text-gray-200 mb-2 text-center">
-                            Set Threshold Value
-                          </label>
-                          <input
-                            id="threshold"
-                            type="number"
-                            value={threshold}
-                            onChange={(e) => setThreshold(projectName, e.target.value)}
-                            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-purple-600 sm:text-sm text-center"
-                            placeholder="Adjust threshold"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
                   )}
- 
- 
+
                   {/* Continue Button - Always Visible */}
                   <div className="flex justify-center items-center mt-2">
                     <button
@@ -610,8 +619,6 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                       </svg>
                     </button>
                   </div>
- 
- 
                 </div>
               </div>
             </div>
@@ -621,7 +628,5 @@ function Analysis({ set_analysis_page, isCollapsed, setIsCollapsed }) {
     </>
   );
 }
- 
+
 export default Analysis;
- 
- 
