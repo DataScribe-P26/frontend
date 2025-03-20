@@ -14,10 +14,12 @@ import { HiAnnotation } from "react-icons/hi";
 import ProjectSettingsModal from "../../components/organizations/projectSettingsModal";
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { Trash2 } from "lucide-react";
+import { useRole } from "../../utils/authUtils";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
+  const {userRole,setRole,clearRole}=useRole();
   const {
     setprojectname,
     setCreatedOn,
@@ -25,7 +27,7 @@ const Dashboard = () => {
     set_allAnnotations,
     setprojectType,
   } = useStore();
-
+  const userType = localStorage.getItem("userType");
   const [activeSection, setActiveSection] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -313,10 +315,11 @@ const Dashboard = () => {
                   Manage and access all your organization's projects
                 </p>
               </div>
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
               <button
                 className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
-                             text-white font-medium rounded-lg shadow-sm transition-colors duration-200
-                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                          text-white font-medium rounded-lg shadow-sm transition-colors duration-200
+                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                 onClick={() => setIsModalOpen(true)}
               >
                 <svg
@@ -334,6 +337,7 @@ const Dashboard = () => {
                 </svg>
                 Create Project
               </button>
+            )}
               <CreateOrgProjectModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -377,36 +381,37 @@ const Dashboard = () => {
                         </h3>
                       </div>
                       {/* Action Icons */}
-                      <div className="flex space-x-2">
-                        <button
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full
-                                      transition-colors duration-200"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedProject(project);
-                            setIsProjectSettingsModalOpen(true);
-                          }}
-                        >
-                          <FiSettings
-                            className="text-lg text-gray-500 hover:text-gray-700
-                                                 dark:text-gray-400 dark:hover:text-gray-300"
-                          />
-                        </button>
-                        <button
-                          className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full
-                                      transition-colors duration-200"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add your delete handling logic here
-                            handleDeleteProject(project.name);
-                          }}
-                        >
-                          <FiTrash2
-                            className="text-lg text-gray-500 hover:text-red-600
-                                               dark:text-gray-400 dark:hover:text-red-400"
-                          />
-                        </button>
-                      </div>
+                      {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+                        <div className="flex space-x-2">
+                          <button
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full
+                                        transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedProject(project);
+                              setIsProjectSettingsModalOpen(true);
+                            }}
+                          >
+                            <FiSettings
+                              className="text-lg text-gray-500 hover:text-gray-700
+                                          dark:text-gray-400 dark:hover:text-gray-300"
+                            />
+                          </button>
+                          <button
+                            className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full
+                                        transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteProject(project.name);
+                            }}
+                          >
+                            <FiTrash2
+                              className="text-lg text-gray-500 hover:text-red-600
+                                        dark:text-gray-400 dark:hover:text-red-400"
+                            />
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
@@ -504,9 +509,9 @@ const Dashboard = () => {
                                   : "bg-purple-200 text-gray-900 border-gray-300 focus:ring-purple-500"
                               } focus:ring-2`}
                             >
-                              <option value="Member">Member</option>
-                              <option value="Admin">Admin</option>
-                              <option value="Viewer">Viewer</option>
+                              <option value="member">Member</option>
+                              <option value="admin">Admin</option>
+                              <option value="viewer">Viewer</option>
                             </select>
                             <button
                               onClick={() => {
@@ -626,9 +631,9 @@ const Dashboard = () => {
                             }
                             focus:ring-2`}
                         >
-                          <option value="Member">Member</option>
-                          <option value="Admin">Admin</option>
-                          <option value="Viewer">Viewer</option>
+                          <option value="member">Member</option>
+                          <option value="admin">Admin</option>
+                          <option value="viewer">Viewer</option>
                         </select>
                         {selectedMembers.map((member) => (
                           <div

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../state/store/authStore/authSlice";
+import useOrganizationStore from "../state/store/organizationStore/organizationSlice";
 
 export const setCookie = function (name, value, hours) {
   let expires = "";
@@ -120,4 +121,11 @@ export const useAuth = function () {
     user,
     isAuthenticated: !!token,
   };
+};
+export const useRole= function() {
+  const { userRole, setRole, clearRole } = useOrganizationStore();
+ 
+  return{
+    userRole,setRole,clearRole };
+ 
 };

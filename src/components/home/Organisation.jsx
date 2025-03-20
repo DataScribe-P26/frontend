@@ -15,14 +15,17 @@ import useStore from "../../state/store/imageStore/combinedImageSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "../../state/api-client/api";
+import { useRole } from "../../utils/authUtils";
 
 const OrganizationCard = ({ name, role, createdOn }) => {
   const navigate = useNavigate();
+  const { userRole,setRole } = useRole();
   return (
     <div
       className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
       onClick={() => {
         localStorage.setItem("organizationName", name);
+        setRole(role);
         navigate("/Dashboard");
       }}
     >
@@ -314,6 +317,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     onClose();
   };
   const { user } = useAuth();
+  const {userRole,setRole,clearRole}=useRole();
 
   async function handleSubmit() {
     const organizationData = {
@@ -330,6 +334,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
       );
       const data = response;
       console.log("Organization Created:", data);
+      setRole("admin");
       toast.success("Organization created successfully!");
     } catch (error) {
       toast.error("Failed to create organization");
@@ -556,9 +561,9 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
                               }
                               className="p-1 border rounded-md text-sm dark:bg-gray-700 dark:text-white"
                             >
-                              <option value="Member">Member</option>
-                              <option value="Admin">Admin</option>
-                              <option value="Viewer">Viewer</option>
+                              <option value="member">Member</option>
+                              <option value="admin">Admin</option>
+                              <option value="viewer">Viewer</option>
                             </select>
 
                             {/* Remove Button */}

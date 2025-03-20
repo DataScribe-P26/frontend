@@ -1,9 +1,11 @@
 import React from "react";
 import { useTheme } from "../../../utils/themeUtils";
+import useOrganizationStore from "../../../state/store/organizationStore/organizationSlice";
 
 function AnnotationsLabels({ currentImage, classes, setExportModal }) {
   const { isDarkMode } = useTheme();
-
+  const {userRole}=useOrganizationStore();
+  const userType=localStorage.getItem("userType");
   const annotations = currentImage?.annotations || [];
   const classList = Array.isArray(classes) ? classes : [];
 
@@ -55,12 +57,14 @@ function AnnotationsLabels({ currentImage, classes, setExportModal }) {
           </div>
         )}
       </div>
-      <div
-        className="h-[6.5vh] bg-blue-500 mb-4 rounded-lg flex justify-center items-center cursor-pointer text-white font-semibold"
-        onClick={() => setExportModal(true)}
-      >
-        Export
-      </div>
+      {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+        <div
+          className="h-[6.5vh] bg-blue-500 mb-4 rounded-lg flex justify-center items-center cursor-pointer text-white font-semibold"
+          onClick={() => setExportModal(true)}
+        >
+          Export
+        </div>
+      )}
     </>
   );
 }

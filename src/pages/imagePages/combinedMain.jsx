@@ -23,7 +23,7 @@ import HomePage from "../../components/home/hero";
 import ProjectsPage from "../../components/home/projects";
 import OrganizationsPage from "../../components/home/organisation";
 import { Profile } from "../../components/home/profile";
-
+import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const {
     imageSrc,
@@ -54,6 +54,8 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const [project_type, setproject_type] = useState(
     localStorage.getItem("projectType")
   );
+  const {userRole}=useOrganizationStore();
+  const userType =localStorage.getItem("userType");
   useEffect(() => {
     const project_tpe = localStorage.getItem("projectType");
     setprojectType(project_tpe);
@@ -484,6 +486,7 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                       setAnnotatedCount={setAnnotatedCount}
                       istrainedd={istrainedd}
                     />
+                    {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                     <div>
                       <Options
                         setAction={setAction}
@@ -492,6 +495,7 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                         project_type={project_type}
                       />
                     </div>
+                  )}
                   </div>
                   <div
                     className="h-[10vh] flex justify-center items-center p-4"
