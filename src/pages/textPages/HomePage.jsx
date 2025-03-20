@@ -8,6 +8,7 @@ import { useTheme } from "../../utils/themeUtils";
 import { get } from "../../state/api-client/api";
 import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
+import TopBar from "../../components/navbar/Navbar";
 
 const HomePage = () => {
   const { projectName } = useParams();
@@ -209,7 +210,7 @@ const HomePage = () => {
             isCollapsed ? "ml-20" : "ml-64"
           }`}
         >
-          <Navbar />
+          <TopBar />
 
           {loading ? (
             <div className="flex items-center justify-center flex-grow">

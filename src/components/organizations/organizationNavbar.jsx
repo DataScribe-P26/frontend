@@ -19,9 +19,12 @@ import { get, post } from "../../state/api-client/api";
 import CreditPurchaseModal from "../wallet/pricingModal";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import { useTheme } from "../../utils/themeUtils";
+import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 export const TopBar = ({ title, setActiveTab }) => {
   const { balance, setBalance } = useWalletStore();
   const { user } = useAuth();
+  const { orgId } = useOrganizationStore();
+
   const { isDarkMode, toggleTheme } = useTheme(); // Use the theme hook instead of local state
 
   const [showProfile, setShowProfile] = useState(false);
@@ -45,10 +48,14 @@ export const TopBar = ({ title, setActiveTab }) => {
     return "User";
   };
   useEffect(() => {
-    get(`/wallet/${user.user_id}`).then((response) => {
-      console.log("wallet", response);
-      setBalance(response.data.balance);
-    });
+    get(`/org-wallet/${orgId}`)
+      .then((response) => {
+        console.log("wallet", response);
+        setBalance(response.data.balance);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [user]);
 
   const displayName = getDisplayName();
@@ -104,20 +111,6 @@ export const TopBar = ({ title, setActiveTab }) => {
   };
 
   // Fetch credits balance
-  const fetchCredits = async () => {
-    try {
-      // This would be replaced with an actual API call
-      // const response = await get("/user/credits", {}, {
-      //   Authorization: `Bearer ${user?.token}`,
-      // });
-      // setCredits(response.data.credits);
-
-      // For now, use the static value
-      setCredits(100);
-    } catch (error) {
-      console.error("Error fetching credits:", error);
-    }
-  };
 
   // Fetch Pending Invitations for the User
   const fetchNotifications = async () => {
@@ -163,9 +156,7 @@ export const TopBar = ({ title, setActiveTab }) => {
     }
   };
 
-  // Fetch initial data
   useEffect(() => {
-    fetchCredits();
     fetchNotifications();
   }, []);
 

@@ -12,6 +12,7 @@ import Footer from "../../components/textProject/modals/footer";
 import { useTheme } from "../../utils/themeUtils";
 import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
+import TopBar from "../../components/navbar/Navbar";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();
@@ -115,7 +116,7 @@ const LabelManager = () => {
             : "ml-16 w-[calc(100%-4rem)]"
         }`}
       >
-        <Navbar />
+        <TopBar />
         <div
           className={`flex items-center p-4 ${
             isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"

@@ -6,6 +6,7 @@ import textStore from "../../state/store/textStore/combinedTextSlice";
 import FileContentDisplay from "../../components/textProject/textAnnotation/nerAnnotation";
 import CombinedFileContent from "../../components/textProject/fileUpload/uploadFile";
 import ContentDisplay from "../../components/textProject/textAnnotation/sentimentAnnotation";
+import TopBar from "../../components/navbar/Navbar";
 
 const Workspace = () => {
   const { projectName } = useParams(); // Get the project name from the URL
@@ -18,7 +19,7 @@ const Workspace = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      {!isAnnotationStarted && <Navbar />} {/* Conditionally render Navbar */}
+      {!isAnnotationStarted && <TopBar />} {/* Conditionally render Navbar */}
       <div className="flex flex-grow">
         {!isAnnotationStarted && <Sidebar />}{" "}
         {/* Conditionally render Sidebar */}

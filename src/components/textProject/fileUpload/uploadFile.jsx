@@ -6,6 +6,7 @@ import textStore from "../../../state/store/textStore/combinedTextSlice";
 import Footer from "../modals/footer"; // Importing footer component
 import { useTheme } from "../../../utils/themeUtils"; // Import useTheme hook
 import { USER_TYPE } from "../../../constants/userConstants";
+import TopBar from "../../../components/navbar/Navbar";
 
 const CombinedFileContent = () => {
   const {
@@ -383,14 +384,17 @@ const CombinedFileContent = () => {
         />
 
         {/* Main Content Adjusts Dynamically */}
-        <div
-          className={`flex flex-col flex-1 transition-all duration-300 ${
-            isCollapsed ? "ml-20" : "ml-64"
-          }`}
-        >
-          <Navbar />
-          <div className="flex-grow flex flex-col">
-            {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
+        <div className="w-full">
+          <TopBar />
+
+          <div
+            className={`flex flex-col flex-1 transition-all duration-300 ${
+              isCollapsed ? "ml-20" : "ml-64"
+            }`}
+          >
+            <div className="flex-grow flex flex-col">
+              {!isUploaded ? renderUploadPage() : renderAlreadyUploadedPage()}
+            </div>
           </div>
         </div>
       </div>

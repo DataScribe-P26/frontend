@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { USER_TYPE } from "../../../constants/userConstants";
 import { useAuth } from "../../../utils/authUtils";
 import { get, post } from "../../../state/api-client/api";
+import TopBar from "../../../components/navbar/Navbar";
 
 const ContentDisplay = () => {
   const navigate = useNavigate();
@@ -523,7 +524,7 @@ const ContentDisplay = () => {
           isCollapsed ? "ml-20" : "ml-64"
         }`}
       >
-        <Navbar />
+        <TopBar />
         <div
           className={`flex-grow h-screen p-8 bg-gradient-to-r bg-gray-100 overflow-y-auto custom-scrollbar ${
             isDarkMode ? "bg-gray-900" : ""
