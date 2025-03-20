@@ -16,7 +16,7 @@ import {
 import { useAuth, logout } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "../../state/api-client/api";
-import CreditPurchaseModal from "../wallet/pricingModal";
+import OrgCreditPurchaseModal from "./orgPricing";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import { useTheme } from "../../utils/themeUtils";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
@@ -182,7 +182,7 @@ export const OrgTopBar = ({ title, setActiveTab }) => {
           Organization
         </h1>
       </div>
-      <CreditPurchaseModal isOpen={openPricing} onClose={onClose} />
+      <OrgCreditPurchaseModal isOpen={openPricing} onClose={onClose} />
 
       {/* Right-Side Icons & User Profile */}
       <div className="flex items-center gap-6">

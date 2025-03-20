@@ -27,6 +27,7 @@ const OrganizationCard = ({ id, name, role, createdOn }) => {
       className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
       onClick={() => {
         localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
+
         localStorage.setItem("organizationName", name);
         console.log("sdvsdv", id);
         setOrgId(id);

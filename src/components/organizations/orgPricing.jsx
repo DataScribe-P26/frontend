@@ -4,10 +4,12 @@ import { useAuth } from "../../utils/authUtils";
 import { post } from "../../state/api-client/api";
 import toast from "react-hot-toast";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
+import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 
 const OrgCreditPurchaseModal = ({ isOpen, onClose }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const { setBalance, balance } = useWalletStore();
+  const { orgId } = useOrganizationStore();
 
   const creditOptions = [
     {
@@ -33,7 +35,7 @@ const OrgCreditPurchaseModal = ({ isOpen, onClose }) => {
 
   const handlePurchase = () => {
     console.log("purchased", creditOptions[selectedOption - 1].price);
-    post(`/wallet/${user.user_id}/add`, {
+    post(`/org-wallet/${orgId}/add`, {
       amount: creditOptions[selectedOption - 1].amount,
       transaction_type: "CREDIT",
       description: `${

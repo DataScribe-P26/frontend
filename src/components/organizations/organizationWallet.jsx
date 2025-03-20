@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../utils/authUtils";
 import { get } from "../../state/api-client/api";
-import CreditPurchaseModal from "../wallet/pricingModal";
+import OrgCreditPurchaseModal from "./orgPricing";
 import {
   DollarSign,
   CreditCard,
@@ -108,7 +108,7 @@ const OrgWalletSection = () => {
   return (
     <div className="min-h-screen  dark:bg-gray-900 py-8">
       {openPricing && (
-        <CreditPurchaseModal isOpen={openPricing} onClose={onClose} />
+        <OrgCreditPurchaseModal isOpen={openPricing} onClose={onClose} />
       )}{" "}
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center mb-8">
