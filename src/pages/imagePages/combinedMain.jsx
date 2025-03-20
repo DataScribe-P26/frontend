@@ -24,8 +24,6 @@ import ProjectsPage from "../../components/home/projects";
 import OrganizationsPage from "../../components/home/organisation";
 import { Profile } from "../../components/home/profile";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
-import WalletSection from "../../components/wallet/wallet";
-import TopBar from "../../components/navbar/Navbar";
 function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const {
     imageSrc,
@@ -56,8 +54,8 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
   const [project_type, setproject_type] = useState(
     localStorage.getItem("projectType")
   );
-  const { userRole } = useOrganizationStore();
-  const userType = localStorage.getItem("userType");
+  const {userRole}=useOrganizationStore();
+  const userType =localStorage.getItem("userType");
   useEffect(() => {
     const project_tpe = localStorage.getItem("projectType");
     setprojectType(project_tpe);
@@ -281,8 +279,6 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
         return <ProjectsPage setActiveTab={setActiveTab} />;
       case "Workspace":
         return;
-      case "wallet":
-        return <WalletSection />;
       default:
         return <ProjectsPage />;
     }
@@ -303,7 +299,7 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
 
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <div className="h-16">
-          <TopBar />
+          <ImageNavbar />
         </div>
         {renderContent()}
 
@@ -490,17 +486,16 @@ function Main({ set_analysis_page, isCollapsed, setIsCollapsed }) {
                       setAnnotatedCount={setAnnotatedCount}
                       istrainedd={istrainedd}
                     />
-                    {(userType !== "org" ||
-                      (userType === "org" && userRole !== "viewer")) && (
-                      <div>
-                        <Options
-                          setAction={setAction}
-                          action={action}
-                          submit={submit}
-                          project_type={project_type}
-                        />
-                      </div>
-                    )}
+                    {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+                    <div>
+                      <Options
+                        setAction={setAction}
+                        action={action}
+                        submit={submit}
+                        project_type={project_type}
+                      />
+                    </div>
+                  )}
                   </div>
                   <div
                     className="h-[10vh] flex justify-center items-center p-4"

@@ -16,19 +16,15 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "../../state/api-client/api";
 import { useRole } from "../../utils/authUtils";
-import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 
-const OrganizationCard = ({ id, name, role, createdOn }) => {
+const OrganizationCard = ({ name, role, createdOn }) => {
   const navigate = useNavigate();
-  const { userRole, setRole } = useRole();
-  const { setOrgId } = useOrganizationStore();
+  const { userRole,setRole } = useRole();
   return (
     <div
       className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
       onClick={() => {
         localStorage.setItem("organizationName", name);
-        console.log("sdvsdv", id);
-        setOrgId(id);
         setRole(role);
         navigate("/Dashboard");
       }}
@@ -321,7 +317,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
     onClose();
   };
   const { user } = useAuth();
-  const { userRole, setRole, clearRole } = useRole();
+  const {userRole,setRole,clearRole}=useRole();
 
   async function handleSubmit() {
     const organizationData = {
@@ -354,9 +350,7 @@ const CreateOrganizationModal = ({ isOpen, onClose }) => {
 
     try {
       const storedOrgName = localStorage.getItem("organizationName");
-      const response = await get(
-        `/users/search/${storedOrgName}?query=${query}`
-      );
+      const response = await get(`/users/search/${storedOrgName}?query=${query}`);
       setSearchResults(response.data.matches);
       const formattedUsers = response.data.matches.map((user, index) => {
         // Extract name from email (part before @)
@@ -764,7 +758,6 @@ const OrganizationsPage = () => {
                     return (
                       <OrganizationCard
                         key={org.id}
-                        id={org._id}
                         name={org.name}
                         role={role}
                         createdOn={org.created_on}

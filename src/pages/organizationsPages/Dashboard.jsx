@@ -6,15 +6,7 @@ import { useAuth } from "../../utils/authUtils";
 import { useTheme } from "../../utils/themeUtils";
 // import MainhomeNavbar from "../../Main home/MainhomeNavbar";
 import Navbar from "../../components/textProject/modals/navbar";
-import {
-  Layout,
-  Users,
-  Settings,
-  FolderPlus,
-  Home,
-  Menu,
-  Wallet2,
-} from "lucide-react";
+import { Layout, Users, Settings, FolderPlus, Home, Menu } from "lucide-react";
 import { MdWorkOutline } from "react-icons/md"; // Project icon
 import { FiSettings, FiTrash2 } from "react-icons/fi"; // Settings icon
 import CreateOrgProjectModal from "../../components/organizations/createOrgProject";
@@ -23,13 +15,11 @@ import ProjectSettingsModal from "../../components/organizations/projectSettings
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { Trash2 } from "lucide-react";
 import { useRole } from "../../utils/authUtils";
-import TopBar from "../../components/organizations/organizationNavbar";
-import WalletSection from "../../components/organizations/organizationWallet";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
-  const { userRole, setRole, clearRole } = useRole();
+  const {userRole,setRole,clearRole}=useRole();
   const {
     setprojectname,
     setCreatedOn,
@@ -152,9 +142,7 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await get(
-        `/users/search/${organizationName}?query=${query}`
-      );
+      const response = await get(`/users/search/${organizationName}?query=${query}`);
       setSearchResults(response.data.matches);
       console.log(selectedMembers);
     } catch (error) {
@@ -171,6 +159,7 @@ const Dashboard = () => {
     }
     setSearchQuery("");
     setSearchResults([]);
+    
   };
   const handleEditClick = (member) => {
     setEditingMember(member.email);
@@ -314,8 +303,6 @@ const Dashboard = () => {
             </div>
           </div>
         );
-      case "wallet":
-        return <WalletSection />;
 
       case "projects":
         return (
@@ -328,30 +315,29 @@ const Dashboard = () => {
                   Manage and access all your organization's projects
                 </p>
               </div>
-              {(userType !== "org" ||
-                (userType === "org" && userRole !== "viewer")) && (
-                <button
-                  className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+              <button
+                className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700
                           text-white font-medium rounded-lg shadow-sm transition-colors duration-200
                           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                  onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsModalOpen(true)}
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Create Project
-                </button>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Create Project
+              </button>
+            )}
               <CreateOrgProjectModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -395,8 +381,7 @@ const Dashboard = () => {
                         </h3>
                       </div>
                       {/* Action Icons */}
-                      {(userType !== "org" ||
-                        (userType === "org" && userRole !== "viewer")) && (
+                      {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                         <div className="flex space-x-2">
                           <button
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full
@@ -859,8 +844,6 @@ const Dashboard = () => {
                 { name: "Dashboard", icon: Home, section: "dashboard" },
                 { name: "Projects", icon: Layout, section: "projects" },
                 { name: "Members", icon: Users, section: "members" },
-                { name: "Wallet", icon: Wallet2, section: "wallet" },
-
                 {
                   name: "Org Settings",
                   icon: Settings,
@@ -878,7 +861,6 @@ const Dashboard = () => {
                   title={name}
                 >
                   <Icon size={20} />
-
                   {!isSidebarCollapsed && <span>{name}</span>}
                 </button>
               ))}
@@ -888,7 +870,7 @@ const Dashboard = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          <TopBar />
+          <Navbar />
           <main
             className={`p-6 transition-all duration-300 ${
               isSidebarCollapsed ? "ml-0" : "ml-0"
