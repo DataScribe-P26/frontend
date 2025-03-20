@@ -906,7 +906,7 @@ const Dashboard = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          <OrgTopBar />
+          <OrgTopBar setActiveSection={setActiveSection} />
           <main
             className={`p-6 transition-all duration-300 ${
               isSidebarCollapsed ? "ml-0" : "ml-0"

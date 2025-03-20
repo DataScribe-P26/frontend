@@ -20,7 +20,7 @@ import OrgCreditPurchaseModal from "./orgPricing";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import { useTheme } from "../../utils/themeUtils";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
-export const OrgTopBar = ({ title, setActiveTab }) => {
+export const OrgTopBar = ({ title, setActiveSection }) => {
   const { balance, setBalance } = useWalletStore();
   const { user } = useAuth();
   const { orgId } = useOrganizationStore();
@@ -272,7 +272,7 @@ export const OrgTopBar = ({ title, setActiveTab }) => {
 
                   <button
                     onClick={() => {
-                      setActiveTab("wallet");
+                      setActiveSection("wallet");
                       setShowWalletDropdown(!showWalletDropdown);
                     }}
                     className="w-full flex items-center justify-center gap-2 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md transition-colors duration-200"
