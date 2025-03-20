@@ -30,7 +30,7 @@ export const TopBar = ({ title, setActiveTab }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [openPricing, setOpenPricing] = useState(false);
 
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [organizationName, setOrganizationName] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -39,6 +39,13 @@ export const TopBar = ({ title, setActiveTab }) => {
   const [credits, setCredits] = useState(100);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedOrgName = localStorage.getItem("organizationName");
+    if (storedOrgName) {
+      setOrganizationName(storedOrgName);
+    }
+  }, []);
 
   // Existing functions
   const getDisplayName = () => {
@@ -172,7 +179,7 @@ export const TopBar = ({ title, setActiveTab }) => {
       {/* Title Section */}
       <div className="flex items-center gap-4">
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-          {title}
+          Organization
         </h1>
       </div>
       <CreditPurchaseModal isOpen={openPricing} onClose={onClose} />
@@ -194,7 +201,7 @@ export const TopBar = ({ title, setActiveTab }) => {
           </button>
         </div>
 
-        {/* Help Icon with Tooltip */}
+        {/* Help Icon with Tooltip
         <div className="relative">
           <HelpCircle
             className="text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 cursor-pointer transition-colors duration-200"
@@ -218,7 +225,7 @@ export const TopBar = ({ title, setActiveTab }) => {
               </ul>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Wallet */}
         <div className="relative wallet-container">
