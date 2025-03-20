@@ -464,6 +464,7 @@ const Dashboard = () => {
             {/* Header Section */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-3xl font-semibold">Team Members</h2>
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
               <button
                 onClick={() => setIsModalOpen(true)}
                 className={`px-4 py-2 rounded-lg transition ${
@@ -474,6 +475,7 @@ const Dashboard = () => {
               >
                 + Add Members
               </button>
+              )}
             </div>
 
             {/* Members List */}
@@ -483,7 +485,7 @@ const Dashboard = () => {
               } bg-opacity-90 shadow `}
             >
               <h3 className="text-xl font-semibold mb-4">Current Members</h3>
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
                 {organizationMembers.map((member) => (
                   <div
                     key={member.email}
@@ -537,6 +539,8 @@ const Dashboard = () => {
                     </div>
 
                     {/* Edit & Delete Buttons Aligned */}
+                   {/* Edit & Delete Buttons Aligned */}
+                   {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                     <div className="flex items-center gap-3">
                       {editingMember !== member.email && (
                         <button
@@ -554,6 +558,7 @@ const Dashboard = () => {
                         <Trash2 size={20} />
                       </button>
                     </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -692,32 +697,35 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold dark:bg-gray-900 dark:text-gray-100">
                 Organization Settings
               </h2>
-              {!isEditing ? (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                >
-                  Edit Details
-                </button>
-              ) : (
-                <div className="space-x-2">
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
+                !isEditing ? (
                   <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setOrgDetails(originalOrgDetails);
-                    }}
-                    className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpdateOrg}
+                    onClick={() => setIsEditing(true)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   >
-                    Save Changes
+                    Edit Details
                   </button>
-                </div>
+                ) : (
+                  <div className="space-x-2">
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setOrgDetails(originalOrgDetails);
+                      }}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdateOrg}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                )
               )}
+
             </div>
 
             <div className="space-y-6">

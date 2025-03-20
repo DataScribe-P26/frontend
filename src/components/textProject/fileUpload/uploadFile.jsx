@@ -7,6 +7,7 @@ import Footer from "../modals/footer"; // Importing footer component
 import { useTheme } from "../../../utils/themeUtils"; // Import useTheme hook
 import { USER_TYPE } from "../../../constants/userConstants";
 import TopBar from "../../../components/navbar/Navbar";
+import { post } from "../../../state/api-client/api";
 
 const CombinedFileContent = () => {
   const {
@@ -126,19 +127,18 @@ const CombinedFileContent = () => {
       formData.append("file", file);
 
       try {
-        const url = `/annotate/${projectType}/${userType}?project_name=${encodeURIComponent(
-          projectName
-        )}&text=${encodeURIComponent(item.text)}&emotion=${encodeURIComponent(
-          emotion
-        )}`;
+       
 
         const response = await post(
           `/upload/${projectType}/${userType}/${projectName}`,
           formData
         );
 
-        const result = await response.json();
-        alert(result.message);
+        if (response && response.data) {
+          alert(response.data.message); 
+        } else {
+          alert("Unexpected response format");
+        }
       } catch (error) {
         console.error("Upload failed", error);
         alert("File upload failed.");

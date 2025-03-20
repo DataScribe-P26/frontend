@@ -12,6 +12,7 @@ import { USER_TYPE } from "../../../constants/userConstants";
 import { useAuth } from "../../../utils/authUtils";
 import { get, post } from "../../../state/api-client/api";
 import TopBar from "../../../components/navbar/Navbar";
+import { useRole } from "../../../utils/authUtils";
 
 const ContentDisplay = () => {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ const ContentDisplay = () => {
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const { user } = useAuth();
   const [fetchedEmotions, setFetchedEmotions] = useState(false);
+  const userType = localStorage.getItem("userType");
+  const {userRole}=useRole();
 
   const [currentIndex, setCurrentIndex] = useState(() => {
     // Try to get saved index from localStorage on initial load
@@ -558,20 +561,28 @@ const ContentDisplay = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:bg-gray-700 dark:text-gray-100">
                       Select emotion for this text:
                     </label>
-                    <select
-                      onChange={handleEmotionChange}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-gray-100 hover:border-purple-500"
-                      value={selectedEmotion}
-                    >
-                      <option value="">Select an emotion</option>
-                      {emotions.map((emotion) => (
-                        <option key={emotion.name} value={emotion.name}>
-                          {emotion.name}
-                        </option>
-                      ))}
-                    </select>
+                    {(userType !== "org" || (userType === "org" && userRole !== "viewer")) ? (
+                      <select
+                        onChange={handleEmotionChange}
+                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-gray-100 hover:border-purple-500"
+                        value={selectedEmotion}
+                      >
+                        <option value="">Select an emotion</option>
+                        {emotions.map((emotion) => (
+                          <option key={emotion.name} value={emotion.name}>
+                            {emotion.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <div className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100">
+                        {selectedEmotion || "No emotion selected"}
+                      </div>
+                    )}
                               
                   </div>
+
+                  {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
 
                   <button
                     className="mt-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -583,6 +594,7 @@ const ContentDisplay = () => {
                   >
                     + Create New Emotion
                   </button>
+                  )}
                 </div>
               </div>
 
@@ -591,12 +603,15 @@ const ContentDisplay = () => {
 
               {/* Action buttons */}
               <div className="flex justify-center space-x-4">
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                 <button
                   onClick={() => handleSubmit()}
                   className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition-colors"
                 >
                   Save Sentiment Labels
                 </button>
+              )}
+                 {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
 
                 <button
                   onClick={handleAutoAnnotation}
@@ -614,6 +629,7 @@ const ContentDisplay = () => {
                 >
                   Auto Annotation
                 </button>
+                 )}
 
                 <CreateEmotion
                   isOpen={isModalOpen}

@@ -9,6 +9,7 @@ import { get } from "../../state/api-client/api";
 import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
 import TopBar from "../../components/navbar/Navbar";
+import { useRole } from "../../utils/authUtils";
 
 const HomePage = () => {
   const { projectName } = useParams();
@@ -18,6 +19,8 @@ const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const projectType = localStorage.getItem("projectType");
+  const userType = localStorage.getItem("userType");
+  const {userRole}=useRole();
 
   const {
     content,
@@ -272,6 +275,7 @@ const HomePage = () => {
                         : "translate-y-4 opacity-0 scale-95"
                     }`}
                   >
+                    {!isCollapsed && (userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                     <button
                       className={`${
                         isDarkMode
@@ -282,6 +286,7 @@ const HomePage = () => {
                     >
                       Start Annotation
                     </button>
+                    )}
                   </div>
                 </div>
               </main>

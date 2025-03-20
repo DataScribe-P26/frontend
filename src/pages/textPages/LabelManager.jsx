@@ -13,6 +13,7 @@ import { useTheme } from "../../utils/themeUtils";
 import { USER_TYPE } from "../../constants/userConstants";
 import { useAuth } from "../../utils/authUtils";
 import TopBar from "../../components/navbar/Navbar";
+import { useRole } from "../../utils/authUtils";
 
 const LabelManager = () => {
   const { labels, addLabel, deleteLabel, setLabels } = textStore();
@@ -23,6 +24,8 @@ const LabelManager = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const userType = localStorage.getItem("userType");
+  const {userRole}=useRole();
 
   useEffect(() => {
     const fetchLabels = async () => {
@@ -125,6 +128,7 @@ const LabelManager = () => {
           <h1 className="text-3xl font-bold ml-4">Label Manager</h1>
         </div>
         <div className="flex-grow p-8 overflow-hidden">
+        {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
           <button
             onClick={() => {
               setCurrentLabel(null);
@@ -135,6 +139,7 @@ const LabelManager = () => {
           >
             Create Label
           </button>
+        )}
 
           {labels.length > 0 ? (
             <div className="overflow-auto h-[30rem] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">

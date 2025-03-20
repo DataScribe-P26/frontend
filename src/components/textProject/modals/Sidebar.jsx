@@ -13,6 +13,7 @@ import { HiAnnotation } from "react-icons/hi";
 import textStore from "../../../state/store/textStore/combinedTextSlice";
 import { useTheme } from "../../../utils/themeUtils";
 import ExportModal from "../exportOption/exportModal";
+import { useRole } from "../../../utils/authUtils";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,6 +23,8 @@ const Sidebar = () => {
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const projectType = localStorage.getItem("projectType"); // Get projectType from localStorage
+  const {userRole}=useRole();
+  const userType = localStorage.getItem("userType");
 
   const shouldShowImport = !isUploaded && !content;
 
@@ -81,12 +84,13 @@ const Sidebar = () => {
         </div>
 
         {/* Dataset Section */}
+        {!isCollapsed && (userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
         <div>
-          {!isCollapsed && (
+        
             <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2">
               DATASET
             </h3>
-          )}
+          
           <button
             className="w-full flex items-center justify-between px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
             onClick={() => setDatasetOpen(!isDatasetOpen)}
@@ -108,6 +112,7 @@ const Sidebar = () => {
                   <span>Import</span>
                 </Link>
               )}
+              
               <button
                 className="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                 onClick={() => setIsModalOpen(true)}
@@ -115,9 +120,11 @@ const Sidebar = () => {
                 <Download size={18} className="shrink-0" />
                 <span>Export</span>
               </button>
+              
             </div>
           )}
         </div>
+        )}
 
         {/* Label Section (Show only if projectType is "ner_tagging") */}
         {projectType === "ner_tagging" && (

@@ -12,6 +12,7 @@ import { USER_TYPE } from "../../../constants/userConstants";
 import { useAuth } from "../../../utils/authUtils";
 import { get, post } from "../../../state/api-client/api";
 import TopBar from "../../../components/navbar/Navbar";
+import { useRole } from "../../../utils/authUtils";
 
 const FileContentDisplay = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -36,6 +37,8 @@ const FileContentDisplay = () => {
   const [editMode, setEditMode] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
   const { user } = useAuth();
+  const userType = localStorage.getItem("userType");
+  const {userRole}=useRole();
 
   const [fetchedLabels, setFetchedLabels] = useState(false);
   const [autoAnnotationEnabled, setAutoAnnotationEnabled] = useState(false);
@@ -429,7 +432,9 @@ const FileContentDisplay = () => {
                 <span className="annotation-text ml-4 w-[85%] overflow-auto text-ellipsis whitespace-nowrap custom-scrollbar">
                   {annotation.text}
                 </span>
+                {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                 <div className="ml-auto">
+                  
                   <button
                     className="bg-red-500 text-white px-2 py-1 rounded-md cursor-pointer"
                     onClick={() => {
@@ -441,6 +446,7 @@ const FileContentDisplay = () => {
                     Delete
                   </button>
                 </div>
+                )}
               </div>
             ))}
           </div>
@@ -645,12 +651,14 @@ const FileContentDisplay = () => {
               {renderNavigation()}
               {/* Submit Button */}
               <div className="flex justify-center  space-x-4">
+              {(userType !== "org" || (userType === "org" && userRole !== "viewer")) && (
                 <button
                   onClick={handleSubmit}
                   className="mt-6 bg-green-700 text-white px-6 py-3 rounded-lg"
                 >
                   Save Annotations
                 </button>
+              )}
                 <CreateLabel
                   isOpen={isModalOpen}
                   onClose={() => setModalOpen(false)}
@@ -665,14 +673,14 @@ const FileContentDisplay = () => {
                 >
                   Exit Project
                 </button>
-                {projectType === "ner_tagging" && (
+                {projectType === "ner_tagging" && (userType !== "org" || (userType === "org" && userRole !== "viewer")) &&(
                   <button
                     className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                     onClick={handleAutoAnnotation}
                   >
                     Auto Annotate
                   </button>
-                )}
+                )}
               </div>
 
               {/* {projectType === "sentiment_analysis" && (
