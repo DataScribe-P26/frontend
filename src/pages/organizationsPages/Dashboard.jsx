@@ -23,8 +23,10 @@ import ProjectSettingsModal from "../../components/organizations/projectSettings
 import useStore from "../../state/store/imageStore/combinedImageSlice";
 import { Trash2 } from "lucide-react";
 import { useRole } from "../../utils/authUtils";
-import TopBar from "../../components/organizations/organizationNavbar";
-import WalletSection from "../../components/organizations/organizationWallet";
+import TopBar, {
+  OrgTopBar,
+} from "../../components/organizations/organizationNavbar";
+import OrgWalletSection from "../../components/organizations/organizationWallet";
 import { USER_TYPE } from "../../constants/userConstants";
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -316,7 +318,7 @@ const Dashboard = () => {
           </div>
         );
       case "wallet":
-        return <WalletSection />;
+        return <OrgWalletSection />;
 
       case "projects":
         return (
@@ -904,7 +906,7 @@ const Dashboard = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          <TopBar />
+          <OrgTopBar />
           <main
             className={`p-6 transition-all duration-300 ${
               isSidebarCollapsed ? "ml-0" : "ml-0"

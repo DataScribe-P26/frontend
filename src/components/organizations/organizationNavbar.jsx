@@ -20,7 +20,7 @@ import CreditPurchaseModal from "../wallet/pricingModal";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import { useTheme } from "../../utils/themeUtils";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
-export const TopBar = ({ title, setActiveTab }) => {
+export const OrgTopBar = ({ title, setActiveTab }) => {
   const { balance, setBalance } = useWalletStore();
   const { user } = useAuth();
   const { orgId } = useOrganizationStore();
@@ -390,4 +390,4 @@ export const TopBar = ({ title, setActiveTab }) => {
   );
 };
 
-export default TopBar;
+export default OrgTopBar;

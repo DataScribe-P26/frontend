@@ -17,7 +17,7 @@ import {
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
 
-const WalletSection = () => {
+const OrgWalletSection = () => {
   const { balance, setBalance } = useWalletStore();
   const { user } = useAuth();
   const [credits, setCredits] = useState(100);
@@ -321,4 +321,4 @@ const WalletSection = () => {
   );
 };
 
-export default WalletSection;
+export default OrgWalletSection;
