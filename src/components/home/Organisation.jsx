@@ -26,6 +26,7 @@ const OrganizationCard = ({ id, name, role, createdOn }) => {
     <div
       className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-700 dark:border-gray-100 dark:text-gray-100"
       onClick={() => {
+        localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
         localStorage.setItem("organizationName", name);
         console.log("sdvsdv", id);
         setOrgId(id);
@@ -685,7 +686,6 @@ const OrganizationsPage = () => {
     try {
       setLoading(true);
       const userType = USER_TYPE.ORGANIZATION;
-      localStorage.setItem("userType", USER_TYPE.ORGANIZATION);
       console.log("current user is", userType);
       const response = await get(`/organizations/user/${user.email}`);
       console.log("ORGS---", response.data);

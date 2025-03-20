@@ -25,6 +25,7 @@ import { Trash2 } from "lucide-react";
 import { useRole } from "../../utils/authUtils";
 import TopBar from "../../components/organizations/organizationNavbar";
 import WalletSection from "../../components/organizations/organizationWallet";
+import { USER_TYPE } from "../../constants/userConstants";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -837,7 +838,14 @@ const Dashboard = () => {
                 isSidebarCollapsed ? "flex-col" : "justify-between"
               }`}
             >
-              <Link to="/home" className="flex items-center gap-3">
+              <Link
+                to="/home"
+                className="flex items-center gap-3"
+                onClick={() => {
+                  localStorage.setItem("userType", USER_TYPE.INDIVIDUAL);
+                  navigate("/home");
+                }}
+              >
                 <div className="flex items-center">
                   <HiAnnotation
                     className={`text-4xl text-purple-400 transform transition-transform duration-300 hover:scale-110 ${
