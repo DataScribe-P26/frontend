@@ -15,11 +15,12 @@ import {
 } from "lucide-react";
 import { useAuth, logout } from "../../utils/authUtils";
 import { useNavigate } from "react-router-dom";
-import { get, post } from "../../state/api-client/api";
+import { get, post, put } from "../../state/api-client/api";
 import OrgCreditPurchaseModal from "./orgPricing";
 import useWalletStore from "../../state/store/walletStore/walletSlice";
 import { useTheme } from "../../utils/themeUtils";
 import useOrganizationStore from "../../state/store/organizationStore/organizationSlice";
+
 export const OrgTopBar = ({ title, setActiveSection }) => {
   const { balance, setBalance } = useWalletStore();
   const { user } = useAuth();
